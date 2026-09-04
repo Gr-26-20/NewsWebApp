@@ -19,7 +19,15 @@
         <!-- MAIN CATEGORY NAVIGATION -->
         <nav class="main-nav">
 
-            <div class="nav-categories">
+            <button class="navbar-toggler"
+                    type="button"
+                    onclick="toggleNavigation()"
+                    aria-label="Toggle navigation">
+                ☰
+            </button>
+
+            <div class="nav-categories" id="navCategories">
+
                 <a href="#">NEWS</a>
                 <a href="#">WORLD</a>
                 <a href="#">SWEDEN</a>
@@ -27,12 +35,15 @@
                 <a href="#">SPORTS</a>
                 <a href="#">EDITOR'S CHOICE</a>
                 <a href="#">NEWSLETTER</a>
+
             </div>
 
-            <div class="nav-account">
+            <div class="nav-account" id="navAccount">
+
                 <a href="#">LOGIN</a>
                 <span> </span>
                 <a href="#">REGISTER</a>
+
             </div>
 
         </nav>

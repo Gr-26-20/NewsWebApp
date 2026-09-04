@@ -4,7 +4,7 @@ using NewsWebApp.Models;
 
 namespace NewsWebApp.Data
 {
-    public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : IdentityDbContext(options)
+    public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : IdentityDbContext<ApplicationUser>(options)
     {
         public DbSet<Users> Users { get; set; }
         public DbSet<Articles> Articles { get; set; }

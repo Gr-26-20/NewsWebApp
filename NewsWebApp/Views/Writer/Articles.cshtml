@@ -1,0 +1,32 @@
+﻿@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@{
+}
+
+@model NewsWebApp.Models.ViewModels.ArticlesVM
+@if (Model.Articles == null || !Model.Articles.Any())
+{
+	<h4>No articles found.</h4>
+}
+
+@foreach (var article in Model.Articles!)
+{
+	<div class="card">
+		<div class="card-header">
+			<p><strong>Created At:</strong> @article.CreatedAt.ToString()</p>
+		</div>
+		<div class="card-body">
+			<h2>@article.Title</h2>
+			<p>@article.Summary</p>
+			<p><strong>Author:</strong> @article.Author</p>
+			<p><strong>Views:</strong> @article.Views</p>
+			<p><strong>Likes:</strong> @article.Likes</p>
+			<img src="@article.ImageUrl" alt="@article.Title" />
+		</div>
+		<div class="card-footer">
+			<a class="btn btn-primary" asp-action="EditArticle" asp-controller="Writer" asp-route-id="@article.Id">Edit</a>
+			<a class="btn btn-danger" asp-action="DeleteArticle" asp-controller="Writer" asp-route-id="@article.Id">Delete</a>
+		</div>
+	</div>
+}

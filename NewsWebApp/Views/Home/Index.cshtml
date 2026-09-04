@@ -1,8 +1,195 @@
 ﻿@{
-    ViewData["Title"] = "Home Page";
+    ViewData["Title"] = "Home";
 }
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+<div class="news-site">
+
+    <!-- HEADER -->
+    <header class="site-header">
+        <div class="header-top">
+            <span>THURSDAY / 03 SEPTEMBER 2026</span>
+            <span>LINKÖPING</span>
+        </div>
+
+        <div class="brand-row">
+            <h1 class="site-logo">CLICKBAIT News</h1>
+            <div class="brand-tagline">YOUR NEWS / YOUR CITY / YOUR WORLD</div>
+        </div>
+
+        <!-- MAIN CATEGORY NAVIGATION -->
+        <nav class="main-nav">
+
+            <button class="navbar-toggler"
+                    type="button"
+                    onclick="toggleNavigation()"
+                    aria-label="Toggle navigation">
+                ☰
+            </button>
+
+            <div class="nav-categories" id="navCategories">
+
+                <a href="#">NEWS</a>
+                <a href="#">WORLD</a>
+                <a href="#">SWEDEN</a>
+                <a href="#">WEATHER</a>
+                <a href="#">SPORTS</a>
+                <a href="#">EDITOR'S CHOICE</a>
+                <a href="#">NEWSLETTER</a>
+
+            </div>
+
+            <div class="nav-account" id="navAccount">
+
+                <a href="#">LOGIN</a>
+                <span> </span>
+                <a href="#">REGISTER</a>
+
+            </div>
+
+        </nav>
+    </header>
+
+    <!-- BREAKING NEWS -->
+    <section class="breaking-bar">
+        <strong>BREAKING</strong>
+        <span>Breaking news headline goes here</span>
+    </section>
+
+    <!-- MAIN CONTENT -->
+    <main>
+
+        <!-- FEATURED NEWS -->
+        <section class="section-block">
+            <div class="section-title">
+                <h2>NEWS</h2>
+                <a href="#">VIEW ALL →</a>
+            </div>
+
+            <div class="featured-grid">
+
+                <article class="featured-story">
+                    <div class="image-placeholder large">IMAGE</div>
+                    <div class="story-category">NEWS</div>
+                    <h3>MAIN HEADLINE GOES HERE</h3>
+                    <p>Short introduction to the main story.</p>
+                </article>
+
+                <div class="side-stories">
+
+                    <article class="story">
+                        <div class="image-placeholder">IMAGE</div>
+                        <div>
+                            <div class="story-category">NEWS</div>
+                            <h3>SECONDARY HEADLINE</h3>
+                            <p>Short story introduction.</p>
+                        </div>
+                    </article>
+
+                    <article class="story">
+                        <div class="image-placeholder">IMAGE</div>
+                        <div>
+                            <div class="story-category">NEWS</div>
+                            <h3>SECONDARY HEADLINE</h3>
+                            <p>Short story introduction.</p>
+                        </div>
+                    </article>
+
+                </div>
+
+                <!-- RIGHT SIDEBAR -->
+                <aside class="sidebar">
+                    <h2>EDITOR'S CHOICE</h2>
+
+                    <article class="sidebar-story">
+                        <span>01</span>
+                        <h3>EDITOR'S CHOICE STORY</h3>
+                    </article>
+
+                    <article class="sidebar-story">
+                        <span>02</span>
+                        <h3>EDITOR'S CHOICE STORY</h3>
+                    </article>
+
+                    <article class="sidebar-story">
+                        <span>03</span>
+                        <h3>EDITOR'S CHOICE STORY</h3>
+                    </article>
+                </aside>
+
+            </div>
+        </section>
+
+        <!-- CATEGORY ROWS -->
+        <section class="category-section">
+
+            <div class="category-column">
+                <div class="section-title">
+                    <h2>WORLD</h2>
+                    <a href="#">MORE →</a>
+                </div>
+
+                <article class="compact-story">
+                    <div class="image-placeholder">IMAGE</div>
+                    <div>
+                        <div class="story-category">WORLD</div>
+                        <h3>WORLD NEWS HEADLINE</h3>
+                        <p>Short introduction.</p>
+                    </div>
+                </article>
+            </div>
+
+
+            <div class="category-column">
+                <div class="section-title">
+                    <h2>SWEDEN</h2>
+                    <a href="#">MORE →</a>
+                </div>
+
+                <article class="compact-story">
+                    <div class="image-placeholder">IMAGE</div>
+                    <div>
+                        <div class="story-category">SWEDEN</div>
+                        <h3>SWEDISH NEWS HEADLINE</h3>
+                        <p>Short introduction.</p>
+                    </div>
+                </article>
+            </div>
+
+
+            <div class="category-column">
+                <div class="section-title">
+                    <h2>SPORTS</h2>
+                    <a href="#">MORE →</a>
+                </div>
+
+                <article class="compact-story">
+                    <div class="image-placeholder">IMAGE</div>
+                    <div>
+                        <div class="story-category">SPORTS</div>
+                        <h3>SPORTS HEADLINE</h3>
+                        <p>Short introduction.</p>
+                    </div>
+                </article>
+            </div>
+
+        </section>
+
+        <!-- WEATHER -->
+        <section class="weather-section">
+
+            <div class="section-title">
+                <h2>WEATHER</h2>
+                <a href="#">FULL FORECAST →</a>
+            </div>
+
+            <div class="weather-placeholder">
+                <div class="weather-city">GOTHENBURG</div>
+                <div class="weather-temp">--°</div>
+                <div class="weather-info">WEATHER DATA GOES HERE</div>
+            </div>
+
+        </section>
+
+    </main>
+
 </div>

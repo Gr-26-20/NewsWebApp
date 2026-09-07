@@ -23,7 +23,9 @@
                     @foreach (var user in Model.UsersWithRoles)
                     {
                         <tr>
-                            
+                            <td>
+                                @user.Email
+                            </td>
                             <td>
                                 @if (!string.IsNullOrEmpty(user.RoleName))
                                 {

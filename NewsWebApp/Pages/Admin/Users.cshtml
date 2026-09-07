@@ -13,6 +13,36 @@
         </div>
     </div>
 
+    <!-- Success Message -->
+    @if (TempData["SuccessMessage"] != null)
+    {
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            <i class="bi bi-check-circle"></i>
+            @TempData["SuccessMessage"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    }
+
+    <!-- Error Message -->
+    @if (TempData["ErrorMessage"] != null)
+    {
+        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+            <i class="bi bi-exclamation-triangle"></i>
+            @TempData["ErrorMessage"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    }
+
+    <!-- Info Message -->
+    @if (TempData["InfoMessage"] != null)
+    {
+        <div class="alert alert-info alert-dismissible fade show" role="alert">
+            <i class="bi bi-info-circle"></i>
+            @TempData["InfoMessage"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    }
+
     @if (Model.UsersWithRoles.Any())
     {
         <div class="row">
@@ -50,31 +80,31 @@
                                         }
                                     </td>
                                     <td class="text-center">
-                                        <div class="btn-group" role="group">
-                                            <form method="post" style="display:inline;">
-                                                <select name="role" class="form-select form-select-sm d-inline-block w-auto me-2">
-                                                    <option value="">-- Add Role --</option>
-                                                    @foreach (var role in Model.AllRoles)
+                                        <form method="post" asp-page-handler="AddRole" class="d-inline me-2">
+                                            @Html.AntiForgeryToken()
+                                            <input type="hidden" name="userId" value="@user.UserId" />
+                                            <select name="role" class="form-select form-select-sm d-inline-block w-auto me-2" onchange="this.form.submit()">
+                                                <option value="">-- Add Role --</option>
+                                                @foreach (var role in Model.AllRoles)
+                                                {
+                                                    @if (!user.RoleName.Contains(role))
                                                     {
-                                                        @if (!user.RoleName.Contains(role))
-                                                        {
-                                                            <option value="@role">@role</option>
-                                                        }
+                                                        <option value="@role">@role</option>
                                                     }
-                                                </select>
-                                                <button type="submit" asp-page-handler="AddRole" asp-route-userId="@user.UserId" class="btn btn-sm btn-success">
-                                                    <i class="bi bi-plus-circle"></i> Add Role
+                                                }
+                                            </select>
+                                        </form>
+                                        @if (!string.IsNullOrEmpty(user.RoleName))
+                                        {
+                                            <form method="post" asp-page-handler="RemoveRole" class="d-inline" onsubmit="return confirm('Are you sure?')">
+                                                @Html.AntiForgeryToken()
+                                                <input type="hidden" name="userId" value="@user.UserId" />
+                                                <input type="hidden" name="role" value="@user.RoleName" />
+                                                <button type="submit" class="btn btn-sm btn-danger">
+                                                    <i class="bi bi-trash"></i> Remove @user.RoleName
                                                 </button>
                                             </form>
-                                            @foreach (var role in new List<string> { user.RoleName }.Where(r => !string.IsNullOrEmpty(r)))
-                                            {
-                                                <form method="post" style="display:inline;">
-                                                    <button type="submit" asp-page-handler="RemoveRole" asp-route-userId="@user.UserId" asp-route-role="@role" class="btn btn-sm btn-danger" onclick="return confirm('Are you sure?')">
-                                                        <i class="bi bi-trash"></i> Remove @role
-                                                    </button>
-                                                </form>
-                                            }
-                                        </div>
+                                        }
                                     </td>
                                 </tr>
                             }

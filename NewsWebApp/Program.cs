@@ -21,6 +21,7 @@ namespace NewsWebApp
                 .AddRoles<IdentityRole>()
                 .AddEntityFrameworkStores<ApplicationDbContext>();
             builder.Services.AddControllersWithViews();
+            builder.Services.AddRazorPages();
 
             // Add services
             builder.Services.AddScoped<IUserAndRoleService, UserAndRoleService>();

@@ -23,14 +23,14 @@ namespace NewsWebApp.Controllers
 
        
 
-        [Authorize(Roles = "WRITER")]
+        [Authorize(Roles = "Writer")]
         public async Task<IActionResult> Create()
         {
             return View();
         }
 
         [HttpPost]
-        [Authorize(Roles = "WRITER")]
+        [Authorize(Roles = "Writer")]
         public async Task<IActionResult> Create(Articles article)
         {
             if (ModelState.IsValid)
@@ -57,7 +57,7 @@ namespace NewsWebApp.Controllers
             return View(article);
         }
 
-        [Authorize(Roles = "WRITER")]
+        [Authorize(Roles = "Writer")]
         public async Task<IActionResult> EditArticle(int id)
         {
             var article = await _context.Articles.FindAsync(id);
@@ -69,7 +69,7 @@ namespace NewsWebApp.Controllers
         }
 
         [HttpPost]
-        [Authorize(Roles = "WRITER")]
+        [Authorize(Roles = "Writer")]
         public async Task<IActionResult> EditArticle(int id, Articles article)
         {
             if (id != article.Id)

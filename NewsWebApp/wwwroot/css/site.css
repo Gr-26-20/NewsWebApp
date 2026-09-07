@@ -182,6 +182,25 @@ a {
     flex-wrap: wrap;
 }
 
+    /* ---------------------------------------------------------
+   SUBSCRIBE BUTTON
+--------------------------------------------------------- */
+
+    .nav-categories a.nav-subscribe {
+        margin-left: auto;
+        border-left: 1px solid var(--border);
+        border-right: none;
+        background: transparent;
+        color: var(--accent);
+        box-shadow: inset 0 0 0 2px var(--accent);
+    }
+
+        .nav-categories a.nav-subscribe:hover {
+            background: var(--accent);
+            color: var(--accent-text);
+            box-shadow: none;
+        }
+
 /* ---------------------------------------------------------
    CATEGORIES STYLING
 --------------------------------------------------------- */

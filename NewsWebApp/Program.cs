@@ -22,6 +22,7 @@ namespace NewsWebApp
                 .AddEntityFrameworkStores<ApplicationDbContext>();
             builder.Services.AddControllersWithViews();
             builder.Services.AddRazorPages();
+            builder.Services.AddScoped<ISubscriptionService, SubscriptionService>();
 
             // Add services
             builder.Services.AddScoped<IUserAndRoleService, UserAndRoleService>();

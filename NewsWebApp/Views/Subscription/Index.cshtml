@@ -1,0 +1,62 @@
+﻿@using NewsWebApp.Models.ViewModels
+@model SubscribeViewModel
+
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-5">
+
+            <div class="card text-center mb-4 shadow-sm">
+                <div class="card-body">
+                    <h2 class="card-title">Subscribe Now</h2>
+                    <p class="display-6 fw-bold">@Model.Price.ToString("C")</p>
+                    <p class="text-muted">@Model.DurationInDays days · Cancel anytime</p>
+                </div>
+            </div>
+
+            <form asp-action="Subscribe" method="post">
+                @Html.AntiForgeryToken()
+
+                <div class="mb-3">
+                    <label asp-for="CardHolderName" class="form-label"></label>
+                    <input asp-for="CardHolderName" class="form-control" placeholder="John Doe" />
+                    <span asp-validation-for="CardHolderName" class="text-danger"></span>
+                </div>
+
+                <div class="mb-3">
+                    <label asp-for="CardNumber" class="form-label"></label>
+                    <input asp-for="CardNumber" class="form-control" placeholder="1234567890123" maxlength="13" />
+                    <span asp-validation-for="CardNumber" class="text-danger"></span>
+                </div>
+
+                <div class="row">
+                    <div class="col mb-3">
+                        <label asp-for="ExpiryDate" class="form-label"></label>
+                        <input asp-for="ExpiryDate" class="form-control" placeholder="MM/YY" maxlength="5" type="text" inputmode="numeric" oninput="this.value = this.value.replace(/[^0-9]/g, ''); 
+                                                                                                                                                        if(this.value.length > 2) {
+                                                                                                                                                            this.value = this.value.substring(0, 2) + '/' + this.value.substring(2);
+                                                                                                                                                        }"/>
+                        <span asp-validation-for="ExpiryDate" class="text-danger"></span>
+                    </div>
+                    <div class="col mb-3">
+                        <label asp-for="CVV" class="form-label"></label>
+                        <input asp-for="CVV" class="form-control" placeholder="123" maxlength="3" type="text" inputmode="numeric" oninput="this.value = this.value.replace(/[^0-9]/g, '')"/>
+                        <span asp-validation-for="CVV" class="text-danger"></span>
+                    </div>
+                </div>
+
+                <input type="hidden" asp-for="PaymentToken" />
+
+                <button type="submit" class="btn btn-primary w-100 mt-3">
+                    Confirm Subscription
+                </button>
+
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

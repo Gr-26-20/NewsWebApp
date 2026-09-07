@@ -29,11 +29,17 @@ namespace NewsWebApp
             builder.Services.AddScoped<RoleSeeder>();
 
 
-            //    .AddEntityFrameworkStores<ApplicationDbContext>();
-            //builder.Services.AddControllersWithViews();
+          
 
             //Article service registration
             builder.Services.AddScoped<IArticleService, ArticleService>();
+
+            builder.Services.Configure<CookiePolicyOptions>(options =>
+            {
+                options.CheckConsentNeeded = context => true;
+                options.MinimumSameSitePolicy = Microsoft.AspNetCore.Http.SameSiteMode.None;
+                options.ConsentCookieValue = "true";
+            });
 
             var app = builder.Build();
 
@@ -53,6 +59,7 @@ namespace NewsWebApp
             app.UseRouting();
             app.UseAuthentication();
             app.UseAuthorization();
+            app.UseCookiePolicy();
 
             app.MapStaticAssets();
             app.MapControllerRoute(

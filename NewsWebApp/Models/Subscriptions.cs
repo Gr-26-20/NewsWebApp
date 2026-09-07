@@ -1,3 +1,7 @@
+using NewsWebApp.Data;
+using System;
+using System.ComponentModel.DataAnnotations;
+
 namespace NewsWebApp.Models
 {
     public class Subscriptions
@@ -8,6 +12,6 @@ namespace NewsWebApp.Models
         public int DurationInDays { get; set; }
         public int BoundingTimeInDays { get; set; }
         public DateTime? CreatedAt { get; set; } = DateTime.UtcNow;
-        public Users UserId { get; set; }
+        public ApplicationUser User { get; set; }
     }
 }

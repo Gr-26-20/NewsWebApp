@@ -1,77 +1,42 @@
-﻿@{
+﻿@model List<NewsWebApp.Models.Articles>
+
+@{
     ViewData["Title"] = "Sweden";
 }
 
 <div class="category-page">
 
     <div class="section-title">
-        <h2>@ViewBag.Category</h2> <!-- SWEDEN -->
+        <h2>@ViewBag.Category</h2>
         <a href="/">BACK TO NEWS →</a>
     </div>
 
     <section class="category-articles">
 
-        <article class="category-article">
+        @foreach (var article in Model)
+        {
+            <article class="category-article">
 
-            <div class="image-placeholder category-image">
-                IMAGE
-            </div>
+                <div class="image-placeholder category-image">
+                    IMAGE
+                </div>
 
-            <div class="story-category">SWEDEN</div>
+                <div class="story-category">
+                    @article.Category
+                </div>
 
-            <h1>
-                <a href="/Articles/Details">
-                    MAIN HEADLINE GOES HERE
-                </a>
-            </h1>
+                <h2>
+                    <a href="/Articles/Details/@article.Id">
+                        @article.Title
+                    </a>
+                </h2>
 
-            <p>
-                Short introduction to the main Swedish news story.
-            </p>
+                <p>
+                    @article.Summary
+                </p>
 
-        </article>
-
-
-        <article class="category-article">
-
-            <div class="image-placeholder category-image">
-                IMAGE
-            </div>
-
-            <div class="story-category">SWEDEN</div>
-
-            <h2>
-                <a href="/Articles/Details">
-                    SECONDARY HEADLINE GOES HERE
-                </a>
-            </h2>
-
-            <p>
-                Short introduction to the secondary news story.
-            </p>
-
-        </article>
-
-
-        <article class="category-article">
-
-            <div class="image-placeholder category-image">
-                IMAGE
-            </div>
-
-            <div class="story-category">SWEDEN</div>
-
-            <h2>
-                <a href="/Articles/Details">
-                    THIRD HEADLINE GOES HERE
-                </a>
-            </h2>
-
-            <p>
-                Short introduction to another Swedish news story.
-            </p>
-
-        </article>
+            </article>
+        }
 
     </section>
 

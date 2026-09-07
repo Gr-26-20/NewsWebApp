@@ -19,15 +19,15 @@ namespace NewsWebApp.Services
             
             
             return await _db.Subscriptions.
-                AnyAsync(s => s.UserId.Email == userEmail
+                AnyAsync(s => s.User.Email == userEmail
                 && s.CreatedAt.HasValue && s.CreatedAt.Value.AddDays(s.DurationInDays) > DateTime.UtcNow);
         }
 
         public async Task<Subscriptions?> GetActiveSubscriptionAsync(string userEmail)
         {
             
-            return await _db.Subscriptions. Include(s => s.UserId)
-                .Where(s => s.UserId.Email == userEmail 
+            return await _db.Subscriptions. Include(s => s.User)
+                .Where(s => s.User.Email == userEmail 
                     && s.CreatedAt.HasValue && s.CreatedAt.Value.AddDays(s.DurationInDays) > DateTime.UtcNow)
                 .FirstOrDefaultAsync();
         }
@@ -53,7 +53,7 @@ namespace NewsWebApp.Services
                 DurationInDays = DurationInDays,
                 BoundingTimeInDays = 0,
                 CreatedAt = DateTime.UtcNow,
-                UserId = user
+                User = user
             });
 
             

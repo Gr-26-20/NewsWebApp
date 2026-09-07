@@ -12,13 +12,13 @@ using Microsoft.AspNetCore.Identity;
 
 namespace NewsWebApp.Controllers
 {
-    //[Authorize]
+    [Authorize]
     public class SubscriptionController : Controller
     {
         private readonly ISubscriptionService _subscriptionService;
-        private readonly UserManager<IdentityUser> _userManager;
+        private readonly UserManager<ApplicationUser> _userManager;
 
-        public SubscriptionController(ISubscriptionService subscriptionService, UserManager<IdentityUser> userManager)
+        public SubscriptionController(ISubscriptionService subscriptionService, UserManager<ApplicationUser> userManager)
         {
             _subscriptionService = subscriptionService;
             _userManager = userManager;

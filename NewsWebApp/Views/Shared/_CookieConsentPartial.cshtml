@@ -30,7 +30,7 @@
 			var button = document.querySelector("#cookieConsent button.reject-policy");
 			button.addEventListener("click", function(event) {
 				// Optionally, you can set a cookie to remember the user's rejection
-				document.cookie = "TrackingConsent=Rejected; path=/; max-age=31536000"; // 1 year
+				document.cookie = "TrackingConsent=Rejected; max-age= 60*60*24; // 1 day";
 				console.log("Cookie consent rejected, cookie set: TrackingConsent=Rejected");
 			}, false);
 		})();

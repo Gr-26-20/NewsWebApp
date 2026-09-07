@@ -51,25 +51,83 @@ namespace NewsWebApp.Pages.Admin
             AllRoles = (await _roleManager.Roles.ToListAsync()).Select(r => r.Name!).ToList();
         }
 
+        // Add role to user
         public async Task<IActionResult> OnPostAddRoleAsync(string userId, string role)
         {
-            var user = await _userManager.FindByIdAsync(userId);
-            if (user != null && !string.IsNullOrEmpty(role))
+            if (string.IsNullOrEmpty(userId) || string.IsNullOrEmpty(role))
             {
-                await _userManager.AddToRoleAsync(user, role);
+                TempData["ErrorMessage"] = "User and Role are required.";
+                return RedirectToPage();
             }
+
+            try
+            {
+                var user = await _userManager.FindByIdAsync(userId);
+                if (user == null)
+                {
+                    TempData["ErrorMessage"] = "User not found.";
+                    return RedirectToPage();
+                }
+
+                var hasRole = await _userManager.IsInRoleAsync(user, role);
+                if (hasRole)
+                {
+                    TempData["InfoMessage"] = $"User already has the '{role}' role.";
+                    return RedirectToPage();
+                }
+
+                var result = await _userManager.AddToRoleAsync(user, role);
+                if (result.Succeeded)
+                {
+                    TempData["SuccessMessage"] = $"Role '{role}' added successfully!";
+                }
+                else
+                {
+                    TempData["ErrorMessage"] = "Failed to add role: " + string.Join(", ", result.Errors.Select(e => e.Description));
+                }
+            }
+            catch (Exception ex)
+            {
+                TempData["ErrorMessage"] = $"Error: {ex.Message}";
+            }
+
             return RedirectToPage();
         }
 
+        // Remove role from user
         public async Task<IActionResult> OnPostRemoveRoleAsync(string userId, string role)
         {
-            var user = await _userManager.FindByIdAsync(userId);
-            if (user != null && !string.IsNullOrEmpty(role))
+            if (string.IsNullOrEmpty(userId) || string.IsNullOrEmpty(role))
             {
-                await _userManager.RemoveFromRoleAsync(user, role);
+                TempData["ErrorMessage"] = "User and Role are required.";
+                return RedirectToPage();
             }
+
+            try
+            {
+                var user = await _userManager.FindByIdAsync(userId);
+                if (user == null)
+                {
+                    TempData["ErrorMessage"] = "User not found.";
+                    return RedirectToPage();
+                }
+
+                var result = await _userManager.RemoveFromRoleAsync(user, role);
+                if (result.Succeeded)
+                {
+                    TempData["SuccessMessage"] = $"Role '{role}' removed successfully!";
+                }
+                else
+                {
+                    TempData["ErrorMessage"] = "Failed to remove role: " + string.Join(", ", result.Errors.Select(e => e.Description));
+                }
+            }
+            catch (Exception ex)
+            {
+                TempData["ErrorMessage"] = $"Error: {ex.Message}";
+            }
+
             return RedirectToPage();
         }
     }
-
 }

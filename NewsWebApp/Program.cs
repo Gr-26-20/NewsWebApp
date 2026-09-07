@@ -28,6 +28,8 @@ namespace NewsWebApp
             builder.Services.AddScoped<RoleSeeder>();
 
 
+            //    .AddEntityFrameworkStores<ApplicationDbContext>();
+            //builder.Services.AddControllersWithViews();
 
             //Article service registration
             builder.Services.AddScoped<IArticleService, ArticleService>();

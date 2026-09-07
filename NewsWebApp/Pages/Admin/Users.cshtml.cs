@@ -38,11 +38,13 @@ namespace NewsWebApp.Pages.Admin
             {
                 var roles = await _userManager.GetRolesAsync(user);
                 var roleName = roles.FirstOrDefault() ?? string.Empty;
+                var userMail = user.Email ?? string.Empty;
 
                 UsersWithRoles.Add(new AddUserToRoleVM
                 {
                     UserId = user.Id,
-                    RoleName = roleName
+                    RoleName = roleName,
+                    Email = userMail
                 });
             }
 

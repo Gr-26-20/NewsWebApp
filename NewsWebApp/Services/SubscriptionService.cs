@@ -14,25 +14,25 @@ namespace NewsWebApp.Services
             _db = db;
         }
 
-        public async Task <bool> HasActiveSubscriptionAsync(int userId)
+        public async Task <bool> HasActiveSubscriptionAsync(string userEmail)
         {
             
             
             return await _db.Subscriptions.
-                AnyAsync(s => s.UserId.Id == userId 
+                AnyAsync(s => s.UserId.Email == userEmail
                 && s.CreatedAt.HasValue && s.CreatedAt.Value.AddDays(s.DurationInDays) > DateTime.UtcNow);
         }
 
-        public async Task<Subscriptions?> GetActiveSubscriptionAsync(int userId)
+        public async Task<Subscriptions?> GetActiveSubscriptionAsync(string userEmail)
         {
             
             return await _db.Subscriptions. Include(s => s.UserId)
-                .Where(s => s.UserId.Id == userId
+                .Where(s => s.UserId.Email == userEmail 
                     && s.CreatedAt.HasValue && s.CreatedAt.Value.AddDays(s.DurationInDays) > DateTime.UtcNow)
                 .FirstOrDefaultAsync();
         }
 
-        public async Task<SubscribeResult> SubscriptionAsync(int userId)
+        public async Task<SubscribeResult> SubscriptionAsync(string userId)
         {
             if (await HasActiveSubscriptionAsync(userId))
             {
@@ -47,11 +47,11 @@ namespace NewsWebApp.Services
 
             _db.Subscriptions.Add(new Subscriptions
             {
-
-                Name = "One and only Attractive Subscription",
+                Id = Guid.NewGuid().ToString(),
+                Name = "Just an Attractive Subscription",
                 Price = Price,
                 DurationInDays = DurationInDays,
-                BoundingTimeInDays = 7,
+                BoundingTimeInDays = 0,
                 CreatedAt = DateTime.UtcNow,
                 UserId = user
             });

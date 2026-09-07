@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using NewsWebApp.Data;
+using NewsWebApp.Services;
 
 namespace NewsWebApp
 {
@@ -19,6 +20,7 @@ namespace NewsWebApp
             builder.Services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = false)
                 .AddEntityFrameworkStores<ApplicationDbContext>();
             builder.Services.AddControllersWithViews();
+            builder.Services.AddScoped<ISubscriptionService, SubscriptionService>();
 
             var app = builder.Build();
 

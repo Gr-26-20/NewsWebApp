@@ -16,9 +16,9 @@
 				@* @Html.DisplayNameFor(model => model.Articles.FirstOrDefault().Id)
                 <p>Link</p> *@
 			</th>
-            <th>
+            @* <th>
                 @Html.DisplayNameFor(model => Model.Articles.FirstOrDefault().Slug)
-            </th>
+            </th> *@
             <th>
                 @Html.DisplayNameFor(model => model.Articles.FirstOrDefault().Title)
             </th>
@@ -28,24 +28,24 @@
             <th>
                 @Html.DisplayNameFor(model => model.Articles.FirstOrDefault().Summary)
             </th>
-            <th>
+            @* <th>
                 @Html.DisplayNameFor(model => model.Articles.FirstOrDefault().ImageUrl)
-            </th>
-            <th>
+            </th> *@
+            @* <th>
                 @Html.DisplayNameFor(model => model.Articles.FirstOrDefault().Views)
             </th>
             <th>
                 @Html.DisplayNameFor(model => model.Articles.FirstOrDefault().Likes)
-            </th>
+            </th> *@
             <th>
                 @Html.DisplayNameFor(model => model.Articles.FirstOrDefault().CreatedAt)
             </th>
             <th>
                 @Html.DisplayNameFor(model => model.Articles.FirstOrDefault().UpdatedAt)
             </th>
-            <th>
+            @* <th>
                 @Html.DisplayNameFor(model => model.Articles.FirstOrDefault().IsArchived)
-            </th>
+            </th> *@
             <th>
                 @Html.DisplayNameFor(model => model.Articles.FirstOrDefault().Category)
             </th>
@@ -58,9 +58,9 @@
             <td>
                 <a class="btn btn-primary" asp-action="ViewArticle" asp-controller="Writer" asp-route-id="@item.Id">view</a>
             </td>
-            <td>
+            @* <td>
                 @Html.DisplayFor(model => item.Slug)
-            </td>
+            </td> *@
             <td>
                 @Html.DisplayFor(model => item.Title)
             </td>
@@ -70,24 +70,24 @@
             <td>
                 @Html.DisplayFor(model => item.Summary)
             </td>
-            <td>
+            @* <td>
                 @Html.DisplayFor(model => item.ImageUrl)
-            </td>
-            <td>
+            </td> *@
+            @* <td>
                 @Html.DisplayFor(model => item.Views)
             </td>
             <td>
                 @Html.DisplayFor(model => item.Likes)
-            </td>
+            </td> *@
             <td>
                 @Html.DisplayFor(model => item.CreatedAt)
             </td>
             <td>
                 @Html.DisplayFor(model => item.UpdatedAt)
             </td>
-            <td>
+            @* <td>
                 @Html.DisplayFor(model => item.IsArchived)
-            </td>
+            </td> *@
             <td>
                 @Html.DisplayFor(model => item.Category)
             </td>

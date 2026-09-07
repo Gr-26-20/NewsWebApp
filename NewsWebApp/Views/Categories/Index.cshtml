@@ -1,0 +1,43 @@
+﻿@model List<NewsWebApp.Models.Articles>
+
+@{
+    ViewData["Title"] = "Sweden";
+}
+
+<div class="category-page">
+
+    <div class="section-title">
+        <h2>@ViewBag.Category</h2>
+        <a href="/">BACK TO NEWS →</a>
+    </div>
+
+    <section class="category-articles">
+
+        @foreach (var article in Model)
+        {
+            <article class="category-article">
+
+                <div class="image-placeholder category-image">
+                    IMAGE
+                </div>
+
+                <div class="story-category">
+                    @article.Category
+                </div>
+
+                <h2>
+                    <a href="/Articles/Details/@article.Id">
+                        @article.Title
+                    </a>
+                </h2>
+
+                <p>
+                    @article.Summary
+                </p>
+
+            </article>
+        }
+
+    </section>
+
+</div>

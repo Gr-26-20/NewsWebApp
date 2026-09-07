@@ -182,11 +182,58 @@ a {
     flex-wrap: wrap;
 }
 
+/* ---------------------------------------------------------
+   CATEGORIES STYLING
+--------------------------------------------------------- */
+
+.category-page {
+    margin-top: 28px;
+}
+
+.category-articles {
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    gap: 18px;
+}
+
+.category-article {
+    background: var(--surface);
+    padding: 14px;
+    border-bottom: 3px solid var(--border);
+}
+
+.category-image {
+    min-height: 220px;
+}
+
+.category-article:first-child {
+    grid-row: span 2;
+}
+
+.category-article h1,
+.category-article h2 {
+    font-family: Georgia, "Times New Roman", serif;
+    line-height: .95;
+}
+
+.category-article h1 {
+    font-size: 36px;
+    margin: 8px 0;
+}
+
+.category-article h2 {
+    font-size: 24px;
+    margin: 8px 0;
+}
+
+.category-article p {
+    color: var(--muted);
+    line-height: 1.4;
+}
 
 /* ---------------------------------------------------------
    ACCOUNT LINKS
 --------------------------------------------------------- */
-
 .nav-account {
     margin-left: auto;
     display: flex;
@@ -575,4 +622,75 @@ a {
     .compact-story {
         grid-template-columns: 110px 1fr;
     }
+}
+/* ---------------------------------------------------------
+   ARTICLE DETAIL
+--------------------------------------------------------- */
+
+.article-page {
+    margin-top: 28px;
+}
+
+.article-detail {
+    max-width: 950px;
+    margin: 0 auto;
+    background: var(--surface);
+    padding: 30px;
+}
+
+    .article-detail .story-category {
+        margin-top: 0;
+    }
+
+    .article-detail h1 {
+        margin: 8px 0 12px;
+        font-family: Georgia, "Times New Roman", serif;
+        font-size: clamp(3rem, 7vw, 6rem);
+        line-height: .9;
+        letter-spacing: -.05em;
+    }
+
+.article-summary {
+    max-width: 750px;
+    margin: 0 0 15px;
+    color: var(--muted);
+    font-size: 18px;
+    line-height: 1.4;
+}
+
+.article-meta {
+    border-top: 1px solid var(--border);
+    border-bottom: 1px solid var(--border);
+    padding: 8px 0;
+    margin-bottom: 20px;
+    font-size: 10px;
+    font-weight: 800;
+    letter-spacing: .08em;
+}
+
+.article-image {
+    min-height: 400px;
+    margin-bottom: 25px;
+}
+
+.article-content {
+    max-width: 750px;
+    margin: 0 auto;
+    font-family: Georgia, "Times New Roman", serif;
+    font-size: 18px;
+    line-height: 1.6;
+}
+
+    .article-content p {
+        margin-bottom: 20px;
+    }
+
+.article-stats {
+    display: flex;
+    gap: 25px;
+    margin-top: 30px;
+    padding-top: 12px;
+    border-top: 1px solid var(--border);
+    font-size: 10px;
+    font-weight: 800;
 }

@@ -31,12 +31,15 @@
                 <div class="row">
                     <div class="col mb-3">
                         <label asp-for="ExpiryDate" class="form-label"></label>
-                        <input asp-for="ExpiryDate" class="form-control" placeholder="MM/YY" maxlength="5" />
+                        <input asp-for="ExpiryDate" class="form-control" placeholder="MM/YY" maxlength="5" type="text" inputmode="numeric" oninput="this.value = this.value.replace(/[^0-9]/g, ''); 
+                                                                                                                                                        if(this.value.length > 2) {
+                                                                                                                                                            this.value = this.value.substring(0, 2) + '/' + this.value.substring(2);
+                                                                                                                                                        }"/>
                         <span asp-validation-for="ExpiryDate" class="text-danger"></span>
                     </div>
                     <div class="col mb-3">
                         <label asp-for="CVV" class="form-label"></label>
-                        <input asp-for="CVV" class="form-control" placeholder="123" maxlength="3" />
+                        <input asp-for="CVV" class="form-control" placeholder="123" maxlength="3" type="text" inputmode="numeric" oninput="this.value = this.value.replace(/[^0-9]/g, '')"/>
                         <span asp-validation-for="CVV" class="text-danger"></span>
                     </div>
                 </div>

@@ -32,13 +32,13 @@ namespace NewsWebApp.Services
                 .FirstOrDefaultAsync();
         }
 
-        public async Task<SubscribeResult> SubscriptionAsync(string userId)
+        public async Task<SubscribeResult> SubscriptionAsync(string userEmail)
         {
-            if (await HasActiveSubscriptionAsync(userId))
+            if (await HasActiveSubscriptionAsync(userEmail))
             {
                 return SubscribeResult.AlreadySubscribed;
             }
-            var user = await _db.Users.FindAsync(userId);
+            var user = await _db.Users.FirstOrDefaultAsync(u => u.Email == userEmail);
 
             if(user == null)
             {

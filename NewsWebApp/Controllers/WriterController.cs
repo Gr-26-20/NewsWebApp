@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.EntityFrameworkCore;
 using NewsWebApp.Data;
 using NewsWebApp.Models;
@@ -20,10 +21,7 @@ namespace NewsWebApp.Controllers
             _articleService = articleService;
         }
 
-        public IActionResult Index()
-        {
-            return View();
-        }
+       
 
         [Authorize(Roles = "WRITER")]
         public async Task<IActionResult> Create()
@@ -88,7 +86,7 @@ namespace NewsWebApp.Controllers
             return View(article);
         }
 
-        [Authorize(Roles = "WRITER")]
+        //[Authorize(Roles = "WRITER")]
         public async Task<IActionResult> DeleteArticle(int id)
         {
             var article = await _context.Articles.FindAsync(id);
@@ -101,7 +99,7 @@ namespace NewsWebApp.Controllers
             return RedirectToAction("Articles");
         }
 
-        [Authorize(Roles = "WRITER")]
+        //[Authorize(Roles = "WRITER")]
         public async Task<IActionResult> Articles()
         {
             var article = _articleService.GetAllArticlesAsync();
@@ -112,6 +110,136 @@ namespace NewsWebApp.Controllers
                     Articles = await article
                 };
                 return View(articlesVM);
+            }
+            return View(article);
+        }
+
+        public async Task<IActionResult> Search(string searchString)
+        {
+            var articles = await _context.Articles
+                .Where(a => a.Title.Contains(searchString) || a.Title.ToUpper().Contains(searchString) || a.Summary.Contains(searchString) || a.Summary.ToUpper().Contains(searchString) || a.Category.Contains(searchString) || a.Category.ToUpper().Contains(searchString))
+                .ToListAsync();
+            ArticlesVM articlesVM = new ArticlesVM
+            {
+                Articles = articles
+            };
+            return View("Index", articlesVM);
+        }
+
+        public async Task<IActionResult> FilterByCategory(string category)
+        {
+            var articles = await _context.Articles
+                .Where(a => a.Category == category)
+                .ToListAsync();
+            ArticlesVM articlesVM = new ArticlesVM
+            {
+                Articles = articles
+            };
+            return View("Index", articlesVM);
+        }
+
+        public async Task<IActionResult> FilterByDate(DateTime startDate, DateTime endDate)
+        {
+            var articles = await _context.Articles
+                .Where(a => a.CreatedAt >= startDate && a.CreatedAt <= endDate)
+                .ToListAsync();
+            ArticlesVM articlesVM = new ArticlesVM
+            {
+                Articles = articles
+            };
+            return View("Index", articlesVM);
+        }
+
+        public async Task<IActionResult> FilterByViews(int minViews, int maxViews)
+        {
+            var articles = await _context.Articles
+                .Where(a => a.Views >= minViews && a.Views <= maxViews)
+                .ToListAsync();
+            ArticlesVM articlesVM = new ArticlesVM
+            {
+                Articles = articles
+            };
+            return View("Index", articlesVM);
+        }
+
+        public async Task<IActionResult> FilterByLikes(int minLikes, int maxLikes)
+        {
+            var articles = await _context.Articles
+                .Where(a => a.Likes >= minLikes && a.Likes <= maxLikes)
+                .ToListAsync();
+            ArticlesVM articlesVM = new ArticlesVM
+            {
+                Articles = articles
+            };
+            return View("Index", articlesVM);
+        }
+
+        public Task<IActionResult> FilterByAuthor(string author)
+        {
+            var articles = _context.Articles
+                .Where(a => a.Author == author)
+                .ToListAsync();
+            ArticlesVM articlesVM = new ArticlesVM
+            {
+                Articles = articles.Result
+            };
+            return Task.FromResult<IActionResult>(View("Index", articlesVM));
+        }
+
+        public Task<IActionResult> FilterBySlug(string slug)
+        {
+            var articles = _context.Articles
+                .Where(a => a.Slug == slug)
+                .ToListAsync();
+            ArticlesVM articlesVM = new ArticlesVM
+            {
+                Articles = articles.Result
+            };
+            return Task.FromResult<IActionResult>(View("Index", articlesVM));
+        }
+
+        public async Task<IActionResult> FilterByArchived(bool isArchived)
+        {
+            var articles = await _context.Articles
+                .Where(a => a.IsArchived == isArchived)
+                .ToListAsync();
+            ArticlesVM articlesVM = new ArticlesVM
+            {
+                Articles = articles
+            };
+            return View("Index", articlesVM);
+        }
+
+        public async Task<IActionResult> FilterByUpdatedAt(DateTime startDate, DateTime endDate)
+        {
+            var articles = await _context.Articles
+                .Where(a => a.UpdatedAt >= startDate && a.UpdatedAt <= endDate)
+                .ToListAsync();
+            ArticlesVM articlesVM = new ArticlesVM
+            {
+                Articles = articles
+            };
+            return View("Index", articlesVM);
+        }
+
+        public async Task<IActionResult> FilterByCreatedAt(DateTime startDate, DateTime endDate)
+        {
+            var articles = await _context.Articles
+                .Where(a => a.CreatedAt >= startDate && a.CreatedAt <= endDate)
+                .ToListAsync();
+            ArticlesVM articlesVM = new ArticlesVM
+            {
+                Articles = articles
+            };
+            return View("Index", articlesVM);
+        }
+
+        public async Task<IActionResult> ViewArticle(int id)
+        {
+            var article = await _context.Articles.FindAsync(id);
+            if (article == null)
+            {
+                return NotFound();
             }
             return View(article);
         }

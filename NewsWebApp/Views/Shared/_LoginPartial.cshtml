@@ -14,6 +14,15 @@
             <li class="nav-item">
                 <a class="nav-link text-dark" asp-page="/Admin/Users">Manage Users</a>
             </li>
+            
+        }
+       @if(User.IsInRole("Writer") || User.IsInRole("Admin")){
+            <li class="nav-item">
+                <a class="nav-link text-dark" asp-action="Articles" asp-controller="Writer">Manage Articles</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link text-dark" asp-action="Create" asp-controller="Writer">Create Article</a>
+            </li>
         }
         <li class="nav-item">
             <form class="form-inline" asp-area="Identity" asp-page="/Account/Logout" asp-route-returnUrl="@Url.Action("Index", "Home", new { area = "" })">

@@ -1,0 +1,102 @@
+@model NewsWebApp.Models.ViewModels.ArticlesVM
+
+@{
+    ViewData["Title"] = "Search results";
+}
+
+<h1>Index</h1>
+
+@* <p>
+    <a asp-action="Create">Create New</a>
+</p> *@
+<table class="table">
+    <thead>
+        <tr>
+			<th>
+				@* @Html.DisplayNameFor(model => model.Articles.FirstOrDefault().Id)
+                <p>Link</p> *@
+			</th>
+            <th>
+                @Html.DisplayNameFor(model => Model.Articles.FirstOrDefault().Slug)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Articles.FirstOrDefault().Title)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Articles.FirstOrDefault().Author)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Articles.FirstOrDefault().Summary)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Articles.FirstOrDefault().ImageUrl)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Articles.FirstOrDefault().Views)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Articles.FirstOrDefault().Likes)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Articles.FirstOrDefault().CreatedAt)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Articles.FirstOrDefault().UpdatedAt)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Articles.FirstOrDefault().IsArchived)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Articles.FirstOrDefault().Category)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var item in Model.Articles) {
+        <tr>
+            <td>
+                <a class="btn btn-primary" asp-action="ViewArticle" asp-controller="Writer" asp-route-id="@item.Id">view</a>
+            </td>
+            <td>
+                @Html.DisplayFor(model => item.Slug)
+            </td>
+            <td>
+                @Html.DisplayFor(model => item.Title)
+            </td>
+            <td>
+                @Html.DisplayFor(model => item.Author)
+            </td>
+            <td>
+                @Html.DisplayFor(model => item.Summary)
+            </td>
+            <td>
+                @Html.DisplayFor(model => item.ImageUrl)
+            </td>
+            <td>
+                @Html.DisplayFor(model => item.Views)
+            </td>
+            <td>
+                @Html.DisplayFor(model => item.Likes)
+            </td>
+            <td>
+                @Html.DisplayFor(model => item.CreatedAt)
+            </td>
+            <td>
+                @Html.DisplayFor(model => item.UpdatedAt)
+            </td>
+            <td>
+                @Html.DisplayFor(model => item.IsArchived)
+            </td>
+            <td>
+                @Html.DisplayFor(model => item.Category)
+            </td>
+            @* <td>
+                <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
+                <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
+                <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
+            </td> *@
+        </tr>
+}
+    </tbody>
+</table>

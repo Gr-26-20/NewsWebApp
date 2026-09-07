@@ -4,67 +4,103 @@
     ViewData["Title"] = "Manage Users";
 }
 
-<div class="container mt-4">
-    <h1>User Management</h1>
-    <hr />
+<div class="container mt-5">
+    <div class="row mb-4">
+        <div class="col-12">
+            <h1 class="display-4 fw-bold">User Management</h1>
+            <p class="lead text-muted">Manage user roles and permissions</p>
+            <hr class="bg-primary" style="height: 3px;">
+        </div>
+    </div>
 
     @if (Model.UsersWithRoles.Any())
     {
-        <div class="table-responsive">
-            <table class="table table-striped">
-                <thead>
-                    <tr>
-                        <th>Email</th>
-                        <th>Roles</th>
-                        
-                    </tr>
-                </thead>
-                <tbody>
-                    @foreach (var user in Model.UsersWithRoles)
-                    {
-                        <tr>
-                            <td>
-                                @user.Email
-                            </td>
-                            <td>
-                                @if (!string.IsNullOrEmpty(user.RoleName))
-                                {
-                                    <span class="badge bg-success">@user.RoleName</span>
-                                }
-                                else
-                                {
-                                    <span class="badge bg-secondary">No roles</span>
-                                }
-                            </td>
-                            <td>
-                                <form method="post" style="display:inline;">
-                                    <select name="role" class="form-select form-select-sm d-inline-block w-auto">
-                                        <option value="">-- Add Role --</option>
-                                        @foreach (var role in Model.AllRoles)
+        <div class="row">
+            <div class="col-12">
+                <div class="table-responsive">
+                    <table class="table table-hover align-middle">
+                        <thead class="table-dark">
+                            <tr>
+                                <th class="text-start">
+                                    <i class="bi bi-envelope"></i> Email
+                                </th>
+                                <th class="text-center">
+                                    <i class="bi bi-shield-check"></i> Current Role
+                                </th>
+                                <th class="text-center">
+                                    <i class="bi bi-gear"></i> Actions
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var user in Model.UsersWithRoles)
+                            {
+                                <tr>
+                                    <td class="fw-semibold">
+                                        @user.Email
+                                    </td>
+                                    <td class="text-center">
+                                        @if (!string.IsNullOrEmpty(user.RoleName))
                                         {
-                                            @if (!user.RoleName.Contains(role))
-                                            {
-                                                <option value="@role">@role</option>
-                                            }
+                                            <span class="badge bg-success px-3 py-2">@user.RoleName</span>
                                         }
-                                    </select>
-                                    <button type="submit" asp-page-handler="AddRole" asp-route-userId="@user.UserId" class="btn btn-sm btn-primary">Add</button>
-                                </form>
-                                @foreach (var role in new List<string> { user.RoleName }.Where(r => !string.IsNullOrEmpty(r)))
-                                {
-                                    <form method="post" style="display:inline;">
-                                        <button type="submit" asp-page-handler="RemoveRole" asp-route-userId="@user.UserId" asp-route-role="@role" class="btn btn-sm btn-danger">Remove @role</button>
-                                    </form>
-                                }
-                            </td>
-                        </tr>
-                    }
-                </tbody>
-            </table>
+                                        else
+                                        {
+                                            <span class="badge bg-secondary px-3 py-2">No roles</span>
+                                        }
+                                    </td>
+                                    <td class="text-center">
+                                        <div class="btn-group" role="group">
+                                            <form method="post" style="display:inline;">
+                                                <select name="role" class="form-select form-select-sm d-inline-block w-auto me-2">
+                                                    <option value="">-- Add Role --</option>
+                                                    @foreach (var role in Model.AllRoles)
+                                                    {
+                                                        @if (!user.RoleName.Contains(role))
+                                                        {
+                                                            <option value="@role">@role</option>
+                                                        }
+                                                    }
+                                                </select>
+                                                <button type="submit" asp-page-handler="AddRole" asp-route-userId="@user.UserId" class="btn btn-sm btn-success">
+                                                    <i class="bi bi-plus-circle"></i> Add Role
+                                                </button>
+                                            </form>
+                                            @foreach (var role in new List<string> { user.RoleName }.Where(r => !string.IsNullOrEmpty(r)))
+                                            {
+                                                <form method="post" style="display:inline;">
+                                                    <button type="submit" asp-page-handler="RemoveRole" asp-route-userId="@user.UserId" asp-route-role="@role" class="btn btn-sm btn-danger" onclick="return confirm('Are you sure?')">
+                                                        <i class="bi bi-trash"></i> Remove @role
+                                                    </button>
+                                                </form>
+                                            }
+                                        </div>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
         </div>
     }
     else
     {
-        <p>No users found.</p>
+        <div class="alert alert-info alert-dismissible fade show" role="alert">
+            <i class="bi bi-info-circle"></i>
+            <strong>No users found.</strong>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
     }
 </div>
+
+<style>
+    .table-hover tbody tr:hover {
+        background-color: rgba(0, 123, 255, 0.05);
+    }
+
+    hr.bg-primary {
+        border: none;
+        margin-bottom: 2rem;
+    }
+</style>

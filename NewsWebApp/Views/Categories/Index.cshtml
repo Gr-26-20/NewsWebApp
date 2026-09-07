@@ -1,5 +1,78 @@
-﻿@*
-    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
-*@
-@{
+﻿@{
+    ViewData["Title"] = "Sweden";
 }
+
+<div class="category-page">
+
+    <div class="section-title">
+        <h2>@ViewBag.Category</h2> <!-- SWEDEN -->
+        <a href="/">BACK TO NEWS →</a>
+    </div>
+
+    <section class="category-articles">
+
+        <article class="category-article">
+
+            <div class="image-placeholder category-image">
+                IMAGE
+            </div>
+
+            <div class="story-category">SWEDEN</div>
+
+            <h1>
+                <a href="/Articles/Details">
+                    MAIN HEADLINE GOES HERE
+                </a>
+            </h1>
+
+            <p>
+                Short introduction to the main Swedish news story.
+            </p>
+
+        </article>
+
+
+        <article class="category-article">
+
+            <div class="image-placeholder category-image">
+                IMAGE
+            </div>
+
+            <div class="story-category">SWEDEN</div>
+
+            <h2>
+                <a href="/Articles/Details">
+                    SECONDARY HEADLINE GOES HERE
+                </a>
+            </h2>
+
+            <p>
+                Short introduction to the secondary news story.
+            </p>
+
+        </article>
+
+
+        <article class="category-article">
+
+            <div class="image-placeholder category-image">
+                IMAGE
+            </div>
+
+            <div class="story-category">SWEDEN</div>
+
+            <h2>
+                <a href="/Articles/Details">
+                    THIRD HEADLINE GOES HERE
+                </a>
+            </h2>
+
+            <p>
+                Short introduction to another Swedish news story.
+            </p>
+
+        </article>
+
+    </section>
+
+</div>

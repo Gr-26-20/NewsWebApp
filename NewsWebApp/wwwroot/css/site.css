@@ -165,11 +165,58 @@ a {
     flex-wrap: wrap;
 }
 
+/* ---------------------------------------------------------
+   CATEGORIES STYLING
+--------------------------------------------------------- */
+
+.category-page {
+    margin-top: 28px;
+}
+
+.category-articles {
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    gap: 18px;
+}
+
+.category-article {
+    background: var(--surface);
+    padding: 14px;
+    border-bottom: 3px solid var(--border);
+}
+
+.category-image {
+    min-height: 220px;
+}
+
+.category-article:first-child {
+    grid-row: span 2;
+}
+
+.category-article h1,
+.category-article h2 {
+    font-family: Georgia, "Times New Roman", serif;
+    line-height: .95;
+}
+
+.category-article h1 {
+    font-size: 36px;
+    margin: 8px 0;
+}
+
+.category-article h2 {
+    font-size: 24px;
+    margin: 8px 0;
+}
+
+.category-article p {
+    color: var(--muted);
+    line-height: 1.4;
+}
 
 /* ---------------------------------------------------------
    ACCOUNT LINKS
 --------------------------------------------------------- */
-
 .nav-account {
     margin-left: auto;
     display: flex;

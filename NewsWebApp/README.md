@@ -17,3 +17,7 @@ Ask Angelin for the actual key values.
   }
 }
 ```
+### To test the subcription use the folloiwng card information
+    Scenario	Card Number	            Expiry	CVV
+✅ Success	    4242 4242 4242 4242	    12/26	123
+❌ Declined  	4000 0000 0000 0002	    12/26	123

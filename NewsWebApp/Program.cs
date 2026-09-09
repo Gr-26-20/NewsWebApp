@@ -3,6 +3,8 @@ using Microsoft.EntityFrameworkCore;
 using NewsWebApp.Data;
 using NewsWebApp.Services;
 
+
+
 namespace NewsWebApp
 {
     public class Program
@@ -10,6 +12,7 @@ namespace NewsWebApp
         public static async Task Main(string[] args)
         {
             var builder = WebApplication.CreateBuilder(args);
+            Stripe.StripeConfiguration.ApiKey = builder.Configuration["Stripe:SecretKey"];
 
             // Add services to the container.
             var connectionString = builder.Configuration.GetConnectionString("DefaultConnection") ?? throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
@@ -41,6 +44,7 @@ namespace NewsWebApp
                 options.ConsentCookieValue = "true";
             });
 
+            
             var app = builder.Build();
 
             // Configure the HTTP request pipeline.

@@ -41,6 +41,7 @@ namespace NewsWebApp.Controllers
                     Title = article.Title,
                     Author = article.Author,
                     Summary = article.Summary,
+                    Content = article.Content,
                     ImageUrl = article.ImageUrl,
                     Views = 0,
                     Likes = 0,

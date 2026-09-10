@@ -22,6 +22,7 @@ namespace NewsWebApp.Services
         {
             return await _context.Articles
                 .Where(a => a.Category == category)
+                .OrderByDescending(a => a.CreatedAt)
                 .ToListAsync();
         }
     }

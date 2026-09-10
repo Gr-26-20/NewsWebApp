@@ -1,14 +1,46 @@
 using Microsoft.AspNetCore.Mvc;
 using NewsWebApp.Models;
+using NewsWebApp.Models.ViewModels;
+using NewsWebApp.Services;
 using System.Diagnostics;
 
 namespace NewsWebApp.Controllers
 {
     public class HomeController : Controller
     {
-        public IActionResult Index()
+        private readonly IArticleService _articleService;
+
+        public HomeController(IArticleService articleService)
         {
-            return View();
+            _articleService = articleService;
+        }
+
+        public async Task<IActionResult> Index()
+        {
+            var model = new HomeViewModel
+            {
+                NewsArticles = (await _articleService
+                    .GetArticlesByCategoryAsync("News"))
+                    .Take(3)
+                    .ToList(),
+
+                WorldArticles = (await _articleService
+                    .GetArticlesByCategoryAsync("World"))
+                    .Take(1)
+                    .ToList(),
+
+                SwedenArticles = (await _articleService
+                    .GetArticlesByCategoryAsync("Sweden"))
+                    .Take(1)
+                    .ToList(),
+
+                SportsArticles = (await _articleService
+                    .GetArticlesByCategoryAsync("Sports"))
+                    .Take(1)
+                    .ToList()
+            };
+
+            return View(model);
         }
 
         public IActionResult Privacy()
@@ -19,7 +51,10 @@ namespace NewsWebApp.Controllers
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
         public IActionResult Error()
         {
-            return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
+            return View(new ErrorViewModel
+            {
+                RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier
+            });
         }
     }
 }

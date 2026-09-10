@@ -15,7 +15,7 @@ namespace NewsWebApp.Services
 
         public async Task SeedRolesAsync()
         {
-            var roles = new[] { "Admin", "Writer", "Reader" };
+            var roles = new[] { "Admin", "Writer", "Reader", "Editor" };
 
             foreach (var role in roles)
             {

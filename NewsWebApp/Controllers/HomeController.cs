@@ -9,10 +9,14 @@ namespace NewsWebApp.Controllers
     public class HomeController : Controller
     {
         private readonly IArticleService _articleService;
+        private readonly WeatherService _weatherService;
 
-        public HomeController(IArticleService articleService)
+        public HomeController(
+            IArticleService articleService,
+            WeatherService weatherService)
         {
             _articleService = articleService;
+            _weatherService = weatherService;
         }
 
         public async Task<IActionResult> Index()
@@ -39,6 +43,9 @@ namespace NewsWebApp.Controllers
                     .Take(1)
                     .ToList()
             };
+            var weather = await _weatherService.GetWeatherAsync();
+
+            model.Weather = weather;
 
             return View(model);
         }

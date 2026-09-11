@@ -396,6 +396,20 @@
 
                 <div class="weather-info">
                     LIVE TEMPERATURE
+
+                    <form method="get" asp-controller="Home" asp-action="Index">
+                        <select name="stationId" class="weather-station-select"
+                                onchange="this.form.submit()">
+
+                            @foreach (var station in Model.WeatherStations)
+                            {
+                                <option value="@station.Id">
+                                    @station.Title
+                                </option>
+                            }
+
+                        </select>
+                    </form>
                 </div>
 
             </div>

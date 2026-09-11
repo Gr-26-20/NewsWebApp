@@ -13,5 +13,7 @@ namespace NewsWebApp.Models.ViewModels
         public List<Articles> SportsArticles { get; set; } = new();
 
         public WeatherStation? Weather { get; set; }
+
+        public List<WeatherStation> WeatherStations { get; set; } = new();
     }
 }

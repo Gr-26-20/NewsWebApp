@@ -19,7 +19,7 @@ namespace NewsWebApp.Controllers
             _weatherService = weatherService;
         }
 
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(string? stationId)
         {
             var model = new HomeViewModel
             {
@@ -43,9 +43,15 @@ namespace NewsWebApp.Controllers
                     .Take(1)
                     .ToList()
             };
-            var weather = await _weatherService.GetWeatherAsync();
+            var selectedStationId = stationId ?? "angered_tv";
+
+            var weather = await _weatherService.GetWeatherAsync(selectedStationId);
 
             model.Weather = weather;
+
+            var stations = await _weatherService.GetStationsAsync("goteborg");
+
+            model.WeatherStations = stations;
 
             return View(model);
         }

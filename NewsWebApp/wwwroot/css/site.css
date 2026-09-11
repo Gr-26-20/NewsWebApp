@@ -753,3 +753,75 @@ img {
     max-width: 100%;
     height: auto;
 }
+
+.site-footer {
+    text-align: center;
+    font-size: 18px;
+}
+
+.site-footer a {
+    color: #ffffff !important;
+    text-decoration: none;
+}
+
+.site-footer a:hover {
+    text-decoration: underline;
+}
+
+.contact-page {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 40px 20px;
+}
+
+.contact-form {
+    margin-top: 30px;
+}
+
+    .contact-form .form-group {
+        margin-bottom: 20px;
+    }
+
+    .contact-form label {
+        display: block;
+        margin-bottom: 6px;
+        font-weight: bold;
+    }
+
+    .contact-form .form-control {
+        width: 100%;
+        padding: 10px;
+        font-size: 16px;
+        box-sizing: border-box;
+    }
+
+    .contact-form textarea {
+        resize: vertical;
+    }
+
+.contact-submit {
+    padding: 10px 25px;
+    border: none;
+    background: #000;
+    color: #fff;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+    .contact-submit:hover {
+        opacity: 0.8;
+    }
+
+.contact-success {
+    margin: 25px 0;
+    padding: 20px;
+    /*background: #eee;*/
+    font-size: 20px;
+    font-weight: bold;
+    text-align: center;
+}
+
+.success-check {
+    font-size: 26px;
+    margin-right: 10px;
+}

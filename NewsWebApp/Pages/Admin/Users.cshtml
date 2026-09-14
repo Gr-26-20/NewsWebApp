@@ -70,9 +70,12 @@
                                         @user.Email
                                     </td>
                                     <td class="text-center">
-                                        @if (!string.IsNullOrEmpty(user.RoleName))
+                                        @if (user.RoleNames.Any())  
                                         {
-                                            <span class="badge bg-success px-3 py-2">@user.RoleName</span>
+                                            foreach (var roleName in user.RoleNames)  // Display each role as a badge
+                                            {
+                                                <span class="badge bg-success px-3 py-2 me-1">@roleName</span>
+                                            }
                                         }
                                         else
                                         {
@@ -87,21 +90,21 @@
                                                 <option value="">-- Add Role --</option>
                                                 @foreach (var role in Model.AllRoles)
                                                 {
-                                                    @if (!user.RoleName.Contains(role))
+                                                    @if (!user.RoleNames.Contains(role))
                                                     {
                                                         <option value="@role">@role</option>
                                                     }
                                                 }
                                             </select>
                                         </form>
-                                        @if (!string.IsNullOrEmpty(user.RoleName))
+                                        @foreach (var roleName in user.RoleNames)
                                         {
-                                            <form method="post" asp-page-handler="RemoveRole" class="d-inline" onsubmit="return confirm('Are you sure?')">
+                                            <form method="post" asp-page-handler="RemoveRole" class="d-inline me-1" onsubmit="return confirm('Are you sure?')">
                                                 @Html.AntiForgeryToken()
                                                 <input type="hidden" name="userId" value="@user.UserId" />
-                                                <input type="hidden" name="role" value="@user.RoleName" />
+                                                <input type="hidden" name="role" value="@roleName" />
                                                 <button type="submit" class="btn btn-sm btn-danger">
-                                                    <i class="bi bi-trash"></i> Remove @user.RoleName
+                                                    <i class="bi bi-trash"></i> Remove @roleName
                                                 </button>
                                             </form>
                                         }

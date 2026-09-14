@@ -21,6 +21,11 @@ namespace NewsWebApp.Controllers
             _articleService = articleService;
         }
 
+        public async Task<IActionResult> Upload()
+        {
+            
+            return View();
+        }
        
 
         [Authorize(Roles = "Writer")]

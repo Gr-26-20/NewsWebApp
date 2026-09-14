@@ -1,0 +1,17 @@
+﻿@model NewsWebApp.Models.FileUploadModel
+
+ 
+
+<form asp-action="Upload" asp-controller="File" method="post" enctype="multipart/form-data">
+
+    <div>
+
+        <label for="file">Select file to upload:</label>
+
+        <input type="file" asp-for="File" />
+
+    </div>
+
+    <button type="submit">Upload</button>
+
+</form> 

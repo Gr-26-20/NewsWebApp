@@ -29,10 +29,9 @@ namespace NewsWebApp
 
             // Add services
             builder.Services.AddScoped<IUserAndRoleService, UserAndRoleService>();
+           
+            builder.Services.AddScoped<IFileService, FileService>();
             builder.Services.AddScoped<RoleSeeder>();
-
-
-          
 
             //Article service registration
             builder.Services.AddScoped<IArticleService, ArticleService>();

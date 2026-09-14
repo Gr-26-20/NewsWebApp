@@ -19,34 +19,41 @@ namespace NewsWebApp.Services
 
         }
 
-        public async Task UploadFileToContainer(FileUploadModel model)
-
+        public async Task<string> UploadFileToContainer(FileUploadModel model)
         {
+            return await UploadImageAsync(model.File);
+        }
 
-            string connectionString = _configuration.GetConnectionString("AzureWebJobsStorage");
+        public async Task<string> UploadImageAsync(IFormFile file)
+        {
+            string connectionString = _configuration["AzureWebJobsStorage"];
 
-            string containerName = _configuration.GetConnectionString("BlobContainerName");
+            string containerName = _configuration["BlobContainerName"];
 
             BlobServiceClient blobServiceClient = new BlobServiceClient(connectionString);
 
             BlobContainerClient containerClient =
-
                                                 blobServiceClient.GetBlobContainerClient(containerName);
 
-            // Create the container if it does not exist 
+            // Create the container if it does not exist
+            await containerClient.CreateIfNotExistsAsync(publicAccessType: Azure.Storage.Blobs.Models.PublicAccessType.Blob);
 
-            await containerClient.CreateIfNotExistsAsync();
+            // Use a unique blob name so uploads never overwrite each other
+            string blobName = $"{Guid.NewGuid()}{Path.GetExtension(file.FileName)}";
 
-            BlobClient blobClient = containerClient.GetBlobClient(model.File.FileName);
+            BlobClient blobClient = containerClient.GetBlobClient(blobName);
 
-            using (var stream = model.File.OpenReadStream())
-
+            var blobHttpHeaders = new Azure.Storage.Blobs.Models.BlobHttpHeaders
             {
+                ContentType = file.ContentType
+            };
 
-                await blobClient.UploadAsync(stream, true);
-
+            using (var stream = file.OpenReadStream())
+            {
+                await blobClient.UploadAsync(stream, blobHttpHeaders);
             }
 
+            return blobClient.Uri.ToString();
         }
     }
 }

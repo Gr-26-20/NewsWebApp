@@ -34,7 +34,6 @@ namespace NewsWebApp.Controllers
             }
 
             await _fileService.UploadFileToContainer(model);
-
             return RedirectToAction("Index");
 
         }

@@ -1,9 +1,11 @@
-﻿using NewsWebApp.Models;
+﻿using Microsoft.AspNetCore.Http;
+using NewsWebApp.Models;
 
 namespace NewsWebApp.Services
 {
     public interface IFileService
     {
-        Task UploadFileToContainer(FileUploadModel model);
+        Task<string> UploadFileToContainer(FileUploadModel model);
+        Task<string> UploadImageAsync(IFormFile file);
     }
 }

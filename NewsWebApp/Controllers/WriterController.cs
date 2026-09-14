@@ -15,10 +15,19 @@ namespace NewsWebApp.Controllers
 
         private readonly IArticleService _articleService;
 
-        public WriterController(ApplicationDbContext context, IArticleService articleService)
+        private readonly IFileService _fileService;
+
+        public WriterController(ApplicationDbContext context, IArticleService articleService, IFileService fileService)
         {
             _context = context;
             _articleService = articleService;
+            _fileService = fileService;
+        }
+
+
+        public IActionResult Index()
+        {
+            return View();
         }
 
         public async Task<IActionResult> Upload()
@@ -36,10 +45,16 @@ namespace NewsWebApp.Controllers
 
         [HttpPost]
         [Authorize(Roles = "Writer")]
-        public async Task<IActionResult> Create(Articles article)
+        public async Task<IActionResult> Create(Articles article, IFormFile? ImageFile)
         {
             if (ModelState.IsValid)
             {
+                string imageUrl = article.ImageUrl;
+                if (ImageFile != null && ImageFile.Length > 0)
+                {
+                    imageUrl = await _fileService.UploadImageAsync(ImageFile);
+                }
+
                 article = new Articles
                 {
                     Slug = article.Slug,
@@ -47,7 +62,7 @@ namespace NewsWebApp.Controllers
                     Author = article.Author,
                     Summary = article.Summary,
                     Content = article.Content,
-                    ImageUrl = article.ImageUrl,
+                    ImageUrl = imageUrl,
                     Views = 0,
                     Likes = 0,
                     CreatedAt = DateTime.UtcNow,
@@ -55,7 +70,7 @@ namespace NewsWebApp.Controllers
                     IsArchived = false,
                     Category = article.Category
                 };
-                
+
                 _context.Articles.Add(article);
                 await _context.SaveChangesAsync();
                 return RedirectToAction("Articles");
@@ -76,7 +91,7 @@ namespace NewsWebApp.Controllers
 
         [HttpPost]
         [Authorize(Roles = "Writer")]
-        public async Task<IActionResult> EditArticle(int id, Articles article)
+        public async Task<IActionResult> EditArticle(int id, Articles article, IFormFile? ImageFile)
         {
             if (id != article.Id)
             {
@@ -85,6 +100,11 @@ namespace NewsWebApp.Controllers
 
             if (ModelState.IsValid)
             {
+                if (ImageFile != null && ImageFile.Length > 0)
+                {
+                    article.ImageUrl = await _fileService.UploadImageAsync(ImageFile);
+                }
+
                 _context.Update(article);
                 await _context.SaveChangesAsync();
                 return RedirectToAction("Articles");

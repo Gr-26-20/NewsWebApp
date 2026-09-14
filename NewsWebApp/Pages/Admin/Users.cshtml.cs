@@ -37,13 +37,12 @@ namespace NewsWebApp.Pages.Admin
             foreach (var user in users)
             {
                 var roles = await _userManager.GetRolesAsync(user);
-                var roleName = roles.FirstOrDefault() ?? string.Empty;
                 var userMail = user.Email ?? string.Empty;
 
                 UsersWithRoles.Add(new AddUserToRoleVM
                 {
                     UserId = user.Id,
-                    RoleName = roleName,
+                    RoleNames = roles.ToList(), // Convert to List<string>
                     Email = userMail
                 });
             }

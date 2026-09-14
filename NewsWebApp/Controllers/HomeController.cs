@@ -56,6 +56,27 @@ namespace NewsWebApp.Controllers
             return View(model);
         }
 
+        [HttpGet]
+        public async Task<IActionResult> GetWeather(string stationId)
+        {
+            var weather = await _weatherService.GetWeatherAsync(stationId);
+
+            if (weather == null)
+            {
+                return NotFound();
+            }
+
+            return Json(weather);
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> GetStations(string municipality)
+        {
+            var stations = await _weatherService.GetStationsAsync(municipality);
+
+            return Json(stations);
+        }
+
         public IActionResult Privacy()
         {
             return View();

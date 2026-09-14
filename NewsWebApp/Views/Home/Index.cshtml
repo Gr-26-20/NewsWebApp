@@ -386,30 +386,51 @@
 
             <div class="weather-placeholder">
 
-                <div class="weather-city">
+                <div class="weather-city" id="weatherCity">
                     GOTHENBURG
                 </div>
 
-                <div class="weather-temp">
+                <div id="weatherTemperature" class="weather-temp">
                     @Model.Weather?.Temp°
                 </div>
 
                 <div class="weather-info">
                     LIVE TEMPERATURE
 
-                    <form method="get" asp-controller="Home" asp-action="Index">
-                        <select name="stationId" class="weather-station-select"
-                                onchange="this.form.submit()">
+                    <select id="weatherMunicipality"
+                            class="weather-station-select">
 
-                            @foreach (var station in Model.WeatherStations)
-                            {
-                                <option value="@station.Id">
-                                    @station.Title
-                                </option>
-                            }
+                        @foreach (var municipality in Model.Municipalities)
+                        {
+                            <option value="@municipality.ApiValue">
+                                @municipality.Name
+                            </option>
+                        }
 
-                        </select>
-                    </form>
+                    </select>
+                    
+
+                    <select id="weatherStation"
+                            class="weather-station-select">
+
+                        @foreach (var station in Model.WeatherStations)
+                        {
+                            <option value="@station.Id">
+                                @station.Title
+                            </option>
+                        }
+
+                    </select>
+
+                </div>
+
+                <div class="weather-attribution">
+                    Weather API provided by
+                    <a href="https://www.temperatur.nu/"
+                       target="_blank"
+                       rel="noopener noreferrer">
+                        temperatur.nu
+                    </a>
                 </div>
 
             </div>
@@ -419,3 +440,55 @@
     </main>
 
 </div>
+@section Scripts {
+    <script>
+        document.getElementById("weatherStation").addEventListener("change", async function() {
+
+            const stationId = this.value;
+
+            const response = await fetch(`/Home/GetWeather?stationId=${stationId}`);
+
+            if (!response.ok) {
+                return;
+            }
+
+            const weather = await response.json();
+
+            document.getElementById("weatherTemperature").textContent = weather.temp + "°";
+        });
+
+
+        document.getElementById("weatherMunicipality").addEventListener("change", async function() {
+
+            const municipality = this.value;
+
+            const municipalityName = this.options[this.selectedIndex].text;
+
+            document.getElementById("weatherCity").textContent =
+                municipalityName.toUpperCase();
+
+            const response = await fetch(`/Home/GetStations?municipality=${municipality}`);
+
+            if (!response.ok) {
+                return;
+            }
+
+            const stations = await response.json();
+
+            const stationSelect = document.getElementById("weatherStation");
+
+            stationSelect.innerHTML = "";
+
+            stations.forEach(function(station) {
+
+                const option = document.createElement("option");
+
+                option.value = station.id;
+                option.textContent = station.title;
+
+                stationSelect.appendChild(option);
+            });
+        });
+    </script>
+
+}

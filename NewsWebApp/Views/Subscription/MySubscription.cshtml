@@ -1,0 +1,22 @@
+﻿@model NewsWebApp.Models.Subscriptions
+@{
+    ViewData["Title"] = "My Subscription";
+}
+
+<div class="container mt-5">
+    <h2>My Subscription</h2>
+    @if (Model == null)
+    {
+        <p>You have no active subscription.</p>
+        <a asp-action="Index" class="btn btn-primary">Subscribe Now</a>
+    }
+    else
+    {
+        <div class="card p-4">
+            <h4>@Model.Name</h4>
+            <p>Price: SEK @Model.Price</p>
+            <p>Started: @Model.CreatedAt?.ToString("dd MMM yyyy")</p>
+            <p>Expires: @Model.CreatedAt?.AddDays(Model.DurationInDays).ToString("dd MMM yyyy")</p>
+        </div>
+    }
+</div>

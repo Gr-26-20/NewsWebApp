@@ -84,5 +84,16 @@ namespace NewsWebApp.Controllers
 
 
         }
+        public async Task<IActionResult> MySubscription()
+        {
+            var user = await _userManager.GetUserAsync(User);
+            if (user == null)
+            {
+                return RedirectToAction("Index", "Home");
+            }
+            var subscription = await _subscriptionService.GetActiveSubscriptionAsync(user.Email);
+            
+            return View(subscription);
+        }
     }
 }

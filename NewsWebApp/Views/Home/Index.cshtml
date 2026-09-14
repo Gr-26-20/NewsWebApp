@@ -488,6 +488,20 @@
 
                 stationSelect.appendChild(option);
             });
+
+            if (stations.length > 0) {
+                stationSelect.value = stations[0].id;
+
+                const weatherResponse =
+                    await fetch(`/Home/GetWeather?stationId=${stations[0].id}`);
+
+                if (weatherResponse.ok) {
+                    const weather = await weatherResponse.json();
+
+                    document.getElementById("weatherTemperature").textContent =
+                        weather.temp + "°";
+                }
+            }
         });
     </script>
 

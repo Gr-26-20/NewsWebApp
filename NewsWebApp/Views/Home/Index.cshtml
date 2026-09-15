@@ -394,6 +394,10 @@
                     @Model.Weather?.Temp°
                 </div>
 
+                <div id="weatherCondition" class="weather-condition">
+                    @Model.SmhiWeather?.SymbolDescription?.ToUpper()
+                </div>
+
                 <div class="weather-info">
                     LIVE TEMPERATURE
 
@@ -490,17 +494,27 @@
             });
 
             if (stations.length > 0) {
-                stationSelect.value = stations[0].id;
+            stationSelect.value = stations[0].id;
 
-                const weatherResponse =
-                    await fetch(`/Home/GetWeather?stationId=${stations[0].id}`);
+            const weatherResponse =
+                await fetch(`/Home/GetWeather?stationId=${stations[0].id}`);
 
-                if (weatherResponse.ok) {
-                    const weather = await weatherResponse.json();
+            if (weatherResponse.ok) {
+                const weather = await weatherResponse.json();
 
-                    document.getElementById("weatherTemperature").textContent =
-                        weather.temp + "°";
+                document.getElementById("weatherTemperature").textContent =
+                    weather.temp + "°";
                 }
+            }
+
+            const smhiResponse =
+            await fetch(`/Home/GetSmhiWeather?municipality=${municipality}`);
+
+            if (smhiResponse.ok) {
+            const smhiWeather = await smhiResponse.json();
+
+            document.getElementById("weatherCondition").textContent =
+                smhiWeather.symbolDescription.toUpperCase();
             }
         });
     </script>

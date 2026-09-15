@@ -613,6 +613,12 @@ a {
     text-decoration: underline;
 }
 
+.weather-condition {
+    font-size: 14px;
+    font-weight: 900;
+    white-space: nowrap;
+}
+
 /* ---------------------------------------------------------
    FOOTER
 --------------------------------------------------------- */

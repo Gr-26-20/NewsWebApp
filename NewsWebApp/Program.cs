@@ -39,6 +39,7 @@ namespace NewsWebApp
 
             builder.Services.AddMemoryCache();
             builder.Services.AddHttpClient<WeatherService>(); // for making HTTP requests
+            builder.Services.AddHttpClient<SmhiWeatherService>();
 
             builder.Services.Configure<CookiePolicyOptions>(options =>
             {

@@ -10,13 +10,16 @@ namespace NewsWebApp.Controllers
     {
         private readonly IArticleService _articleService;
         private readonly WeatherService _weatherService;
+        private readonly SmhiWeatherService _smhiWeatherService;
 
         public HomeController(
             IArticleService articleService,
-            WeatherService weatherService)
+            WeatherService weatherService,
+            SmhiWeatherService smhiWeatherService)
         {
             _articleService = articleService;
             _weatherService = weatherService;
+            _smhiWeatherService = smhiWeatherService;
         }
 
         public async Task<IActionResult> Index(string? stationId)
@@ -53,6 +56,15 @@ namespace NewsWebApp.Controllers
 
             model.WeatherStations = stations;
 
+            var gothenburg = model.Municipalities
+                .First(m => m.ApiValue == "goteborg");
+
+            var smhiWeather = await _smhiWeatherService.GetWeatherAsync(
+                gothenburg.Latitude,
+                gothenburg.Longitude);
+
+            model.SmhiWeather = smhiWeather;
+
             return View(model);
         }
 
@@ -75,6 +87,31 @@ namespace NewsWebApp.Controllers
             var stations = await _weatherService.GetStationsAsync(municipality);
 
             return Json(stations);
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> GetSmhiWeather(string municipality)
+        {
+            var model = new HomeViewModel();
+
+            var selectedMunicipality = model.Municipalities
+                .FirstOrDefault(m => m.ApiValue == municipality);
+
+            if (selectedMunicipality == null)
+            {
+                return NotFound();
+            }
+
+            var weather = await _smhiWeatherService.GetWeatherAsync(
+                selectedMunicipality.Latitude,
+                selectedMunicipality.Longitude);
+
+            if (weather == null)
+            {
+                return NotFound();
+            }
+
+            return Json(weather);
         }
 
         public IActionResult Privacy()

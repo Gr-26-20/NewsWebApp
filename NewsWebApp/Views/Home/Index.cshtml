@@ -1,4 +1,10 @@
 ﻿@model NewsWebApp.Models.ViewModels.HomeViewModel
+@using Microsoft.AspNetCore.Identity
+@inject SignInManager<NewsWebApp.Data.ApplicationUser> SignInManager
+@inject UserManager<NewsWebApp.Data.ApplicationUser> UserManager
+@inject NewsWebApp.Services.ISubscriptionService SubscriptionService
+
+
 
 @{
     ViewData["Title"] = "Home";
@@ -37,11 +43,32 @@
                 <a href="/Categories/Sports">SPORTS</a>
                 <a href="/Categories/EditorsChoice">EDITOR'S CHOICE</a>
                 <a href="/Categories/Newsletter">NEWSLETTER</a>
-                <a asp-controller="Subscription"
-                   asp-action="Index"
-                   class="btn-subscribe-nav">
-                    SUBSCRIBE
-                </a>
+                @if (SignInManager.IsSignedIn(User))
+                {
+                    var currentUser = await UserManager.GetUserAsync(User);
+                    bool isSubscribed = currentUser != null &&
+                        await SubscriptionService.HasActiveSubscriptionAsync(currentUser.Email);
+
+                    if (!isSubscribed)
+                    {
+                        <a asp-controller="Subscription" asp-action="Index" class="btn-subscribe-nav">
+                            SUBSCRIBE
+                        </a>
+                    }
+                    else
+                    {
+                        <a asp-controller="Subscription" asp-action="MySubscription" class="btn-subscribe-nav subscribed">
+                            ✓ SUBSCRIBED
+                        </a>
+                    }
+                }
+                else
+                {
+                    <a asp-area="Identity" asp-page="/Account/Register"
+                       asp-route-returnUrl="/Subscription" class="btn-subscribe-nav">
+                        SUBSCRIBE
+                    </a>
+                }
 
             </div>
         </nav>

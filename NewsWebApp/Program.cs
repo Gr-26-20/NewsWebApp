@@ -36,6 +36,10 @@ namespace NewsWebApp
             //Article service registration
             builder.Services.AddScoped<IArticleService, ArticleService>();
 
+            builder.Services.AddMemoryCache();
+            builder.Services.AddHttpClient<WeatherService>(); // for making HTTP requests
+            builder.Services.AddHttpClient<SmhiWeatherService>();
+
             builder.Services.Configure<CookiePolicyOptions>(options =>
             {
                 options.CheckConsentNeeded = context => true;

@@ -1,0 +1,54 @@
+﻿@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@{
+}
+
+@model NewsWebApp.Models.ViewModels.NewsletterVM
+
+
+@if (Model.NewsLetters == null || !Model.NewsLetters.Any())
+{
+	<h4>No newsletters found.</h4>
+}
+
+@foreach (var newsletter in Model.NewsLetters!)
+{
+	<div class="card">
+		<div class="card-header">
+			@* <p><strong>Created At:</strong> @newsletter.CreatedAt.ToString()</p> *@
+		</div>
+		<div class="card-body">
+			<p><strong>Email:</strong> @newsletter.Email</p>
+			<p><strong>Subject:</strong> @newsletter.Subject</p>
+			<p><strong>Category:</strong> @newsletter.Category</p>
+			<p><strong>Logo:</strong> @newsletter.Logo</p>
+			<p>@newsletter.Body</p>
+			<p><strong>Body:</strong> @newsletter.Body</p>
+			<h2>@newsletter.Title</h2>
+			<p><strong>Image:</strong> @newsletter.imageUrl</p>
+			<p><strong>Description:</strong> @newsletter.Description</p>
+			<p><strong>Link:</strong> @newsletter.link</p>
+
+			<h2>@newsletter.Title2</h2>
+			<p><strong>Image2:</strong> @newsletter.imageUrl2</p>
+			<p><strong>Description2:</strong> @newsletter.Description2</p>
+			<p><strong>Link2:</strong> @newsletter.link2</p>
+
+			<h2>@newsletter.Title3</h2>
+			<p><strong>Image3:</strong> @newsletter.imageUrl3</p>
+			<p><strong>Description3:</strong> @newsletter.Description3</p>
+			<p><strong>Link3:</strong> @newsletter.link3</p>
+			 
+		</div>
+		<div class="card-footer">
+			<a class="btn btn-primary" asp-action="EditNewsLetter" asp-controller="Newsletter" asp-route-id="@newsletter.Id">Edit</a>
+			<a class="btn btn-danger" asp-action="DeleteNewsLetter" asp-controller="Newsletter" asp-route-id="@newsletter.Id">Delete</a>
+			<a class="btn btn-success" asp-action="SendNewsletter" asp-controller="Newsletter" asp-route-id="@newsletter.Id">Send</a>
+			@* <div class="form-group">
+				<input type="submit" asp-action="SendNewsLetter" asp-controller="Email" value="Send" class="btn btn-info" />
+			</div> *@
+			@* <a class="btn btn-info" asp-action="SendNewsLetterImmediate" asp-controller="Email" asp-route-id="@newsletter.Id">Send</a> *@
+		</div>
+	</div>
+}

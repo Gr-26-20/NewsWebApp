@@ -18,6 +18,7 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.Extensions.Logging;
 using NewsWebApp.Data;
+using NewsWebApp.Services;
 
 namespace NewsWebApp.Areas.Identity.Pages.Account;
 
@@ -29,6 +30,7 @@ public class RegisterModel : PageModel
     private readonly IUserEmailStore<ApplicationUser> _emailStore;
     private readonly ILogger<RegisterModel> _logger;
     private readonly IEmailSender _emailSender;
+
 
     public RegisterModel(
         UserManager<ApplicationUser> userManager,

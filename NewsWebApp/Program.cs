@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.EntityFrameworkCore;
 using NewsWebApp.Data;
 using NewsWebApp.Services;
@@ -33,6 +34,12 @@ namespace NewsWebApp
 
             //Article service registration
             builder.Services.AddScoped<IArticleService, ArticleService>();
+
+            //Newsletter service registration
+            builder.Services.AddScoped<INewsletterService, NewsletterService>();
+
+            // Email service registration
+            builder.Services.AddScoped<IEmailSender, EmailSender>();
 
             builder.Services.Configure<CookiePolicyOptions>(options =>
             {

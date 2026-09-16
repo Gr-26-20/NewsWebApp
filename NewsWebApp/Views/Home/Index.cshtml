@@ -123,18 +123,9 @@
                                 }
                                 else
                                 {
-                                    @if (!string.IsNullOrWhiteSpace(article.ImageUrl))
-                                    {
-                                        <img src="@article.ImageUrl"
-                                             alt="@article.Title"
-                                             class="article-image" />
-                                    }
-                                    else
-                                    {
-                                        <div class="image-placeholder">
-                                            IMAGE
-                                        </div>
-                                    }
+                                    <div class="image-placeholder">
+                                        IMAGE
+                                    </div>
                                 }
 
                                 <div>
@@ -444,21 +435,24 @@
     </main>
 
 </div>
-@section Scripts {
+@section Scripts
+{
     <script>
 
         let municipalityRequestNumber = 0;
 
 
         // Change Temperatur.nu station
-        document.getElementById("weatherStation").addEventListener("change", async function() {
+        document.getElementById("weatherStation").addEventListener("change", async function()
+        {
 
             const stationId = this.value;
 
             const response =
                 await fetch(`/Home/GetWeather?stationId=${stationId}`);
 
-            if (!response.ok) {
+            if (!response.ok)
+            {
                 return;
             }
 
@@ -470,7 +464,8 @@
 
 
         // Change municipality
-        document.getElementById("weatherMunicipality").addEventListener("change", async function() {
+        document.getElementById("weatherMunicipality").addEventListener("change", async function()
+        {
 
             const municipality = this.value;
 
@@ -484,23 +479,45 @@
             // Give this municipality selection a unique number
             const requestNumber = ++municipalityRequestNumber;
 
-           
+
             // TEMPERATUR.NU
-           
+
             const response =
                 await fetch(`/Home/GetStations?municipality=${municipality}`);
 
-            if (!response.ok) {
+            if (!response.ok)
+            {
                 return;
             }
 
-            const stations = await response.json();
+            const result = await response.json();
+
 
             // Ignore an older request if the user has already
             // selected another municipality
-            if (requestNumber !== municipalityRequestNumber) {
+            if (requestNumber !== municipalityRequestNumber)
+            {
                 return;
             }
+
+
+            // Check if Temperatur.nu has temporarily blocked requests
+            if (result.isBlocked)
+            {
+                document.getElementById("weatherCondition").textContent =
+                    "WEATHER DATA TEMPORARILY UNAVAILABLE";
+
+                document.getElementById("weatherTemperature").textContent =
+                    "";
+
+                document.getElementById("weatherStation").innerHTML =
+                    "";
+
+                return;
+            }
+
+
+            const stations = result.stations;
 
             const stationSelect =
                 document.getElementById("weatherStation");
@@ -508,8 +525,8 @@
             stationSelect.innerHTML = "";
 
 
-            stations.forEach(function(station) {
-
+            stations.forEach(function(station)
+            {
                 const option =
                     document.createElement("option");
 
@@ -521,8 +538,8 @@
 
 
             // Select the first station and get its temperature
-            if (stations.length > 0) {
-
+            if (stations.length > 0)
+            {
                 stationSelect.value = stations[0].id;
 
                 const weatherResponse =
@@ -530,8 +547,8 @@
                         `/Home/GetWeather?stationId=${stations[0].id}`
                     );
 
-                if (weatherResponse.ok) {
-
+                if (weatherResponse.ok)
+                {
                     const weather =
                         await weatherResponse.json();
 
@@ -540,7 +557,7 @@
                 }
             }
 
-            
+
             // SMHI
 
             const smhiResponse =
@@ -548,15 +565,18 @@
                     `/Home/GetSmhiWeather?municipality=${municipality}`
                 );
 
-            if (!smhiResponse.ok) {
+            if (!smhiResponse.ok)
+            {
                 return;
             }
 
             const smhiWeather =
                 await smhiResponse.json();
 
+
             // Ignore an older municipality request
-            if (requestNumber !== municipalityRequestNumber) {
+            if (requestNumber !== municipalityRequestNumber)
+            {
                 return;
             }
 
@@ -568,4 +588,4 @@
     </script>
 }
 
-}
+

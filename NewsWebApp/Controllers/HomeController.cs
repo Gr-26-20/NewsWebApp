@@ -52,9 +52,9 @@ namespace NewsWebApp.Controllers
 
             model.Weather = weather;
 
-            var stations = await _weatherService.GetStationsAsync("goteborg");
+            var stationsResult = await _weatherService.GetStationsAsync("goteborg");
 
-            model.WeatherStations = stations;
+            model.WeatherStations = stationsResult.Stations;
 
             var gothenburg = model.Municipalities
                 .First(m => m.ApiValue == "goteborg");
@@ -84,9 +84,9 @@ namespace NewsWebApp.Controllers
         [HttpGet]
         public async Task<IActionResult> GetStations(string municipality)
         {
-            var stations = await _weatherService.GetStationsAsync(municipality);
+            var result = await _weatherService.GetStationsAsync(municipality);
 
-            return Json(stations);
+            return Json(result);
         }
 
         [HttpGet]

@@ -4,6 +4,12 @@ namespace NewsWebApp.Models.ViewModels
 {
     public class WeatherApiResponse
     {
+        [JsonPropertyName("client")]
+        public string Client { get; set; }
+
+        [JsonPropertyName("error")]
+        public string Error { get; set; }
+
         [JsonPropertyName("stations")]
         public List<WeatherStation> Stations { get; set; } = new();
     }

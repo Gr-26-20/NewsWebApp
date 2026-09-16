@@ -32,7 +32,7 @@ namespace NewsWebApp.Services
                 .FirstOrDefaultAsync();
         }
 
-        public async Task<SubscribeResult> SubscriptionAsync(string userEmail)
+        public async Task<SubscribeResult> SubscriptionAsync(string userEmail, string stripeToken)
         {
             if (await HasActiveSubscriptionAsync(userEmail))
             {
@@ -43,6 +43,29 @@ namespace NewsWebApp.Services
             if(user == null)
             {
                 return SubscribeResult.UserNotFound;
+            }
+
+            var chargeOptions = new Stripe.ChargeCreateOptions
+            {
+                Amount = (long)(Price * 100), 
+                Currency = "sek",
+                Description = "ClickBait News - Irresistible Subscription",
+                Source = stripeToken,
+            };
+
+            var chargeService = new Stripe.ChargeService();
+            try
+            {
+                var charge = await chargeService.CreateAsync(chargeOptions);
+                if (charge.Status != "succeeded")
+                {
+                    return SubscribeResult.PaymentFailed;
+                }
+
+            }
+            catch (Stripe.StripeException)
+            {
+                return SubscribeResult.PaymentFailed;
             }
 
             _db.Subscriptions.Add(new Subscriptions
@@ -56,7 +79,6 @@ namespace NewsWebApp.Services
                 User = user
             });
 
-            
             await _db.SaveChangesAsync();
             return SubscribeResult.Success;
         }
@@ -66,6 +88,8 @@ namespace NewsWebApp.Services
     {
         Success,
         AlreadySubscribed,
+
+        PaymentFailed,
         UserNotFound
     }
 }

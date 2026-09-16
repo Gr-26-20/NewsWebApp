@@ -1,4 +1,12 @@
-﻿@{
+﻿@model NewsWebApp.Models.ViewModels.HomeViewModel
+@using Microsoft.AspNetCore.Identity
+@inject SignInManager<NewsWebApp.Data.ApplicationUser> SignInManager
+@inject UserManager<NewsWebApp.Data.ApplicationUser> UserManager
+@inject NewsWebApp.Services.ISubscriptionService SubscriptionService
+
+
+
+@{
     ViewData["Title"] = "Home";
 }
 
@@ -7,7 +15,7 @@
     <!-- HEADER -->
     <header class="site-header">
         <div class="header-top">
-            <span>THURSDAY / 03 SEPTEMBER 2026</span>
+            <span>@DateTime.Today.ToString("dddd / dd MMMM yyyy").ToUpper()</span>
             <span>LINKÖPING</span>
         </div>
 
@@ -35,20 +43,37 @@
                 <a href="/Categories/Sports">SPORTS</a>
                 <a href="/Categories/EditorsChoice">EDITOR'S CHOICE</a>
                 <a href="/Categories/Newsletter">NEWSLETTER</a>
-                <a asp-controller="Subscription" asp-action="Index" class="btn-subscribe-nav">SUBSCRIBE</a>
+                @if (SignInManager.IsSignedIn(User))
+                {
+                    var currentUser = await UserManager.GetUserAsync(User);
+                    bool isSubscribed = currentUser != null &&
+                        await SubscriptionService.HasActiveSubscriptionAsync(currentUser.Email);
+
+                    if (!isSubscribed)
+                    {
+                        <a asp-controller="Subscription" asp-action="Index" class="btn-subscribe-nav">
+                            SUBSCRIBE
+                        </a>
+                    }
+                    else
+                    {
+                        <a asp-controller="Subscription" asp-action="MySubscription" class="btn-subscribe-nav subscribed">
+                            ✓ SUBSCRIBED
+                        </a>
+                    }
+                }
+                else
+                {
+                    <a asp-area="Identity" asp-page="/Account/Register"
+                       asp-route-returnUrl="/Subscription" class="btn-subscribe-nav">
+                        SUBSCRIBE
+                    </a>
+                }
 
             </div>
-
-            @* <div class="nav-account" id="navAccount">
-
-                <a href="#">LOGIN</a>
-                <span> </span>
-                <a href="#">REGISTER</a>
-
-            </div> *@
-
         </nav>
     </header>
+
 
     <!-- BREAKING NEWS -->
     <section class="breaking-bar">
@@ -56,134 +81,327 @@
         <span>Breaking news headline goes here</span>
     </section>
 
+
     <!-- MAIN CONTENT -->
     <main>
 
         <!-- FEATURED NEWS -->
         <section class="section-block">
+
             <div class="section-title">
                 <h2>NEWS</h2>
-                <a href="#">VIEW ALL →</a>
+                <a href="/Categories/News">VIEW ALL →</a>
             </div>
 
-            <div class="featured-grid">
 
-                <article class="featured-story">
-                    <div class="image-placeholder large">IMAGE</div>
-                    <div class="story-category">NEWS</div>
-                    <h3>
-                        <a href="/Articles/Details">
-                            MAIN HEADLINE GOES HERE
-                        </a>
-                    </h3>
-                    <p>Short introduction to the main story.</p>
-                </article>
+            @if (Model.NewsArticles.Any())
+            {
+                <div class="featured-grid">
 
-                <div class="side-stories">
+                    <!-- MAIN NEWS STORY -->
+                    @{
+                        var mainArticle = Model.NewsArticles.First();
+                    }
 
-                    <article class="story">
-                        <div class="image-placeholder">IMAGE</div>
-                        <div>
-                            <div class="story-category">NEWS</div>
-                            <h3>SECONDARY HEADLINE</h3>
-                            <p>Short story introduction.</p>
+                    <article class="featured-story">
+
+                        @if (!string.IsNullOrWhiteSpace(mainArticle.ImageUrl))
+                        {
+                            <img src="@mainArticle.ImageUrl"
+                                 alt="@mainArticle.Title"
+                                 class="article-image large" />
+                        }
+                        else
+                        {
+                            <div class="image-placeholder large">
+                                IMAGE
+                            </div>
+                        }
+
+                        <div class="story-category">
+                            @mainArticle.Category
                         </div>
+
+                        <h3>
+                            <a href="/Articles/Details/@mainArticle.Id">
+                                @mainArticle.Title
+                            </a>
+                        </h3>
+
+                        <p>
+                            @mainArticle.Summary
+                        </p>
+
                     </article>
 
-                    <article class="story">
-                        <div class="image-placeholder">IMAGE</div>
-                        <div>
-                            <div class="story-category">NEWS</div>
-                            <h3>SECONDARY HEADLINE</h3>
-                            <p>Short story introduction.</p>
-                        </div>
-                    </article>
+
+                    <!-- SECONDARY NEWS STORIES -->
+                    <div class="side-stories">
+
+                        @foreach (var article in Model.NewsArticles.Skip(1))
+                        {
+                            <article class="story">
+
+                                @if (!string.IsNullOrWhiteSpace(article.ImageUrl))
+                                {
+                                    <img src="@article.ImageUrl"
+                                         alt="@article.Title"
+                                         class="article-image secondary" />
+                                }
+                                else
+                                {
+                                    @if (!string.IsNullOrWhiteSpace(article.ImageUrl))
+                                    {
+                                        <img src="@article.ImageUrl"
+                                             alt="@article.Title"
+                                             class="article-image" />
+                                    }
+                                    else
+                                    {
+                                        <div class="image-placeholder">
+                                            IMAGE
+                                        </div>
+                                    }
+                                }
+
+                                <div>
+
+                                    <div class="story-category">
+                                        @article.Category
+                                    </div>
+
+                                    <h3>
+                                        <a href="/Articles/Details/@article.Id">
+                                            @article.Title
+                                        </a>
+                                    </h3>
+
+                                    <p>
+                                        @article.Summary
+                                    </p>
+
+                                </div>
+
+                            </article>
+                        }
+
+                    </div>
+
+
+                    <!-- RIGHT SIDEBAR -->
+                    <aside class="sidebar">
+
+                        <h2>EDITOR'S CHOICE</h2>
+
+                        <article class="sidebar-story">
+                            <span>01</span>
+                            <h3>EDITOR'S CHOICE STORY</h3>
+                        </article>
+
+                        <article class="sidebar-story">
+                            <span>02</span>
+                            <h3>EDITOR'S CHOICE STORY</h3>
+                        </article>
+
+                        <article class="sidebar-story">
+                            <span>03</span>
+                            <h3>EDITOR'S CHOICE STORY</h3>
+                        </article>
+
+                    </aside>
 
                 </div>
+            }
+            else
+            {
+                <p>No news articles available.</p>
+            }
 
-                <!-- RIGHT SIDEBAR -->
-                <aside class="sidebar">
-                    <h2>EDITOR'S CHOICE</h2>
-
-                    <article class="sidebar-story">
-                        <span>01</span>
-                        <h3>EDITOR'S CHOICE STORY</h3>
-                    </article>
-
-                    <article class="sidebar-story">
-                        <span>02</span>
-                        <h3>EDITOR'S CHOICE STORY</h3>
-                    </article>
-
-                    <article class="sidebar-story">
-                        <span>03</span>
-                        <h3>EDITOR'S CHOICE STORY</h3>
-                    </article>
-                </aside>
-
-            </div>
         </section>
+
 
         <!-- CATEGORY ROWS -->
         <section class="category-section">
 
+
+            <!-- WORLD -->
             <div class="category-column">
+
                 <div class="section-title">
                     <h2>
                         <a href="/Categories/World">WORLD</a>
                     </h2>
+
                     <a href="/Categories/World">MORE →</a>
                 </div>
 
-                <article class="compact-story">
-                    <div class="image-placeholder">IMAGE</div>
-                    <div>
-                        <div class="story-category">WORLD</div>
-                        <h3>WORLD NEWS HEADLINE</h3>
-                        <p>Short introduction.</p>
-                    </div>
-                </article>
+
+                @if (Model.WorldArticles.Any())
+                {
+                    var article = Model.WorldArticles.First();
+
+                    <article class="compact-story">
+
+                        @if (!string.IsNullOrWhiteSpace(article.ImageUrl))
+                        {
+                            <img src="@article.ImageUrl"
+                                 alt="@article.Title"
+                                 class="article-image" />
+                        }
+                        else
+                        {
+                            <div class="image-placeholder">
+                                IMAGE
+                            </div>
+                        }
+
+                        <div>
+
+                            <div class="story-category">
+                                @article.Category
+                            </div>
+
+                            <h3>
+                                <a href="/Articles/Details/@article.Id">
+                                    @article.Title
+                                </a>
+                            </h3>
+
+                            <p>
+                                @article.Summary
+                            </p>
+
+                        </div>
+
+                    </article>
+                }
+                else
+                {
+                    <p>No World articles available.</p>
+                }
+
             </div>
 
 
+            <!-- SWEDEN -->
             <div class="category-column">
+
                 <div class="section-title">
                     <h2>
                         <a href="/Categories/Sweden">SWEDEN</a>
                     </h2>
+
                     <a href="/Categories/Sweden">MORE →</a>
                 </div>
 
-                <article class="compact-story">
-                    <div class="image-placeholder">IMAGE</div>
-                    <div>
-                        <div class="story-category">SWEDEN</div>
-                        <h3>SWEDISH NEWS HEADLINE</h3>
-                        <p>Short introduction.</p>
-                    </div>
-                </article>
+
+                @if (Model.SwedenArticles.Any())
+                {
+                    var article = Model.SwedenArticles.First();
+
+                    <article class="compact-story">
+
+                        @if (!string.IsNullOrWhiteSpace(article.ImageUrl))
+                        {
+                            <img src="@article.ImageUrl"
+                                 alt="@article.Title"
+                                 class="article-image" />
+                        }
+                        else
+                        {
+                            <div class="image-placeholder">
+                                IMAGE
+                            </div>
+                        }
+
+                        <div>
+
+                            <div class="story-category">
+                                @article.Category
+                            </div>
+
+                            <h3>
+                                <a href="/Articles/Details/@article.Id">
+                                    @article.Title
+                                </a>
+                            </h3>
+
+                            <p>
+                                @article.Summary
+                            </p>
+
+                        </div>
+
+                    </article>
+                }
+                else
+                {
+                    <p>No Sweden articles available.</p>
+                }
+
             </div>
 
 
+            <!-- SPORTS -->
             <div class="category-column">
+
                 <div class="section-title">
                     <h2>
                         <a href="/Categories/Sports">SPORTS</a>
                     </h2>
+
                     <a href="/Categories/Sports">MORE →</a>
                 </div>
 
-                <article class="compact-story">
-                    <div class="image-placeholder">IMAGE</div>
-                    <div>
-                        <div class="story-category">SPORTS</div>
-                        <h3>SPORTS HEADLINE</h3>
-                        <p>Short introduction.</p>
-                    </div>
-                </article>
+
+                @if (Model.SportsArticles.Any())
+                {
+                    var article = Model.SportsArticles.First();
+
+                    <article class="compact-story">
+
+                        @if (!string.IsNullOrWhiteSpace(article.ImageUrl))
+                        {
+                            <img src="@article.ImageUrl"
+                                 alt="@article.Title"
+                                 class="article-image" />
+                        }
+                        else
+                        {
+                            <div class="image-placeholder">
+                                IMAGE
+                            </div>
+                        }
+
+                        <div>
+
+                            <div class="story-category">
+                                @article.Category
+                            </div>
+
+                            <h3>
+                                <a href="/Articles/Details/@article.Id">
+                                    @article.Title
+                                </a>
+                            </h3>
+
+                            <p>
+                                @article.Summary
+                            </p>
+
+                        </div>
+
+                    </article>
+                }
+                else
+                {
+                    <p>No Sports articles available.</p>
+                }
+
             </div>
 
         </section>
+
 
         <!-- WEATHER -->
         <section class="weather-section">
@@ -194,9 +412,19 @@
             </div>
 
             <div class="weather-placeholder">
-                <div class="weather-city">GOTHENBURG</div>
-                <div class="weather-temp">--°</div>
-                <div class="weather-info">WEATHER DATA GOES HERE</div>
+
+                <div class="weather-city">
+                    GOTHENBURG
+                </div>
+
+                <div class="weather-temp">
+                    --°
+                </div>
+
+                <div class="weather-info">
+                    WEATHER DATA GOES HERE
+                </div>
+
             </div>
 
         </section>

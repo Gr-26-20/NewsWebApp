@@ -619,6 +619,23 @@ a {
     white-space: nowrap;
 }
 
+.weather-message {
+    margin-top: 5px;
+    line-height: 1.2;
+    color: #d71920;
+}
+
+.weather-message-title {
+    font-size: 12px;
+    font-weight: bold;
+}
+
+.weather-message-text {
+    margin-top: 2px;
+    font-size: 10px;
+    font-weight: normal;
+}
+
 /* ---------------------------------------------------------
    FOOTER
 --------------------------------------------------------- */

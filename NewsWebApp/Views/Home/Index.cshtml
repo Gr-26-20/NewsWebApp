@@ -389,6 +389,11 @@
                     @Model.SmhiWeather?.SymbolDescription?.ToUpper()
                 </div>
 
+                <div id="weatherMessage" class="weather-message">
+                    <div class="weather-message-title"></div>
+                    <div class="weather-message-text"></div>
+                </div>
+
                 <div class="weather-info">
                     LIVE TEMPERATURE
 
@@ -502,18 +507,27 @@
 
 
             // Check if Temperatur.nu has temporarily blocked requests
+            
+            // if (true) // Swap "if (result.isBlocked)" for checking time limit error message
             if (result.isBlocked)
             {
-                document.getElementById("weatherCondition").textContent =
-                    "WEATHER DATA TEMPORARILY UNAVAILABLE";
+                document.getElementById("weatherMessage").querySelector(".weather-message-title").textContent =
+                    "LIVE TEMPERATURE TEMPORARILY UNAVAILABLE";
+
+                document.getElementById("weatherMessage").querySelector(".weather-message-text").textContent =
+                    "The external weather service has reached its request limit. Please try again later.";
 
                 document.getElementById("weatherTemperature").textContent =
                     "";
 
                 document.getElementById("weatherStation").innerHTML =
                     "";
+            }
+            else
+            {
+                document.getElementById("weatherMessage").querySelector(".weather-message-title").textContent = "";
 
-                return;
+                document.getElementById("weatherMessage").querySelector(".weather-message-text").textContent = "";
             }
 
 

@@ -446,11 +446,17 @@
 </div>
 @section Scripts {
     <script>
+
+        let municipalityRequestNumber = 0;
+
+
+        // Change Temperatur.nu station
         document.getElementById("weatherStation").addEventListener("change", async function() {
 
             const stationId = this.value;
 
-            const response = await fetch(`/Home/GetWeather?stationId=${stationId}`);
+            const response =
+                await fetch(`/Home/GetWeather?stationId=${stationId}`);
 
             if (!response.ok) {
                 return;
@@ -458,20 +464,31 @@
 
             const weather = await response.json();
 
-            document.getElementById("weatherTemperature").textContent = weather.temp + "°";
+            document.getElementById("weatherTemperature").textContent =
+                weather.temp + "°";
         });
 
 
+        // Change municipality
         document.getElementById("weatherMunicipality").addEventListener("change", async function() {
 
             const municipality = this.value;
 
-            const municipalityName = this.options[this.selectedIndex].text;
+            const municipalityName =
+                this.options[this.selectedIndex].text;
 
             document.getElementById("weatherCity").textContent =
                 municipalityName.toUpperCase();
 
-            const response = await fetch(`/Home/GetStations?municipality=${municipality}`);
+
+            // Give this municipality selection a unique number
+            const requestNumber = ++municipalityRequestNumber;
+
+           
+            // TEMPERATUR.NU
+           
+            const response =
+                await fetch(`/Home/GetStations?municipality=${municipality}`);
 
             if (!response.ok) {
                 return;
@@ -479,13 +496,22 @@
 
             const stations = await response.json();
 
-            const stationSelect = document.getElementById("weatherStation");
+            // Ignore an older request if the user has already
+            // selected another municipality
+            if (requestNumber !== municipalityRequestNumber) {
+                return;
+            }
+
+            const stationSelect =
+                document.getElementById("weatherStation");
 
             stationSelect.innerHTML = "";
 
+
             stations.forEach(function(station) {
 
-                const option = document.createElement("option");
+                const option =
+                    document.createElement("option");
 
                 option.value = station.id;
                 option.textContent = station.title;
@@ -493,30 +519,53 @@
                 stationSelect.appendChild(option);
             });
 
+
+            // Select the first station and get its temperature
             if (stations.length > 0) {
-            stationSelect.value = stations[0].id;
 
-            const weatherResponse =
-                await fetch(`/Home/GetWeather?stationId=${stations[0].id}`);
+                stationSelect.value = stations[0].id;
 
-            if (weatherResponse.ok) {
-                const weather = await weatherResponse.json();
+                const weatherResponse =
+                    await fetch(
+                        `/Home/GetWeather?stationId=${stations[0].id}`
+                    );
 
-                document.getElementById("weatherTemperature").textContent =
-                    weather.temp + "°";
+                if (weatherResponse.ok) {
+
+                    const weather =
+                        await weatherResponse.json();
+
+                    document.getElementById("weatherTemperature").textContent =
+                        weather.temp + "°";
                 }
             }
 
-            const smhiResponse =
-            await fetch(`/Home/GetSmhiWeather?municipality=${municipality}`);
+            
+            // SMHI
 
-            if (smhiResponse.ok) {
-            const smhiWeather = await smhiResponse.json();
+            const smhiResponse =
+                await fetch(
+                    `/Home/GetSmhiWeather?municipality=${municipality}`
+                );
+
+            if (!smhiResponse.ok) {
+                return;
+            }
+
+            const smhiWeather =
+                await smhiResponse.json();
+
+            // Ignore an older municipality request
+            if (requestNumber !== municipalityRequestNumber) {
+                return;
+            }
 
             document.getElementById("weatherCondition").textContent =
                 smhiWeather.symbolDescription.toUpperCase();
-            }
+
         });
+
     </script>
+}
 
 }

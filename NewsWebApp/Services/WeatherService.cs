@@ -54,13 +54,22 @@ namespace NewsWebApp.Services
                 return cachedStations;
             }
 
-            var url = $"https://api.temperatur.nu/tnu_1.20.php?kommun_url={municipality}&sensor_type=air&cli=NewsWebApp";
+            var url =
+                $"https://api.temperatur.nu/tnu_1.20.php?kommun_url={municipality}&sensor_type=air&cli=NewsWebApp";
+
+            
 
             var response = await _httpClient.GetStringAsync(url);
 
-            var weather = JsonSerializer.Deserialize<WeatherApiResponse>(response);
+            
 
-            var stations = weather?.Stations ?? new List<WeatherStation>();
+            var weather =
+                JsonSerializer.Deserialize<WeatherApiResponse>(response);
+
+            var stations =
+                weather?.Stations ?? new List<WeatherStation>();
+
+            
 
             if (stations.Count > 0)
             {

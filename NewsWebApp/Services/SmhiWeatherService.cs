@@ -1,29 +1,40 @@
-﻿using System.Text.Json;
+﻿using Microsoft.Extensions.Caching.Memory;
 using NewsWebApp.Models.ViewModels;
 using System.Globalization;
+using System.Text.Json;
 
 namespace NewsWebApp.Services
 {
     public class SmhiWeatherService
     {
         private readonly HttpClient _httpClient;
+        private readonly IMemoryCache _cache;
 
-        public SmhiWeatherService(HttpClient httpClient)
+        public SmhiWeatherService(
+            HttpClient httpClient,
+            IMemoryCache cache)
         {
             _httpClient = httpClient;
+            _cache = cache;
         }
 
         public async Task<SmhiWeatherData?> GetWeatherAsync(
             double latitude,
             double longitude)
         {
+            var cacheKey = $"smhi_weather_{latitude}_{longitude}";
+
+            if (_cache.TryGetValue(cacheKey, out SmhiWeatherData? cachedWeather))
+            {
+                return cachedWeather;
+            }
+
             var url =
                 $"https://opendata-download-metfcst.smhi.se/api/category/snow1g/version/1/geotype/point/lon/{longitude.ToString(CultureInfo.InvariantCulture)}/lat/{latitude.ToString(CultureInfo.InvariantCulture)}/data.json";
 
             var response = await _httpClient.GetStringAsync(url);
 
-            var weather =
-    JsonSerializer.Deserialize<SmhiWeatherResponse>(response);
+            var weather = JsonSerializer.Deserialize<SmhiWeatherResponse>(response);
 
             var data = weather?.TimeSeries.FirstOrDefault()?.Data;
 
@@ -60,6 +71,14 @@ namespace NewsWebApp.Services
                     27 => "Heavy snowfall",
                     _ => "Unknown"
                 };
+            }
+
+            if (data != null)
+            {
+                _cache.Set(
+                    cacheKey,
+                    data,
+                    TimeSpan.FromMinutes(5));
             }
 
             return data;

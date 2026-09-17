@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using NewsWebApp.Data;
 using NewsWebApp.Models;
 using NewsWebApp.Models.ViewModels;
@@ -47,25 +48,20 @@ namespace NewsWebApp.Controllers
         [HttpPost]
         public async Task<IActionResult> EditNewsletter(NewsLetter newsletter)
         {
-            //    if (ModelState.IsValid)
-            //    {
-            //        _applicationDbContext.Update(newsletter);
-            //        await _applicationDbContext.SaveChanges();
-            //        return RedirectToAction(nameof(ManageNewsletters));
-            //    }
-            //    return View(newsletter);
-
            
-
             if (ModelState.IsValid)
             {
+                //Saves changes to properties
+                _applicationDbContext.Update(newsletter);
+                await _applicationDbContext.SaveChangesAsync();
+                //Append the new changes to the body of the message
+                UpdateNewsletterBody(newsletter);
+                //Save changes to db
                 _applicationDbContext.Update(newsletter);
                 await _applicationDbContext.SaveChangesAsync();
                 return RedirectToAction(nameof(ManageNewsletters));
             }
             return View(newsletter);
-
-
         }
 
         public async Task<IActionResult> DeleteNewsLetter(int id)
@@ -84,6 +80,76 @@ namespace NewsWebApp.Controllers
             var newsletter = await _newsletterService.GetNewsletterByIdAsync(id);
             await _emailSender.SendEmailAsync(newsletter.Email, newsletter.Subject, newsletter.Body);
             return RedirectToAction(nameof(ManageNewsletters));
+        }
+
+        public void UpdateNewsletterBody(NewsLetter newsLetter)
+        {
+            var category = new List<SelectListItem>
+            {
+            new SelectListItem { Value = "News", Text = "News" },
+            new SelectListItem { Value = "World", Text = "World" },
+            new SelectListItem { Value = "Sweden", Text = "Sweden" },
+            new SelectListItem { Value = "Sports", Text = "Sports" },
+            new SelectListItem { Value = "Weather", Text = "Weather" },
+            };
+            ViewBag.Categories = new SelectList(category, "Value", "Text");
+            if (ModelState.IsValid)
+            {
+
+                newsLetter.Body = $"<img style='height:100px; width:200px;' src='{newsLetter.Logo}' alt='logo'/></div></div><h1>{newsLetter.Subject}</h1><p>{newsLetter.Body}</p>";
+                if (!string.IsNullOrEmpty(newsLetter.imageUrl))
+                {
+                    newsLetter.Body += $"<div style='display: flex;'><div><img src='{newsLetter.imageUrl}' alt='Image' /></div>";
+                }
+                if (!string.IsNullOrEmpty(newsLetter.Title))
+                {
+                    newsLetter.Body += $"<div><div style='padding-left: 2%;'><h2>{newsLetter.Title}</h2>";
+                }
+                if (!string.IsNullOrEmpty(newsLetter.Description))
+                {
+                    newsLetter.Body += $"<p>{newsLetter.Description}</p>";
+                }
+                if (!string.IsNullOrEmpty(newsLetter.link))
+                {
+                    newsLetter.Body += $"<p><a href='{newsLetter.link}' target='_blank'>Read more</a></p></div></div></div></div>";
+                }
+                if (!string.IsNullOrEmpty(newsLetter.imageUrl2))
+                {
+                    newsLetter.Body += $"<div style='display:flex;'><div><img src='{newsLetter.imageUrl2}' alt='Image' /></div>";
+                }
+                if (!string.IsNullOrEmpty(newsLetter.Title2))
+                {
+                    newsLetter.Body += $"<div><div style='padding-left: 2%;'><h2>{newsLetter.Title2}</h2>";
+                }
+                if (!string.IsNullOrEmpty(newsLetter.Description2))
+                {
+                    newsLetter.Body += $"<p>{newsLetter.Description2}</p>";
+                }
+                if (!string.IsNullOrEmpty(newsLetter.link2))
+                {
+                    newsLetter.Body += $"<p><a href='{newsLetter.link2}' target='_blank'>Read more</a></p></div></div></div></div>";
+                }
+
+
+
+
+                if (!string.IsNullOrEmpty(newsLetter.imageUrl3))
+                {
+                    newsLetter.Body += $"<div style='display:flex'><div><img src='{newsLetter.imageUrl3}' alt='Image' /></div>";
+                }
+                if (!string.IsNullOrEmpty(newsLetter.Title3))
+                {
+                    newsLetter.Body += $"<div><div style='padding-left: 2%;'><h2>{newsLetter.Title3}</h2>";
+                }
+                if (!string.IsNullOrEmpty(newsLetter.Description3))
+                {
+                    newsLetter.Body += $"<p>{newsLetter.Description}</p>";
+                }
+                if (!string.IsNullOrEmpty(newsLetter.link3))
+                {
+                    newsLetter.Body += $"<p><a href='{newsLetter.link3}' target='_blank'>Read more</a></p></div></div></div></div>";
+                }
+            }
         }
     }
 }

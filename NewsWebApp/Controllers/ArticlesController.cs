@@ -15,6 +15,8 @@ namespace NewsWebApp.Controllers
         {
             _context = context;
             _articleService = articleService;
+
+        }
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly ISubscriptionService _subscriptionService;
 
@@ -68,6 +70,8 @@ namespace NewsWebApp.Controllers
             var editorsChoiceArticles = await _articleService.GetEditorsChoiceArticlesAsync();
 
             return View(editorsChoiceArticles);
+        }
+
         [HttpPost]
         public async Task<IActionResult> Like(int id)
         {

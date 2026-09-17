@@ -10,7 +10,7 @@
 <hr />
 <div class="row">
     <div class="col-md-4">
-        <form asp-action="EditArticle">
+        <form asp-action="EditArticle" method="post" enctype="multipart/form-data">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <input type="hidden" asp-for="Id" />
             <div class="form-group">
@@ -33,9 +33,23 @@
                 <span asp-validation-for="Summary" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="ImageUrl" class="control-label"></label>
-                <input asp-for="ImageUrl" class="form-control" />
-                <span asp-validation-for="ImageUrl" class="text-danger"></span>
+                <label asp-for="Content" class="control-label"></label>
+                <textarea asp-for="Content"
+                          class="form-control"
+                          rows="12"
+                          placeholder="Enter the complete article"></textarea>
+                <span asp-validation-for="Content" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                @if (!string.IsNullOrEmpty(Model.ImageUrl))
+                {
+                    <div class="mb-2">
+                        <img src="@Model.ImageUrl" alt="Current image" style="max-height:150px" />
+                    </div>
+                }
+                <input type="hidden" asp-for="ImageUrl" />
+                <label for="ImageFile" class="control-label">Replace Image</label>
+                <input type="file" name="ImageFile" id="ImageFile" class="form-control" accept="image/*" />
             </div>
             @*<div class="form-group">
                 <label asp-for="Views" class="control-label"></label>
@@ -64,7 +78,17 @@
             </div>
             <div class="form-group">
                 <label asp-for="Category" class="control-label"></label>
-                <input asp-for="Category" class="form-control" />
+
+                <select asp-for="Category" class="form-control">
+                    <option value="">-- Select Category --</option>
+                    <option value="News">News</option>
+                    <option value="World">World</option>
+                    <option value="Sweden">Sweden</option>
+                    <option value="Weather">Weather</option>
+                    <option value="Sports">Sports</option>
+                    <option value="EditorsChoice">Editor's Choice</option>
+                </select>
+
                 <span asp-validation-for="Category" class="text-danger"></span>
             </div>
             <div class="form-group">

@@ -1,58 +1,65 @@
-﻿@{
-    ViewData["Title"] = "Main Headline Goes Here";
+﻿@model NewsWebApp.Models.Articles
+
+@{
+    ViewData["Title"] = Model.Title;
 }
 
 <div class="article-page">
 
     <div class="section-title">
-        <h2>NEWS</h2>
+        <h2>@Model.Category.ToUpper()</h2>
         <a href="/">BACK TO NEWS →</a>
     </div>
 
     <article class="article-detail">
 
-        <div class="story-category">NEWS</div>
+        <div class="story-category">
+            @Model.Category
+        </div>
 
-        <h1>MAIN HEADLINE GOES HERE</h1>
+        <h1>@Model.Title</h1>
 
         <p class="article-summary">
-            This is a short introduction to the main news story.
+            @Model.Summary
         </p>
 
         <div class="article-meta">
-            04 SEPTEMBER 2026 &nbsp; | &nbsp; NEWS
+            @Model.CreatedAt?.ToString("dd MMMM yyyy").ToUpper()
+            &nbsp; | &nbsp;
+            @Model.Category.ToUpper()
+            &nbsp; | &nbsp;
+            @Model.Author
         </div>
 
-        <div class="image-placeholder article-image">
-            IMAGE
-        </div>
+        @if (!string.IsNullOrWhiteSpace(Model.ImageUrl))
+        {
+            <img src="@Model.ImageUrl"
+                 alt="@Model.Title"
+                 class="article-image" />
+        }
+        else
+        {
+            <div class="image-placeholder article-image">
+                IMAGE
+            </div>
+        }
 
         <div class="article-content">
 
-            <p>
-                This is the beginning of the full news article.
-                The article detail page displays the complete story
-                selected by the reader.
-            </p>
-
-            <p>
-                This is another paragraph of the article. For now,
-                this text is hard-coded so that we can test the
-                article view and navigation before connecting it
-                to the database.
-            </p>
-
-            <p>
-                Additional article content would appear here.
-                Later, this content will come from the Article
-                model and database.
-            </p>
+            @foreach (var paragraph in Model.Content.Split(
+                new[] { "\r\n\r\n", "\n\n" },
+                StringSplitOptions.RemoveEmptyEntries))
+            {
+                <p>
+                    @paragraph
+                </p>
+            }
 
         </div>
 
         <div class="article-stats">
-            <span>♥ 0 LIKES</span>
-            <span>👁 0 VIEWS</span>
+            <span>♥ @Model.Likes LIKES</span>
+            <span>👁 @Model.Views VIEWS</span>
         </div>
 
     </article>

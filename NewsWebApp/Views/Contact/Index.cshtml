@@ -1,0 +1,54 @@
+﻿@model NewsWebApp.Models.ViewModels.ContactViewModel
+
+@{
+    ViewData["Title"] = "Contact Us";
+}
+
+<div class="contact-page">
+
+    <div class="section-title">
+        <h2>CONTACT US</h2>
+        <a href="/">BACK TO NEWS →</a>
+    </div>
+
+    @if (ViewBag.Message != null)
+    {
+        <div class="contact-success">
+            <span class="success-check">✔</span>
+            <span>@ViewBag.Message</span>
+        </div>
+    }
+
+    <form asp-action="Index" method="post" class="contact-form">
+
+        <div class="form-group">
+            <label asp-for="Name">Name</label>
+            <input asp-for="Name" class="form-control" />
+            <span asp-validation-for="Name" class="text-danger"></span>
+        </div>
+
+        <div class="form-group">
+            <label asp-for="Email">Email</label>
+            <input asp-for="Email" class="form-control" />
+            <span asp-validation-for="Email" class="text-danger"></span>
+        </div>
+
+        <div class="form-group">
+            <label asp-for="Subject">Subject</label>
+            <input asp-for="Subject" class="form-control" />
+            <span asp-validation-for="Subject" class="text-danger"></span>
+        </div>
+
+        <div class="form-group">
+            <label asp-for="Message">Message</label>
+            <textarea asp-for="Message" class="form-control" rows="8"></textarea>
+            <span asp-validation-for="Message" class="text-danger"></span>
+        </div>
+
+        <button type="submit" class="contact-submit">
+            SEND
+        </button>
+
+    </form>
+
+</div>

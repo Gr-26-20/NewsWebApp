@@ -17,11 +17,13 @@ namespace NewsWebApp.Controllers
     {
         private readonly ISubscriptionService _subscriptionService;
         private readonly UserManager<ApplicationUser> _userManager;
+        private readonly IConfiguration _configuration;
 
-        public SubscriptionController(ISubscriptionService subscriptionService, UserManager<ApplicationUser> userManager)
+        public SubscriptionController(ISubscriptionService subscriptionService, UserManager<ApplicationUser> userManager, IConfiguration configuration)
         {
             _subscriptionService = subscriptionService;
             _userManager = userManager;
+            _configuration = configuration;
         }
 
         public async Task<IActionResult> Index()
@@ -34,19 +36,20 @@ namespace NewsWebApp.Controllers
 
             if (await _subscriptionService.HasActiveSubscriptionAsync(user.Email))
             {
-                return RedirectToAction("Index", "Home");
+                return RedirectToAction("AlreadySubscribed");
             }
-            else
-            {
-                return View(new SubscribeViewModel());
-            }
+            ViewBag.PublishableKey = _configuration["Stripe:PublishableKey"];
+            return View(new SubscribeViewModel());
+
 
         }
 
         [HttpPost, ValidateAntiForgeryToken]
         public async Task<IActionResult> Subscribe(SubscribeViewModel model)
         {
-            if (!ModelState.IsValid) {
+            if (!ModelState.IsValid)
+            {
+                ViewBag.PublishableKey = _configuration["Stripe:PublishableKey"];
                 return View("Index", model);
             }
             var user = await _userManager.GetUserAsync(User);
@@ -55,10 +58,12 @@ namespace NewsWebApp.Controllers
                 return RedirectToAction("Index", "Home");
             }
 
-                return await _subscriptionService.SubscriptionAsync(user.Email) switch
+            return await _subscriptionService.SubscriptionAsync(user.Email, model.StripeToken ?? "") switch
             {
 
                 SubscribeResult.Success => RedirectToAction("Confirmation"),
+                SubscribeResult.AlreadySubscribed => RedirectToAction("AlreadySubscribed"),
+                SubscribeResult.PaymentFailed => RedirectToAction("PaymentFailed"),
                 _ => RedirectToAction("Index", "Home")
             };
 
@@ -69,6 +74,26 @@ namespace NewsWebApp.Controllers
             return View();
         }
 
-        
+        public IActionResult AlreadySubscribed()
+        {
+            return View();
+        }
+        public IActionResult PaymentFailed()
+        {
+            return View();
+
+
+        }
+        public async Task<IActionResult> MySubscription()
+        {
+            var user = await _userManager.GetUserAsync(User);
+            if (user == null)
+            {
+                return RedirectToAction("Index", "Home");
+            }
+            var subscription = await _subscriptionService.GetActiveSubscriptionAsync(user.Email);
+            
+            return View(subscription);
+        }
     }
 }

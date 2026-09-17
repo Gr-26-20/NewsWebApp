@@ -17,9 +17,18 @@
         {
             <article class="category-article">
 
-                <div class="image-placeholder category-image">
-                    IMAGE
-                </div>
+                @if (!string.IsNullOrWhiteSpace(article.ImageUrl))
+                {
+                    <img src="@article.ImageUrl"
+                         alt="@article.Title"
+                         class="article-image category-image" />
+                }
+                else
+                {
+                    <div class="image-placeholder category-image">
+                        IMAGE
+                    </div>
+                }
 
                 <div class="story-category">
                     @article.Category

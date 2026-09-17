@@ -1,0 +1,25 @@
+﻿@* Archived Articles *@
+
+@model List<NewsWebApp.Models.Articles>
+
+@if( Model.Any(a => a.IsArchived))
+{
+    <ul>
+        @foreach (var article in Model.Where(a => a.IsArchived))
+        {
+            <li>
+                <a href="@Url.Action("Details", "Articles", new { id = article.Id })">
+                    @article.Title
+                </a>
+                <p>@article.Summary</p>
+                <p>@article.Category</p>
+                <p>@article.Author</p>
+                <p>@article.CreatedAt</p>
+            </li>
+        }
+    </ul>
+}
+else
+{
+    <p>No archived articles available.</p>
+}

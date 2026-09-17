@@ -21,7 +21,23 @@ namespace NewsWebApp.Services
         public async Task<List<Articles>> GetArticlesByCategoryAsync(string category)
         {
             return await _context.Articles
-                .Where(a => a.Category == category)
+                .Where(a => a.Category == category && !a.IsArchived)
+                .OrderByDescending(a => a.CreatedAt)
+                .ToListAsync();
+        }
+
+        public async Task<List<Articles>> GetArchivedArticlesAsync()
+        {
+            return await _context.Articles
+                .Where(a => a.IsArchived)
+                .OrderByDescending(a => a.CreatedAt)
+                .ToListAsync();
+        }
+
+        public async Task<List<Articles>> GetEditorsChoiceArticlesAsync()
+        {
+            return await _context.Articles
+                .Where(a => a.EditorChoice)
                 .OrderByDescending(a => a.CreatedAt)
                 .ToListAsync();
         }

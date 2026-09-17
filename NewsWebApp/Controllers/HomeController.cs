@@ -44,6 +44,11 @@ namespace NewsWebApp.Controllers
                 SportsArticles = (await _articleService
                     .GetArticlesByCategoryAsync("Sports"))
                     .Take(1)
+                    .ToList(),
+
+                EditorsChoiceArticles = (await _articleService
+                    .GetEditorsChoiceArticlesAsync())
+                    .Take(3)
                     .ToList()
             };
             var selectedStationId = stationId ?? "angered_tv";

@@ -41,7 +41,9 @@
                 <a href="/Categories/Sweden">SWEDEN</a>
                 <a href="/Categories/Weather">WEATHER</a>
                 <a href="/Categories/Sports">SPORTS</a>
-                <a href="/Categories/EditorsChoice">EDITOR'S CHOICE</a>
+                <a asp-controller="Articles" asp-action="EditorsChoice">EDITOR'S CHOICE</a>
+                <a asp-controller="Articles" asp-action="Archived">ARCHIVE</a>
+
                 <a href="/Categories/Newsletter">NEWSLETTER</a>
                 @if (SignInManager.IsSignedIn(User))
                 {
@@ -184,20 +186,25 @@
 
                         <h2>EDITOR'S CHOICE</h2>
 
-                        <article class="sidebar-story">
-                            <span>01</span>
-                            <h3>EDITOR'S CHOICE STORY</h3>
-                        </article>
-
-                        <article class="sidebar-story">
-                            <span>02</span>
-                            <h3>EDITOR'S CHOICE STORY</h3>
-                        </article>
-
-                        <article class="sidebar-story">
-                            <span>03</span>
-                            <h3>EDITOR'S CHOICE STORY</h3>
-                        </article>
+                        @if (Model.EditorsChoiceArticles.Any())
+                        {
+                            for (int i = 0; i < Model.EditorsChoiceArticles.Count; i++)
+                            {
+                                var choiceArticle = Model.EditorsChoiceArticles[i];
+                                <article class="sidebar-story">
+                                    <span>@((i + 1).ToString("00"))</span>
+                                    <h3>
+                                        <a href="/Articles/Details/@choiceArticle.Id">
+                                            @choiceArticle.Title
+                                        </a>
+                                    </h3>
+                                </article>
+                            }
+                        }
+                        else
+                        {
+                            <p>No editor's choice articles yet.</p>
+                        }
 
                     </aside>
 

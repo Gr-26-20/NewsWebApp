@@ -9,6 +9,12 @@ namespace NewsWebApp.Controllers
     public class ArticlesController : Controller
     {
         private readonly ApplicationDbContext _context;
+        private readonly IArticleService _articleService;
+
+        public ArticlesController(ApplicationDbContext context, IArticleService articleService)
+        {
+            _context = context;
+            _articleService = articleService;
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly ISubscriptionService _subscriptionService;
 
@@ -48,6 +54,20 @@ namespace NewsWebApp.Controllers
             return View(article);
         }
 
+        public async Task<IActionResult> Archived()
+        {
+            var archivedArticles = await _context.Articles
+                .Where(a => a.IsArchived)
+                .ToListAsync();
+
+            return View(archivedArticles);
+        }
+
+        public async Task<IActionResult> EditorsChoice()
+        {
+            var editorsChoiceArticles = await _articleService.GetEditorsChoiceArticlesAsync();
+
+            return View(editorsChoiceArticles);
         [HttpPost]
         public async Task<IActionResult> Like(int id)
         {

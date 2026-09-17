@@ -870,3 +870,19 @@ img {
     font-size: 26px;
     margin-right: 10px;
 }
+
+@media (max-width: 700px) {
+
+    .weather-placeholder {
+        flex-wrap: wrap;
+        gap: 12px;
+    }
+
+    .weather-info {
+        width: 100%;
+    }
+
+    .weather-station-select {
+        max-width: 100%;
+    }
+}

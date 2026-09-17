@@ -37,7 +37,27 @@ namespace NewsWebApp.Controllers
                 if (!hasAccess)
                     return RedirectToAction("Index", "Subscription");
             }
-                return View(article);
+            article.Views++;
+            await _context.SaveChangesAsync();
+            return View(article);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> Like(int id)
+        {
+            var article = await _context.Articles.FindAsync(id);
+            if (article == null)
+            {
+                return NotFound();
+            }
+            var sessionKey = $"Liked_{id}";
+            if(HttpContext.Session.GetString(sessionKey) == null)
+            {
+                article.Likes++;
+                await _context.SaveChangesAsync();
+                HttpContext.Session.SetString(sessionKey, "true");
+            }
+            return Json(new { likes = article.Likes });
         }
     }
 }

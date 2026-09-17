@@ -222,7 +222,10 @@ a {
 }
 
 .category-image {
-    min-height: 220px;
+    width: 100%;
+    height: 220px;
+    object-fit: cover;
+    display: block;
 }
 
 .category-article:first-child {
@@ -557,10 +560,8 @@ a {
         font-weight: 900;
     }
     .compact-story .article-image {
-        width: 130px;
-        height: 110px;
-        object-fit: cover;
-        display: block;
+        max-width: 100%;
+        height: auto;
     }
 
 /* ---------------------------------------------------------

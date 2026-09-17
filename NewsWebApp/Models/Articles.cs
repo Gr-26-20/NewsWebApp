@@ -16,5 +16,6 @@ namespace NewsWebApp.Models
         public bool IsArchived { get; set; }
         public bool EditorChoice { get; set; }
         public string Category { get; set; }
+        public bool IsSubscribedUsers { get; set; }
     }
 }

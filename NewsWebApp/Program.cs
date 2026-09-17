@@ -36,6 +36,10 @@ namespace NewsWebApp
             //Article service registration
             builder.Services.AddScoped<IArticleService, ArticleService>();
 
+            builder.Services.AddMemoryCache();
+            builder.Services.AddHttpClient<WeatherService>(); // for making HTTP requests
+            builder.Services.AddHttpClient<SmhiWeatherService>();
+
             builder.Services.Configure<CookiePolicyOptions>(options =>
             {
                 options.CheckConsentNeeded = context => true;
@@ -43,7 +47,7 @@ namespace NewsWebApp
                 options.ConsentCookieValue = "true";
             });
 
-            
+            builder.Services.AddSession();
             var app = builder.Build();
 
             // Configure the HTTP request pipeline.
@@ -60,6 +64,7 @@ namespace NewsWebApp
 
             app.UseHttpsRedirection();
             app.UseRouting();
+            app.UseSession();
             app.UseAuthentication();
             app.UseAuthorization();
             app.UseCookiePolicy();

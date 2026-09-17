@@ -47,7 +47,7 @@ namespace NewsWebApp
                 options.ConsentCookieValue = "true";
             });
 
-            
+            builder.Services.AddSession();
             var app = builder.Build();
 
             // Configure the HTTP request pipeline.
@@ -64,6 +64,7 @@ namespace NewsWebApp
 
             app.UseHttpsRedirection();
             app.UseRouting();
+            app.UseSession();
             app.UseAuthentication();
             app.UseAuthorization();
             app.UseCookiePolicy();

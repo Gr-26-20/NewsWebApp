@@ -37,8 +37,14 @@ namespace NewsWebApp.Controllers
                 if (!hasAccess)
                     return RedirectToAction("Index", "Subscription");
             }
-            article.Views++;
-            await _context.SaveChangesAsync();
+           
+            var viewKey = $"viewed_{id}";
+            if (HttpContext.Session.GetString(viewKey) == null)
+            {
+                article.Views++;
+                await _context.SaveChangesAsync();
+                HttpContext.Session.SetString(viewKey, "true");
+            }
             return View(article);
         }
 

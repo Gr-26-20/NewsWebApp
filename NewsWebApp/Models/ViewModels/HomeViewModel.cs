@@ -11,5 +11,7 @@ namespace NewsWebApp.Models.ViewModels
         public List<Articles> SwedenArticles { get; set; } = new();
 
         public List<Articles> SportsArticles { get; set; } = new();
+
+        public List<Articles> EditorsChoiceArticles { get; set; } = new();
     }
 }

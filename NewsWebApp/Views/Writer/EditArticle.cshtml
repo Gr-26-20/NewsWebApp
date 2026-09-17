@@ -9,7 +9,7 @@
 <h4>Articles</h4>
 <hr />
 <div class="row">
-    <div class="col-md-4">
+    <div class="col-md-7">
         <form asp-action="EditArticle" method="post" enctype="multipart/form-data">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <input type="hidden" asp-for="Id" />
@@ -48,7 +48,7 @@
                     </div>
                 }
                 <input type="hidden" asp-for="ImageUrl" />
-                <label for="ImageFile" class="control-label">Replace Image</label>
+                <label for="ImageFile" class="control-label mb-2">Replace Image</label>
                 <input type="file" name="ImageFile" id="ImageFile" class="form-control" accept="image/*" />
             </div>
             @*<div class="form-group">
@@ -77,6 +77,12 @@
                 <span asp-validation-for="IsArchived" class="text-danger"></span>
             </div>
             <div class="form-group">
+                <label asp-for="EditorChoice" class="control-label"></label>
+                <input asp-for="EditorChoice" class="form-check-input" />
+                <span asp-validation-for="EditorChoice" class="text-danger"></span>
+            </div>
+
+            <div class="form-group">
                 <label asp-for="Category" class="control-label"></label>
 
                 <select asp-for="Category" class="form-control">
@@ -86,7 +92,6 @@
                     <option value="Sweden">Sweden</option>
                     <option value="Weather">Weather</option>
                     <option value="Sports">Sports</option>
-                    <option value="EditorsChoice">Editor's Choice</option>
                 </select>
 
                 <span asp-validation-for="Category" class="text-danger"></span>

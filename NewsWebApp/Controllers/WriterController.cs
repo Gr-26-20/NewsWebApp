@@ -68,6 +68,7 @@ namespace NewsWebApp.Controllers
                     CreatedAt = DateTime.UtcNow,
                     UpdatedAt = DateTime.UtcNow,
                     IsArchived = false,
+                    EditorChoice = article.EditorChoice,
                     Category = article.Category
                 };
 

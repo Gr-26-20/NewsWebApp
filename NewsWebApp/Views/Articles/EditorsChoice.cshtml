@@ -1,0 +1,23 @@
+@model List<NewsWebApp.Models.Articles>
+
+@{
+    ViewData["Title"] = "Editor's Choice";
+}
+
+<div class="editors-choice">
+    <h2>Editor's Choice</h2>
+    <ul>
+        @foreach (var article in Model)
+        {
+            <li>
+                <a href="@Url.Action("Details", "Articles", new { id = article.Id })">
+                    @article.Title
+                </a>
+                <p>@article.Summary</p>
+                <p>@article.Category</p>
+                <p>@article.Author</p>
+                <p>@article.CreatedAt</p>
+            </li>
+        }
+    </ul>
+</div>

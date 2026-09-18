@@ -5,11 +5,19 @@
 namespace NewsWebApp.Data.Migrations
 {
     /// <inheritdoc />
-    public partial class addedcontent : Migration
+    public partial class editosChoice : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
+            migrationBuilder.AlterColumn<string>(
+                name: "ImageUrl",
+                table: "Articles",
+                type: "nvarchar(max)",
+                nullable: true,
+                oldClrType: typeof(string),
+                oldType: "nvarchar(max)");
+
             migrationBuilder.AddColumn<bool>(
                 name: "EditorChoice",
                 table: "Articles",
@@ -24,6 +32,16 @@ namespace NewsWebApp.Data.Migrations
             migrationBuilder.DropColumn(
                 name: "EditorChoice",
                 table: "Articles");
+
+            migrationBuilder.AlterColumn<string>(
+                name: "ImageUrl",
+                table: "Articles",
+                type: "nvarchar(max)",
+                nullable: false,
+                defaultValue: "",
+                oldClrType: typeof(string),
+                oldType: "nvarchar(max)",
+                oldNullable: true);
         }
     }
 }

@@ -952,3 +952,30 @@ img {
         border-bottom: 1px solid var(--border);
     }
 }
+/* ---------------------------------------------------------
+   Likes and Views buttons
+    */
+.article-stats {
+    display: flex;
+    gap: 1.5rem;
+    align-items: center;
+    font-size: 0.9rem;
+    font-weight: 600;
+    letter-spacing: 0.05em;
+}
+
+.btn-like {
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    color: inherit;
+    font-size: 0.9rem;
+    font-weight: 600;
+    letter-spacing: 0.05em;
+    padding: 0;
+}
+
+    .btn-like:disabled {
+        cursor: default;
+        opacity: 0.5;
+    }

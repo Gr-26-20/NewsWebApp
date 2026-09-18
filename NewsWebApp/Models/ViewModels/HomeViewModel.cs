@@ -12,6 +12,7 @@ namespace NewsWebApp.Models.ViewModels
 
         public List<Articles> SportsArticles { get; set; } = new();
 
+        public List<Articles> EditorsChoiceArticles { get; set; } = new();
         public WeatherStation? Weather { get; set; }
         public SmhiWeatherData? SmhiWeather { get; set; }
 

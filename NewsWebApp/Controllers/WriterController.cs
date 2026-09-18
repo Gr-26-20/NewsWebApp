@@ -68,6 +68,7 @@ namespace NewsWebApp.Controllers
                     CreatedAt = DateTime.UtcNow,
                     UpdatedAt = DateTime.UtcNow,
                     IsArchived = false,
+                    EditorChoice = article.EditorChoice,
                     Category = article.Category
                 };
 
@@ -112,7 +113,7 @@ namespace NewsWebApp.Controllers
             return View(article);
         }
 
-        //[Authorize(Roles = "WRITER")]
+        [Authorize(Roles = "WRITER")]
         public async Task<IActionResult> DeleteArticle(int id)
         {
             var article = await _context.Articles.FindAsync(id);

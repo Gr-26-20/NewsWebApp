@@ -5,25 +5,24 @@
 namespace NewsWebApp.Data.Migrations
 {
     /// <inheritdoc />
-    public partial class addedcontent : Migration
+    public partial class AddedLogoToNewsletter : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.AddColumn<bool>(
-                name: "EditorChoice",
-                table: "Articles",
-                type: "bit",
-                nullable: false,
-                defaultValue: false);
+            migrationBuilder.AddColumn<string>(
+                name: "Logo",
+                table: "NewsLetters",
+                type: "nvarchar(max)",
+                nullable: true);
         }
 
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropColumn(
-                name: "EditorChoice",
-                table: "Articles");
+                name: "Logo",
+                table: "NewsLetters");
         }
     }
 }

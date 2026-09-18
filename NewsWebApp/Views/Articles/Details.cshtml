@@ -58,10 +58,31 @@
         </div>
 
         <div class="article-stats">
-            <span>♥ @Model.Likes LIKES</span>
+            <button id="likeBtn" class="btn-like" onclick="likeArticle(@Model.Id)">
+                ♥ <span id="likeCount">@Model.Likes</span> LIKES
+            </button>
             <span>👁 @Model.Views VIEWS</span>
         </div>
 
     </article>
 
 </div>
+
+
+@Html.AntiForgeryToken()
+@section Scripts
+{
+    <script>
+    async function likeArticle(id) {
+        
+        const response = await fetch(`/Articles/Like/${id}`, {
+            method: 'POST',
+           
+        });
+        const data = await response.json();
+        document.getElementById('likeCount').textContent = data.likes;
+        document.getElementById('likeBtn').disabled = true;
+        document.getElementById('likeBtn').style.opacity = 0.5;
+    }
+    </script>
+}

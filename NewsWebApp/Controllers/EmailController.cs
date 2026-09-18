@@ -176,7 +176,7 @@ namespace NewsWebApp.Controllers
 
                 newsLetter = new NewsLetter
                 {
-                    
+                    Logo = newsLetter.Logo,
                     Email = newsLetter.Email,
                     Subject = newsLetter.Subject,
                     Category = newsLetter.Category,
@@ -185,14 +185,14 @@ namespace NewsWebApp.Controllers
                     Title = newsLetter.Title,
                     Description = newsLetter.Description,
                     link = newsLetter.link,
-                    //imageUrl2 = newsLetter.imageUrl2,
-                    //Title2 = newsLetter.Title2,
-                    //Description2 = newsLetter.Description2,
-                    //link2 = newsLetter.link2,
-                    //imageUrl3 = newsLetter.imageUrl3,
-                    //Title3 = newsLetter.Title3,
-                    //Description3 = newsLetter.Description3,
-                    //link3 = newsLetter.link3
+                    imageUrl2 = newsLetter.imageUrl2,
+                    Title2 = newsLetter.Title2,
+                    Description2 = newsLetter.Description2,
+                    link2 = newsLetter.link2,
+                    imageUrl3 = newsLetter.imageUrl3,
+                    Title3 = newsLetter.Title3,
+                    Description3 = newsLetter.Description3,
+                    link3 = newsLetter.link3
                 };
 
                 _context.NewsLetters.Add(newsLetter);

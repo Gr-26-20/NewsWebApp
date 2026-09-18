@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.Text;
 
 namespace NewsWebApp.Models
 {
@@ -14,7 +15,7 @@ namespace NewsWebApp.Models
         public string Subject { get; set; } = string.Empty;
 
         
-        public string Body { get; set; } = string.Empty;
+        public string Body { get; set; }
 
         public string? imageUrl { get; set; } = string.Empty;
 

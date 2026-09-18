@@ -1,0 +1,193 @@
+﻿@model NewsWebApp.Models.ViewModels.ForecastViewModel
+
+@{
+    ViewData["Title"] = "Weather";
+
+    string GetWeatherSymbol(string summary)
+    {
+        summary = summary?.ToLower() ?? "";
+
+        if (summary.Contains("thunder"))
+            return "⛈️";
+
+        if (summary.Contains("snow"))
+            return "❄️";
+
+        if (summary.Contains("rain"))
+            return "🌧️";
+
+        if (summary.Contains("partly"))
+            return "🌤️";
+
+        if (summary.Contains("cloud"))
+            return "☁️";
+
+        if (summary.Contains("clear") || summary.Contains("sun"))
+            return "☀️";
+
+        return "🌤️";
+    }
+}
+
+<div class="forecast-page">
+
+    <div class="forecast-page-header">
+        <h1>WEATHER</h1>
+
+        <a href="/" class="full-forecast-link">
+            BACK TO NEWS →
+        </a>
+    </div>
+
+
+    <!-- CURRENT WEATHER -->
+
+    <section class="current-weather">
+
+        <div class="current-weather-main">
+
+            <div class="current-location">
+                @Model.HourlyForecast.FirstOrDefault()?.City
+            </div>
+
+            <div class="current-temperature">
+                @Model.HourlyForecast.FirstOrDefault()?.TemperatureC°C
+            </div>
+
+            <div class="current-condition">
+                @Model.HourlyForecast.FirstOrDefault()?.Summary
+            </div>
+
+        </div>
+
+        <div class="current-weather-details">
+
+            <div class="weather-detail">
+                <span>HUMIDITY</span>
+                <strong>
+                    @Model.HourlyForecast.FirstOrDefault()?.Humidity%
+                </strong>
+            </div>
+
+            <div class="weather-detail">
+                <span>WIND</span>
+                <strong>
+                    @Model.HourlyForecast.FirstOrDefault()?.WindSpeed m/s
+                </strong>
+            </div>
+
+        </div>
+
+    </section>
+
+
+    <!-- NEXT 24 HOURS -->
+
+    <section class="forecast-section">
+
+        <div class="forecast-heading">
+            <h2>NEXT 24 HOURS</h2>
+        </div>
+
+        <!-- DESKTOP -->
+
+        <div class="hourly-desktop">
+
+            <div class="hourly-day">
+                TODAY
+            </div>
+
+            <div class="hourly-grid">
+
+                @foreach (var weather in Model.HourlyForecast)
+                {
+                    <div class="hourly-column">
+                        <strong class="hourly-time">
+                            @weather.Date.ToString("HH:mm")
+                        </strong>
+
+                        <strong class="hourly-temperature">
+                            @weather.TemperatureC°C
+                        </strong>
+
+                        <span class="hourly-symbol">
+                            @GetWeatherSymbol(weather.Summary)
+                        </span>
+
+                        <span class="hourly-wind">
+                            @weather.WindSpeed m/s
+                        </span>
+
+                        <span class="hourly-humidity">
+                            @weather.Humidity%
+                        </span>
+                    </div>
+                }
+
+            </div>
+
+        </div>
+
+
+        <!-- MOBILE -->
+        <div class="hourly-mobile">
+            @foreach (var weather in Model.HourlyForecast)
+            {
+                <div class="forecast-row">
+                    <strong>
+                        @weather.Date.ToString("HH:mm")
+                    </strong>
+
+                    <span class="forecast-symbol">
+                        @GetWeatherSymbol(weather.Summary)
+                    </span>
+
+                    <strong>
+                        @weather.TemperatureC°C
+                    </strong>
+
+                    <span>
+                        @weather.Summary
+                    </span>
+                </div>
+            }
+        </div>
+
+    </section>
+
+
+    <!-- 5 DAY FORECAST -->
+
+    <section class="forecast-section">
+
+        <div class="forecast-heading">
+            <h2>5 DAY FORECAST</h2>
+        </div>
+
+        <div class="five-day-forecast">
+
+            @foreach (var weather in Model.FiveDayForecast)
+            {
+                <div class="forecast-day">
+
+                    <strong>
+                        @weather.Date.ToString("ddd").ToUpper()
+                    </strong>
+
+                    <span>
+                        @weather.TemperatureC°C
+                    </span>
+
+                    <small>
+                        @weather.Summary
+                    </small>
+
+                </div>
+            }
+
+        </div>
+
+    </section>
+
+</div>
+

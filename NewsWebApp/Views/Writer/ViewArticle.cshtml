@@ -5,7 +5,7 @@
 }
 
 @model NewsWebApp.Models.Articles
-@if (Model == null)
+@if ( Model.IsArchived)
 {
 	<h4>No articles found.</h4>
 }

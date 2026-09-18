@@ -41,7 +41,9 @@
                 <a href="/Categories/Sweden">SWEDEN</a>
                 <a href="/Categories/Weather">WEATHER</a>
                 <a href="/Categories/Sports">SPORTS</a>
-                <a href="/Categories/EditorsChoice">EDITOR'S CHOICE</a>
+                <a asp-controller="Articles" asp-action="EditorsChoice">EDITOR'S CHOICE</a>
+                <a asp-controller="Articles" asp-action="Archived">ARCHIVE</a>
+
                 <a href="/Categories/Newsletter">NEWSLETTER</a>
                 @if (SignInManager.IsSignedIn(User))
                 {
@@ -150,18 +152,9 @@
                                 }
                                 else
                                 {
-                                    @if (!string.IsNullOrWhiteSpace(article.ImageUrl))
-                                    {
-                                        <img src="@article.ImageUrl"
-                                             alt="@article.Title"
-                                             class="article-image" />
-                                    }
-                                    else
-                                    {
-                                        <div class="image-placeholder">
-                                            IMAGE
-                                        </div>
-                                    }
+                                    <div class="image-placeholder">
+                                        IMAGE
+                                    </div>
                                 }
 
                                 <div>
@@ -193,20 +186,25 @@
 
                         <h2>EDITOR'S CHOICE</h2>
 
-                        <article class="sidebar-story">
-                            <span>01</span>
-                            <h3>EDITOR'S CHOICE STORY</h3>
-                        </article>
-
-                        <article class="sidebar-story">
-                            <span>02</span>
-                            <h3>EDITOR'S CHOICE STORY</h3>
-                        </article>
-
-                        <article class="sidebar-story">
-                            <span>03</span>
-                            <h3>EDITOR'S CHOICE STORY</h3>
-                        </article>
+                        @if (Model.EditorsChoiceArticles.Any())
+                        {
+                            for (int i = 0; i < Model.EditorsChoiceArticles.Count; i++)
+                            {
+                                var choiceArticle = Model.EditorsChoiceArticles[i];
+                                <article class="sidebar-story">
+                                    <span>@((i + 1).ToString("00"))</span>
+                                    <h3>
+                                        <a href="/Articles/Details/@choiceArticle.Id">
+                                            @choiceArticle.Title
+                                        </a>
+                                    </h3>
+                                </article>
+                            }
+                        }
+                        else
+                        {
+                            <p>No editor's choice articles yet.</p>
+                        }
 
                     </aside>
 
@@ -413,16 +411,60 @@
 
             <div class="weather-placeholder">
 
-                <div class="weather-city">
+                <div class="weather-city" id="weatherCity">
                     GOTHENBURG
                 </div>
 
-                <div class="weather-temp">
-                    --°
+                <div id="weatherTemperature" class="weather-temp">
+                    @Model.Weather?.Temp°
+                </div>
+
+                <div id="weatherCondition" class="weather-condition">
+                    @Model.SmhiWeather?.SymbolDescription?.ToUpper()
+                </div>
+
+                <div id="weatherMessage" class="weather-message">
+                    <div class="weather-message-title"></div>
+                    <div class="weather-message-text"></div>
                 </div>
 
                 <div class="weather-info">
-                    WEATHER DATA GOES HERE
+                    LIVE TEMPERATURE
+
+                    <select id="weatherMunicipality"
+                            class="weather-station-select">
+
+                        @foreach (var municipality in Model.Municipalities)
+                        {
+                            <option value="@municipality.ApiValue">
+                                @municipality.Name
+                            </option>
+                        }
+
+                    </select>
+                    
+
+                    <select id="weatherStation"
+                            class="weather-station-select">
+
+                        @foreach (var station in Model.WeatherStations)
+                        {
+                            <option value="@station.Id">
+                                @station.Title
+                            </option>
+                        }
+
+                    </select>
+
+                </div>
+
+                <div class="weather-attribution">
+                    Weather API provided by
+                    <a href="https://www.temperatur.nu/"
+                       target="_blank"
+                       rel="noopener noreferrer">
+                        temperatur.nu
+                    </a>
                 </div>
 
             </div>
@@ -432,3 +474,166 @@
     </main>
 
 </div>
+@section Scripts
+{
+    <script>
+
+        let municipalityRequestNumber = 0;
+
+
+        // Change Temperatur.nu station
+        document.getElementById("weatherStation").addEventListener("change", async function()
+        {
+
+            const stationId = this.value;
+
+            const response =
+                await fetch(`/Home/GetWeather?stationId=${stationId}`);
+
+            if (!response.ok)
+            {
+                return;
+            }
+
+            const weather = await response.json();
+
+            document.getElementById("weatherTemperature").textContent =
+                weather.temp + "°";
+        });
+
+
+        // Change municipality
+        document.getElementById("weatherMunicipality").addEventListener("change", async function()
+        {
+
+            const municipality = this.value;
+
+            const municipalityName =
+                this.options[this.selectedIndex].text;
+
+            document.getElementById("weatherCity").textContent =
+                municipalityName.toUpperCase();
+
+
+            // Give this municipality selection a unique number
+            const requestNumber = ++municipalityRequestNumber;
+
+
+            // TEMPERATUR.NU
+
+            const response =
+                await fetch(`/Home/GetStations?municipality=${municipality}`);
+
+            if (!response.ok)
+            {
+                return;
+            }
+
+            const result = await response.json();
+
+
+            // Ignore an older request if the user has already
+            // selected another municipality
+            if (requestNumber !== municipalityRequestNumber)
+            {
+                return;
+            }
+
+
+            // Check if Temperatur.nu has temporarily blocked requests
+            
+            // if (true) // Swap "if (result.isBlocked)" for checking time limit error message
+            if (result.isBlocked)
+            {
+                document.getElementById("weatherMessage").querySelector(".weather-message-title").textContent =
+                    "LIVE TEMPERATURE TEMPORARILY UNAVAILABLE";
+
+                document.getElementById("weatherMessage").querySelector(".weather-message-text").textContent =
+                    "The external weather service has reached its request limit. Please try again later.";
+
+                document.getElementById("weatherTemperature").textContent =
+                    "";
+
+                document.getElementById("weatherStation").innerHTML =
+                    "";
+            }
+            else
+            {
+                document.getElementById("weatherMessage").querySelector(".weather-message-title").textContent = "";
+
+                document.getElementById("weatherMessage").querySelector(".weather-message-text").textContent = "";
+            }
+
+
+            const stations = result.stations;
+
+            const stationSelect =
+                document.getElementById("weatherStation");
+
+            stationSelect.innerHTML = "";
+
+
+            stations.forEach(function(station)
+            {
+                const option =
+                    document.createElement("option");
+
+                option.value = station.id;
+                option.textContent = station.title;
+
+                stationSelect.appendChild(option);
+            });
+
+
+            // Select the first station and get its temperature
+            if (stations.length > 0)
+            {
+                stationSelect.value = stations[0].id;
+
+                const weatherResponse =
+                    await fetch(
+                        `/Home/GetWeather?stationId=${stations[0].id}`
+                    );
+
+                if (weatherResponse.ok)
+                {
+                    const weather =
+                        await weatherResponse.json();
+
+                    document.getElementById("weatherTemperature").textContent =
+                        weather.temp + "°";
+                }
+            }
+
+
+            // SMHI
+
+            const smhiResponse =
+                await fetch(
+                    `/Home/GetSmhiWeather?municipality=${municipality}`
+                );
+
+            if (!smhiResponse.ok)
+            {
+                return;
+            }
+
+            const smhiWeather =
+                await smhiResponse.json();
+
+
+            // Ignore an older municipality request
+            if (requestNumber !== municipalityRequestNumber)
+            {
+                return;
+            }
+
+            document.getElementById("weatherCondition").textContent =
+                smhiWeather.symbolDescription.toUpperCase();
+
+        });
+
+    </script>
+}
+
+

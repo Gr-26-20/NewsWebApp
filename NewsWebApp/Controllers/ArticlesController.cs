@@ -9,6 +9,14 @@ namespace NewsWebApp.Controllers
     public class ArticlesController : Controller
     {
         private readonly ApplicationDbContext _context;
+        private readonly IArticleService _articleService;
+
+        public ArticlesController(ApplicationDbContext context, IArticleService articleService)
+        {
+            _context = context;
+            _articleService = articleService;
+
+        }
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly ISubscriptionService _subscriptionService;
 
@@ -37,7 +45,49 @@ namespace NewsWebApp.Controllers
                 if (!hasAccess)
                     return RedirectToAction("Index", "Subscription");
             }
-                return View(article);
+           
+            var viewKey = $"viewed_{id}";
+            if (HttpContext.Session.GetString(viewKey) == null)
+            {
+                article.Views++;
+                await _context.SaveChangesAsync();
+                HttpContext.Session.SetString(viewKey, "true");
+            }
+            return View(article);
+        }
+
+        public async Task<IActionResult> Archived()
+        {
+            var archivedArticles = await _context.Articles
+                .Where(a => a.IsArchived)
+                .ToListAsync();
+
+            return View(archivedArticles);
+        }
+
+        public async Task<IActionResult> EditorsChoice()
+        {
+            var editorsChoiceArticles = await _articleService.GetEditorsChoiceArticlesAsync();
+
+            return View(editorsChoiceArticles);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> Like(int id)
+        {
+            var article = await _context.Articles.FindAsync(id);
+            if (article == null)
+            {
+                return NotFound();
+            }
+            var sessionKey = $"Liked_{id}";
+            if(HttpContext.Session.GetString(sessionKey) == null)
+            {
+                article.Likes++;
+                await _context.SaveChangesAsync();
+                HttpContext.Session.SetString(sessionKey, "true");
+            }
+            return Json(new { likes = article.Likes });
         }
     }
 }

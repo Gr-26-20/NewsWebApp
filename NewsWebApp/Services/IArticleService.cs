@@ -7,5 +7,7 @@ namespace NewsWebApp.Services
         Task<List<Articles>> GetAllArticlesAsync();
 
         Task<List<Articles>> GetArticlesByCategoryAsync(string category);
+        Task<List<Articles>> GetArchivedArticlesAsync();
+        Task<List<Articles>> GetEditorsChoiceArticlesAsync();
     }
 }

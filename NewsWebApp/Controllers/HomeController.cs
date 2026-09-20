@@ -97,6 +97,10 @@ namespace NewsWebApp.Controllers
         [HttpGet]
         public async Task<IActionResult> GetSmhiWeather(string municipality)
         {
+            HttpContext.Session.SetString(
+            "SelectedWeatherMunicipality",
+            municipality);
+
             var model = new HomeViewModel();
 
             var selectedMunicipality = model.Municipalities

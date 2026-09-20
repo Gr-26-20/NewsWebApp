@@ -15,11 +15,15 @@ namespace NewsWebApp.Controllers
 
         public async Task<IActionResult> Index()
         {
+            var municipality =
+                HttpContext.Session.GetString("SelectedWeatherMunicipality")
+                ?? "Gothenburg";
+
             var hourlyForecast =
-                await _weatherService.Get24HourForecastAsync();
+                await _weatherService.Get24HourForecastAsync(municipality);
 
             var fiveDayForecast =
-                await _weatherService.Get5DayForecastAsync();
+                await _weatherService.Get5DayForecastAsync(municipality);
 
             var model = new ForecastViewModel
             {

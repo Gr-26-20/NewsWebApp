@@ -46,10 +46,10 @@ namespace NewsWebApp.Services
 
             return station;
         }
-        public async Task<List<WeatherForecast>> Get24HourForecastAsync()
+        public async Task<List<WeatherForecast>> Get24HourForecastAsync(string location)
         {
             var url =
-                "https://weatherapi.dreammaker-it.se/Forecast/24Hours?location=Gothenburg&lang=en";
+                $"https://weatherapi.dreammaker-it.se/Forecast/24Hours?location={location}&lang=en";
 
             var response =
                 await _httpClient.GetStringAsync(url);
@@ -65,10 +65,12 @@ namespace NewsWebApp.Services
                         return forecast ?? new List<WeatherForecast>();
         }
 
-        public async Task<List<WeatherForecast>> Get5DayForecastAsync()
+        public async Task<List<WeatherForecast>> Get5DayForecastAsync(string location)
         {
             var url =
-                "https://weatherapi.dreammaker-it.se/Forecast/5Days?location=Gothenburg&lang=en";
+                $"https://weatherapi.dreammaker-it.se/Forecast/5Days?location={location}&lang=en";
+
+
 
             var response =
                 await _httpClient.GetStringAsync(url);

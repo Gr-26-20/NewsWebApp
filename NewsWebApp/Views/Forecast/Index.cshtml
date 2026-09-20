@@ -161,8 +161,17 @@
     <section class="forecast-section">
 
         <div class="forecast-heading">
-            <h2>5 DAY FORECAST</h2>
-        </div>
+            <h2>
+                @if (Model.FiveDayForecast.Count == 6)
+                {
+                    <text>TODAY & 5 DAY FORECAST</text>
+                }
+                else
+                {
+                    <text>5 DAY FORECAST</text>
+                }
+            </h2>
+       </div>
 
         <div class="five-day-forecast">
 

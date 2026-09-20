@@ -1195,6 +1195,12 @@ img {
     border-bottom: 2px solid var(--border);
 }
 
+@media (min-width: 701px) {
+    .five-day-forecast:has(.forecast-day:nth-child(5):last-child) {
+        grid-template-columns: repeat(5, minmax(0, 1fr));
+    }
+}
+
 .forecast-day {
     min-width: 0;
     padding: 10px 8px;
@@ -1209,7 +1215,7 @@ img {
     }
 
     .forecast-day strong {
-        font-size: .7rem;
+        font-size: .8rem;
         letter-spacing: .04em;
     }
 
@@ -1219,7 +1225,7 @@ img {
     }
 
     .forecast-day small {
-        font-size: .7rem;
+        font-size: .8rem;
         font-weight: 600;
         overflow-wrap: break-word;
     }

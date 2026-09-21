@@ -14,8 +14,24 @@ namespace NewsWebApp.Models
         public DateTime? CreatedAt { get; set; } = DateTime.UtcNow;
         public DateTime? UpdatedAt { get; set; } = DateTime.UtcNow;
         public bool IsArchived { get; set; }
+        public bool IsSubscribedUsers { get; set; }
+        //public bool IsApproved { get; set; } = false;
         public bool EditorChoice { get; set; }
         public string Category { get; set; }
-        public bool IsSubscribedUsers { get; set; }
+
+        public List<Feedback> Feedback { get; set; } = new ();
+
+        public enum Status
+        {
+            New,
+            Pending,
+            Approved,
+            Rejected,
+            Archived
+
+        }
+
+        public Status articleStatus { get; set; } = Status.New;
+
     }
 }

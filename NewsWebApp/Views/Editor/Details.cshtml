@@ -1,0 +1,28 @@
+  @* @model IEnumerable<NewsWebApp.Models.Feedback>  *@
+
+@{
+    ViewData["Title"] = "Details";
+}
+
+<h1>Details</h1>
+
+
+@* @model IEnumerable<NewsWebApp.Models.Feedback> *@
+@model IEnumerable<NewsWebApp.Models.Feedback>
+@* @model NewsWebApp.Models.ViewModels.FeedbackVM *@
+@* @model NewsWebApp.Models.Feedback *@
+
+@{
+    ViewData["Title"] = "Details";
+}
+
+@if(Model != null)
+{
+    <ul>
+        @foreach(var item in Model)
+        {
+            <li>@item.Feedbackstring</li>
+        }
+    </ul>
+}
+

@@ -41,5 +41,73 @@ namespace NewsWebApp.Services
                 .OrderByDescending(a => a.CreatedAt)
                 .ToListAsync();
         }
+
+        public async Task<List<Articles>> GetApprovedArticlesAsync()
+        {
+           return await _context.Articles
+                .Where(a => a.articleStatus == Articles.Status.New)
+                .OrderByDescending(a => a.CreatedAt)
+                .ToListAsync();
+        }
+
+        public async Task<List<Articles>> GetApprovedArticlesByCategoryAsync(string category)
+        {
+            return await _context.Articles
+               .AsAsyncEnumerable()
+               .Where(a => a.Category == category && !a.IsArchived && a.articleStatus == Articles.Status.Approved)
+               .OrderByDescending(a => a.CreatedAt)
+               .ToListAsync();
+        }
+
+        public async Task<List<Articles>> GetArticlesNewAsync()
+        {
+            return await _context.Articles
+                .Where(a => a.articleStatus == Articles.Status.New)
+                .OrderByDescending(a => a.CreatedAt)
+                .ToListAsync();
+                
+        }
+
+        public async Task<List<Articles>> GetArticlesPendingAsync()
+        {
+            return await _context.Articles
+                .Where(a => a.articleStatus == Articles.Status.Pending)
+                .OrderByDescending(a => a.CreatedAt)
+                .ToListAsync();
+
+        }
+
+        public async Task<List<Articles>> GetArticlesApprovedAsync()
+        {
+            return await _context.Articles
+                .Where(a => a.articleStatus == Articles.Status.Pending)
+                .OrderByDescending(a => a.CreatedAt)
+                .ToListAsync();
+
+        }
+
+        public async Task<List<Articles>> GetArticlesRejectedAsync()
+        {
+            return await _context.Articles
+                .Where(a => a.articleStatus == Articles.Status.Pending)
+                .OrderByDescending(a => a.CreatedAt)
+                .ToListAsync();
+
+        }
+
+        public async Task<List<Articles>> GetArticlesArchivedAsync()
+        {
+            return await _context.Articles
+                .Where(a => a.articleStatus == Articles.Status.Pending)
+                .OrderByDescending(a => a.CreatedAt)
+                .ToListAsync();
+
+        }
+
+        public List<Feedback> GetAllFeedbackForArticle(Articles article)
+        {
+            //var article = _context.Articles.FindAsync(id);
+            return article.Feedback;
+        }
     }
 }

@@ -69,7 +69,8 @@ namespace NewsWebApp.Controllers
                     UpdatedAt = DateTime.UtcNow,
                     IsArchived = false,
                     EditorChoice = article.EditorChoice,
-                    Category = article.Category
+                    Category = article.Category,
+                    articleStatus = Models.Articles.Status.New
                 };
 
                 _context.Articles.Add(article);
@@ -113,7 +114,7 @@ namespace NewsWebApp.Controllers
             return View(article);
         }
 
-        [Authorize(Roles = "WRITER")]
+        [Authorize(Roles = "Writer")]
         public async Task<IActionResult> DeleteArticle(int id)
         {
             var article = await _context.Articles.FindAsync(id);
@@ -269,6 +270,27 @@ namespace NewsWebApp.Controllers
                 return NotFound();
             }
             return View(article);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> ApproveArticle(int id)
+        {
+            var article = await _context.Articles.FindAsync(id);
+            if (ModelState.IsValid)
+            {
+                if (article == null)
+                {
+                    return NotFound();
+                }
+                else
+                {
+                    article.articleStatus = Models.Articles.Status.Approved;
+                    _context.Update(article);
+                    await _context.SaveChangesAsync();
+                    return RedirectToAction(nameof(Articles));
+                }
+            }
+            return RedirectToAction(nameof(Articles));
         }
     }
 }

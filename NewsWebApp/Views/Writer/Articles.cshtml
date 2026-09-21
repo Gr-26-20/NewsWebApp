@@ -15,6 +15,7 @@
 	<div class="card">
 		<div class="card-header">
 			<p><strong>Created At:</strong> @article.CreatedAt.ToString()</p>
+			<p><strong>Article status: </strong>@article.articleStatus</p>
 		</div>
 		<div class="card-body">
 			<h2>@article.Title</h2>
@@ -24,12 +25,13 @@
 			<p><strong>Category:</strong> @article.Category</p>
 			<p><strong>Views:</strong> @article.Views</p>
 			<p><strong>Likes:</strong> @article.Likes</p>
-			
 			<img src="@article.ImageUrl" alt="@article.Title" />
 		</div>
 		<div class="card-footer">
 			<a class="btn btn-primary" asp-action="EditArticle" asp-controller="Writer" asp-route-id="@article.Id">Edit</a>
 			<a class="btn btn-danger" asp-action="DeleteArticle" asp-controller="Writer" asp-route-id="@article.Id">Delete</a>
+			<a class="btn btn-warning" asp-action="Create" asp-controller="Editor" asp-route-id="@article.Id">Add feedback</a>
+			<a class="btn btn-info" asp-action="Details" asp-controller="Editor" asp-route-id="@article.Id">View feedback</a>
 		</div>
 	</div>
 }

@@ -3,27 +3,42 @@
 @{
     ViewData["Title"] = "Weather";
 
-    string GetWeatherSymbol(string summary)
+    string GetWeatherSymbol(WeatherForecast weather)
     {
-        summary = summary?.ToLower() ?? "";
+        var code = weather.Icon?.Code?.ToLower() ?? "";
 
-        if (summary.Contains("thunder"))
-            return "⛈️";
+        if (code.EndsWith("n"))
+        {
+            if (code.StartsWith("01"))
+                return "🌙";
 
-        if (summary.Contains("snow"))
-            return "❄️";
+            if (code.StartsWith("02"))
+                return "☁️";
 
-        if (summary.Contains("rain"))
-            return "🌧️";
+            if (code.StartsWith("03") || code.StartsWith("04"))
+                return "☁️";
+        }
 
-        if (summary.Contains("partly"))
+        if (code.StartsWith("01"))
+            return "☀️";
+
+        if (code.StartsWith("02"))
             return "🌤️";
 
-        if (summary.Contains("cloud"))
+        if (code.StartsWith("03") || code.StartsWith("04"))
             return "☁️";
 
-        if (summary.Contains("clear") || summary.Contains("sun"))
-            return "☀️";
+        if (code.StartsWith("09") || code.StartsWith("10"))
+            return "🌧️";
+
+        if (code.StartsWith("11"))
+            return "⛈️";
+
+        if (code.StartsWith("13"))
+            return "❄️";
+
+        if (code.StartsWith("50"))
+            return "🌫️";
 
         return "🌤️";
     }
@@ -111,7 +126,7 @@
                         </strong>
 
                         <span class="hourly-symbol">
-                            @GetWeatherSymbol(weather.Summary)
+                            @GetWeatherSymbol(weather)
                         </span>
 
                         <span class="hourly-wind">
@@ -139,7 +154,7 @@
                     </strong>
 
                     <span class="forecast-symbol">
-                        @GetWeatherSymbol(weather.Summary)
+                        @GetWeatherSymbol(weather)
                     </span>
 
                     <strong>
@@ -194,6 +209,9 @@
                 </div>
             }
 
+        </div>
+        <div class="forecast-credit">
+            Forecast data provided by DreamMaker IT · weatherapi.dreammaker-it.se
         </div>
 
     </section>

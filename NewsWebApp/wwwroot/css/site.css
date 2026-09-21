@@ -1230,6 +1230,13 @@ img {
         overflow-wrap: break-word;
     }
 
+    .forecast-credit {
+        margin-top: 12px;
+        text-align: right;
+        font-size: 10px;
+        color: var(--muted);
+    }
+
 /* =========================================================
    FORECAST MOBILE
 ========================================================= */

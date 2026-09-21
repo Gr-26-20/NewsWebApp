@@ -1,24 +1,35 @@
-﻿<div class="container mt-5">
-    <div class="row justify-content-center">
-        <div class="col-md-5">
-            <div class="card text-center shadow-sm p-4">
+﻿@{
+    ViewData["Title"] = "Subscription Confirmed";
+}
 
-                <div class="mb-3">
-                    <span style="font-size: 3rem;">✓</span>
-                </div>
+<div class="sub-page">
+    <div class="sub-card">
+        <div class="sub-badge active">CONFIRMED</div>
 
-                <h2 class="text-success">You're subscribed!</h2>
+        <div class="sub-icon">✅</div>
 
-                <p class="text-muted mt-3">
-                    A confirmation email has been sent to you.<br />
-                    Your subscription is active for 30 days.
-                </p>
+        <h2 class="sub-title">You're In!</h2>
+        <p class="sub-subtitle">Welcome to CLICKBAIT News Premium.</p>
 
-                <a asp-controller="Home" asp-action="Index" class="btn btn-primary mt-3">
-                    Go to Home
-                </a>
-
+        <div class="mysub-details">
+            <div class="mysub-detail-row">
+                <span class="mysub-detail-label">Status</span>
+                <span class="mysub-detail-value mysub-days-left">Active</span>
+            </div>
+            <div class="mysub-detail-row">
+                <span class="mysub-detail-label">Duration</span>
+                <span class="mysub-detail-value">30 days</span>
             </div>
         </div>
+
+        <div class="mysub-perks" style="margin-bottom: 1.5rem;">
+            <span>✓ Unlimited premium articles unlocked</span>
+            <span>✓ Ad-free reading experience</span>
+            <span>✓ Breaking news before everyone else</span>
+        </div>
+
+        <a asp-controller="Home" asp-action="Index" class="btn-sub">Start Reading →</a>
+
+        <p class="sub-note">A confirmation email has been sent to you.</p>
     </div>
 </div>

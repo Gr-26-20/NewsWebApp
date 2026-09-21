@@ -23,6 +23,7 @@ namespace NewsWebApp.Controllers
             _articleService = articleService;
             _userManager = userManager;
             _subscriptionService = subscriptionService;
+            _articleService = articleService;
         }
 
         public async Task<IActionResult> Details(int id)

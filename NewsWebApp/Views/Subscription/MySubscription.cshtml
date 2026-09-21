@@ -3,20 +3,50 @@
     ViewData["Title"] = "My Subscription";
 }
 
-<div class="container mt-5">
-    <h2>My Subscription</h2>
+<div class="sub-page">
     @if (Model == null)
     {
-        <p>You have no active subscription.</p>
-        <a asp-action="Index" class="btn btn-primary">Subscribe Now</a>
+        <div class="sub-card inactive">
+            <div class="sub-icon">📰</div>
+            <h2 class="sub-title">No Active Subscription</h2>
+            <p class="sub-subtitle">You're missing out on premium content.</p>
+            <a asp-action="Index" class="btn-sub">Subscribe Now →</a>
+        </div>
     }
     else
     {
-        <div class="card p-4">
-            <h4>@Model.Name</h4>
-            <p>Price: SEK @Model.Price</p>
-            <p>Started: @Model.CreatedAt?.ToString("dd MMM yyyy")</p>
-            <p>Expires: @Model.CreatedAt?.AddDays(Model.DurationInDays).ToString("dd MMM yyyy")</p>
+        var expires = Model.CreatedAt?.AddDays(Model.DurationInDays);
+        var daysLeft = expires.HasValue ? (int)(expires.Value - DateTime.UtcNow).TotalDays : 0;
+
+        <div class="sub-card">
+            <span class="sub-badge active">ACTIVE</span>
+            <h2 class="sub-title">@Model.Name</h2>
+            <p class="sub-subtitle">Thank you for supporting CLICKBAIT News.</p>
+
+            <div class="mysub-details">
+                <div class="mysub-detail-row">
+                    <span class="mysub-detail-label">Price</span>
+                    <span class="mysub-detail-value">SEK @Model.Price / 30 days</span>
+                </div>
+                <div class="mysub-detail-row">
+                    <span class="mysub-detail-label">Started</span>
+                    <span class="mysub-detail-value">@Model.CreatedAt?.ToString("dd MMM yyyy")</span>
+                </div>
+                <div class="mysub-detail-row">
+                    <span class="mysub-detail-label">Expires</span>
+                    <span class="mysub-detail-value">@expires?.ToString("dd MMM yyyy")</span>
+                </div>
+                <div class="mysub-detail-row">
+                    <span class="mysub-detail-label">Days Left</span>
+                    <span class="mysub-detail-value mysub-days-left">@daysLeft days</span>
+                </div>
+            </div>
+
+            <div class="mysub-perks">
+                <span>✓ Unlimited premium articles</span>
+                <span>✓ Ad-free reading</span>
+                <span>✓ Breaking news first</span>
+            </div>
         </div>
     }
 </div>

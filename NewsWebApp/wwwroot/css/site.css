@@ -1,4 +1,4 @@
-/*
+﻿/*
 ===========================================================
 COLOR SCHEME
 ===========================================================
@@ -1342,3 +1342,253 @@ img {
             border-bottom: none;
         }
 }
+
+/* ---------------------------------------------------------
+   SUBSCRIPTION PAGES � shared base
+   (Index, Pay, MySubscription all use these)
+--------------------------------------------------------- */
+
+.sub-page {
+    min-height: 80vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 2rem 1rem;
+}
+
+.sub-card {
+    background: var(--surface);
+    border: 2px solid var(--border);
+    border-radius: 4px;
+    padding: 2.5rem 2rem;
+    max-width: 480px;
+    width: 100%;
+    text-align: center;
+    box-shadow: 6px 6px 0px var(--border);
+}
+
+.sub-badge {
+    display: inline-block;
+    background: var(--text);
+    color: var(--surface);
+    font-size: 0.7rem;
+    font-weight: 700;
+    letter-spacing: 0.15em;
+    padding: 0.3rem 0.9rem;
+    border-radius: 2px;
+    margin-bottom: 1rem;
+}
+
+    .sub-badge.active {
+        background: #2ecc71;
+    }
+
+.sub-title {
+    font-size: 1.6rem;
+    font-weight: 900;
+    letter-spacing: -0.02em;
+    text-transform: uppercase;
+    margin: 0 0 0.4rem;
+}
+
+.sub-subtitle {
+    color: var(--muted);
+    font-size: 0.95rem;
+    margin-bottom: 2rem;
+}
+
+.btn-sub {
+    display: block;
+    width: 100%;
+    background: var(--text);
+    color: var(--surface);
+    border: none;
+    padding: 1rem;
+    font-size: 1rem;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+    border-radius: 3px;
+    cursor: pointer;
+    text-decoration: none;
+    transition: background 0.2s, transform 0.1s;
+    margin-top: 1rem;
+}
+
+    .btn-sub:hover {
+        background: #333;
+        color: var(--surface);
+        transform: translateY(-1px);
+    }
+
+    .btn-sub:disabled {
+        background: #888;
+        cursor: not-allowed;
+        transform: none;
+    }
+
+.sub-note {
+    text-align: center;
+    font-size: 0.78rem;
+    color: #aaa;
+    margin: 1.2rem 0 0.5rem;
+}
+
+.sub-back {
+    display: block;
+    text-align: center;
+    font-size: 0.85rem;
+    color: var(--muted);
+    text-decoration: none;
+    margin-top: 0.75rem;
+}
+
+    .sub-back:hover {
+        color: var(--text);
+    }
+
+/* ---------------------------------------------------------
+   INDEX PAGE extras
+--------------------------------------------------------- */
+
+.subscribe-perks {
+    list-style: none;
+    padding: 0;
+    margin: 0 0 2rem;
+    text-align: left;
+}
+
+    .subscribe-perks li {
+        padding: 0.5rem 0;
+        font-size: 0.95rem;
+        border-bottom: 1px solid #f0f0f0;
+        color: #333;
+    }
+
+        .subscribe-perks li:last-child {
+            border-bottom: none;
+        }
+
+.subscribe-price {
+    margin-bottom: 1.8rem;
+    line-height: 1;
+}
+
+.price-amount {
+    font-size: 3rem;
+    font-weight: 900;
+    color: var(--text);
+}
+
+.price-currency {
+    font-size: 1.2rem;
+    font-weight: 700;
+    vertical-align: super;
+    color: var(--text);
+}
+
+.price-period {
+    font-size: 0.9rem;
+    color: #888;
+    display: block;
+    margin-top: 0.3rem;
+}
+
+/* ---------------------------------------------------------
+   PAY PAGE extras
+--------------------------------------------------------- */
+
+.pay-header {
+    margin-bottom: 2rem;
+}
+
+.pay-field-label {
+    font-size: 0.8rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 0.5rem;
+    text-align: left;
+}
+
+.pay-card-input {
+    border: 1.5px solid #ccc;
+    border-radius: 3px;
+    padding: 12px 14px;
+    background: #fafafa;
+    transition: border-color 0.2s;
+    margin-bottom: 0.5rem;
+}
+
+    .pay-card-input:focus-within {
+        border-color: var(--text);
+        background: #fff;
+    }
+
+.pay-error {
+    color: #c0392b;
+    font-size: 0.85rem;
+    min-height: 1.2rem;
+    margin-bottom: 0.5rem;
+    text-align: left;
+}
+
+/* ---------------------------------------------------------
+   MY SUBSCRIPTION PAGE extras
+--------------------------------------------------------- */
+
+.sub-card.inactive {
+    box-shadow: 6px 6px 0px #ccc;
+    border-color: #ccc;
+}
+
+.sub-icon {
+    font-size: 3rem;
+    margin-bottom: 1rem;
+}
+
+.mysub-details {
+    border: 1.5px solid #eee;
+    border-radius: 3px;
+    margin-bottom: 1.5rem;
+    text-align: left;
+}
+
+.mysub-detail-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.75rem 1rem;
+    border-bottom: 1px solid #f0f0f0;
+}
+
+    .mysub-detail-row:last-child {
+        border-bottom: none;
+    }
+
+.mysub-detail-label {
+    font-size: 0.8rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: #888;
+}
+
+.mysub-detail-value {
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: var(--text);
+}
+
+.mysub-days-left {
+    color: #2ecc71;
+}
+
+.mysub-perks {
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+    font-size: 0.85rem;
+    color: var(--muted);
+}
+

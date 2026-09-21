@@ -73,6 +73,7 @@ a {
     /*    letter-spacing: .04em;*/
     /*    border-right: 1px solid var(--border);*/
 }
+
     .nav-item a:hover {
         background: var(--accent);
         color: var(--accent-text);
@@ -559,6 +560,7 @@ a {
         line-height: 1;
         font-weight: 900;
     }
+
     .compact-story .article-image {
         max-width: 100%;
         height: auto;
@@ -597,6 +599,7 @@ a {
     padding: 4px 7px;
     height: 28px;
 }
+
 .weather-attribution {
     margin-left: auto;
     align-self: flex-end;
@@ -605,14 +608,14 @@ a {
     white-space: nowrap;
 }
 
-.weather-attribution a {
-    color: inherit;
-    text-decoration: none;
-}
+    .weather-attribution a {
+        color: inherit;
+        text-decoration: none;
+    }
 
-.weather-attribution a:hover {
-    text-decoration: underline;
-}
+        .weather-attribution a:hover {
+            text-decoration: underline;
+        }
 
 .weather-condition {
     font-size: 14px;
@@ -680,7 +683,7 @@ a {
         margin-top: 10px;
     }
 
-    
+
 
     .featured-grid {
         grid-template-columns: 1fr;
@@ -805,14 +808,14 @@ img {
     font-size: 18px;
 }
 
-.site-footer a {
-    color: #ffffff !important;
-    text-decoration: none;
-}
+    .site-footer a {
+        color: #ffffff !important;
+        text-decoration: none;
+    }
 
-.site-footer a:hover {
-    text-decoration: underline;
-}
+        .site-footer a:hover {
+            text-decoration: underline;
+        }
 
 .contact-page {
     max-width: 800px;
@@ -980,6 +983,359 @@ img {
         opacity: 0.5;
     }
 
+/* =========================================================
+   FORECAST PAGE
+.forecast-page {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 20px 20px 40px;
+}
+
+/* ---------------------------------------------------------
+   FORECAST PAGE HEADER
+--------------------------------------------------------- */
+.forecast-page-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 4px solid var(--border);
+    padding: 0 0 8px;
+    margin-bottom: 18px;
+}
+
+    .forecast-page-header h1 {
+        margin: 0;
+        font-size: 1.4rem;
+        font-weight: 800;
+        letter-spacing: .06em;
+    }
+
+.full-forecast-link {
+    color: var(--text);
+    text-decoration: none;
+    font-size: .85rem;
+    font-weight: 800;
+    letter-spacing: .04em;
+}
+
+    .full-forecast-link:hover {
+        color: var(--accent);
+        text-decoration: underline;
+    }
+
+/* ---------------------------------------------------------
+   CURRENT WEATHER
+--------------------------------------------------------- */
+.current-weather {
+    background: var(--surface);
+    border-top: 2px solid var(--border);
+    border-bottom: 2px solid var(--border);
+    padding: 16px 18px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 25px;
+}
+
+.current-weather-main {
+    display: flex;
+    align-items: baseline;
+    gap: 15px;
+}
+
+.current-location {
+    font-size: .75rem;
+    font-weight: 800;
+    letter-spacing: .06em;
+    text-transform: uppercase;
+}
+
+.current-temperature {
+    font-size: 2.8rem;
+    font-weight: 800;
+    line-height: 1;
+}
+
+.current-condition {
+    font-size: .8rem;
+    font-weight: 800;
+    letter-spacing: .05em;
+    text-transform: uppercase;
+}
+
+.current-weather-details {
+    display: flex;
+    gap: 25px;
+}
+
+.weather-detail {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+    .weather-detail span {
+        font-size: .65rem;
+        font-weight: 700;
+        letter-spacing: .08em;
+    }
+
+    .weather-detail strong {
+        font-size: 1rem;
+    }
+
+/* ---------------------------------------------------------
+   FORECAST SECTIONS
+--------------------------------------------------------- */
+.forecast-section {
+    margin-bottom: 25px;
+}
+
+.forecast-heading {
+    background: var(--text);
+    color: var(--surface);
+    padding: 7px 12px;
+    margin-bottom: 8px;
+}
+
+    .forecast-heading h2 {
+        margin: 0;
+        font-size: .85rem;
+        font-weight: 800;
+        letter-spacing: .07em;
+    }
+
+/* =========================================================
+   NEXT 24 HOURS - DESKTOP
+.hourly-desktop {
+    display: block;
+    background: var(--surface);
+    border-top: 2px solid var(--border);
+    border-bottom: 2px solid var(--border);
+}
+
+.hourly-day {
+    background: var(--text);
+    color: var(--surface);
+    padding: 7px 12px;
+    border-bottom: 1px solid var(--border);
+    font-size: .75rem;
+    font-weight: 800;
+    letter-spacing: .08em;
+}
+
+.hourly-grid {
+    display: grid;
+    grid-template-columns: repeat(9, minmax(0, 1fr));
+}
+
+.hourly-column {
+    min-width: 0;
+    padding: 12px 8px;
+    text-align: center;
+    border-right: 1px solid var(--border);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 5px;
+}
+
+    .hourly-column:last-child {
+        border-right: none;
+    }
+
+.hourly-time {
+    font-size: .75rem;
+    font-weight: 800;
+}
+
+.hourly-temperature {
+    font-size: 1.3rem;
+    font-weight: 900;
+}
+
+.hourly-icon {
+    width: 45px;
+    height: 45px;
+    object-fit: contain;
+}
+.hourly-column .hourly-symbol {
+    font-size: 2.2rem;
+    line-height: 1;
+    margin: 8px 0;
+}
+
+.hourly-wind {
+    font-size: .75rem;
+    font-weight: 800;
+}
+
+.hourly-humidity {
+    font-size: .7rem;
+    color: var(--muted);
+}
+
+/* =========================================================
+   NEXT 24 HOURS - MOBILE
+.hourly-mobile {
+    display: none;
+}
+
+/* =========================================================
+   5 DAY FORECAST
+.five-day-forecast {
+    display: grid;
+    grid-template-columns: repeat(6, minmax(0, 1fr));
+    background: var(--surface);
+    border-top: 2px solid var(--border);
+    border-bottom: 2px solid var(--border);
+}
+
+@media (min-width: 701px) {
+    .five-day-forecast:has(.forecast-day:nth-child(5):last-child) {
+        grid-template-columns: repeat(5, minmax(0, 1fr));
+    }
+}
+
+.forecast-day {
+    min-width: 0;
+    padding: 10px 8px;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    border-right: 1px solid var(--border);
+}
+
+    .forecast-day:last-child {
+        border-right: none;
+    }
+
+    .forecast-day strong {
+        font-size: .8rem;
+        letter-spacing: .04em;
+    }
+
+    .forecast-day span {
+        font-size: 1.2rem;
+        font-weight: 800;
+    }
+
+    .forecast-day small {
+        font-size: .8rem;
+        font-weight: 600;
+        overflow-wrap: break-word;
+    }
+
+    .forecast-credit {
+        margin-top: 12px;
+        text-align: right;
+        font-size: 10px;
+        color: var(--muted);
+    }
+
+/* =========================================================
+   FORECAST MOBILE
+@media (max-width: 700px) {
+    .forecast-page {
+        padding: 15px 12px 30px;
+    }
+
+    .forecast-page-header h1 {
+        font-size: 1.2rem;
+    }
+
+    .full-forecast-link {
+        font-size: .75rem;
+    }
+
+    .current-weather {
+        padding: 12px;
+        align-items: flex-start;
+        gap: 15px;
+    }
+
+    .current-weather-main {
+        flex-direction: column;
+        gap: 5px;
+    }
+
+    .current-temperature {
+        font-size: 2.3rem;
+    }
+
+    .current-weather-details {
+        gap: 15px;
+    }
+
+    .hourly-desktop {
+        display: none;
+    }
+
+    .hourly-mobile {
+        display: block;
+        background: var(--surface);
+        border-top: 2px solid var(--border);
+        border-bottom: 2px solid var(--border);
+    }
+
+    .forecast-row {
+        display: grid;
+        grid-template-columns: 55px 35px 55px 1fr;
+        align-items: center;
+        min-height: 38px;
+        padding: 0 12px;
+        border-bottom: 1px solid var(--border);
+        font-size: .8rem;
+    }
+
+    .forecast-symbol {
+        font-size: 1.2rem;
+        text-align: center;
+    }
+
+    
+
+        .forecast-row:last-child {
+            border-bottom: none;
+        }
+
+        .forecast-row strong {
+            font-weight: 800;
+        }
+
+        .forecast-row span:nth-child(2) {
+            font-weight: 900;
+        }
+
+    .five-day-forecast {
+        grid-template-columns: 1fr;
+    }
+
+    .forecast-day {
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        gap: 15px;
+        padding: 10px 12px;
+        border-right: none;
+        border-bottom: 1px solid var(--border);
+    }
+
+        .forecast-day strong {
+            width: 45px;
+        }
+
+        .forecast-day span {
+            width: 55px;
+        }
+
+        .forecast-day small {
+            flex: 1;
+        }
+
+        .forecast-day:last-child {
+            border-bottom: none;
+        }
 /* ---------------------------------------------------------
    SUBSCRIPTION PAGES � shared base
    (Index, Pay, MySubscription all use these)

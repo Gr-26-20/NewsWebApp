@@ -406,14 +406,12 @@
 
             <div class="section-title">
                 <h2>WEATHER</h2>
-                <a href="#">FULL FORECAST →</a>
+                <a href="/Forecast/Index">FULL FORECAST →</a>
             </div>
 
             <div class="weather-placeholder">
 
-                <div class="weather-city" id="weatherCity">
-                    GOTHENBURG
-                </div>
+                <div class="weather-city" id="weatherCity"></div>
 
                 <div id="weatherTemperature" class="weather-temp">
                     @Model.Weather?.Temp°
@@ -436,7 +434,8 @@
 
                         @foreach (var municipality in Model.Municipalities)
                         {
-                            <option value="@municipality.ApiValue">
+                            <option value="@municipality.ApiValue"
+                                    selected="@(municipality.ApiValue == Context.Session.GetString("SelectedWeatherMunicipality"))">
                                 @municipality.Name
                             </option>
                         }
@@ -479,6 +478,26 @@
     <script>
 
         let municipalityRequestNumber = 0;
+
+
+        // Set initial municipality name
+
+        const weatherMunicipality =
+            document.getElementById("weatherMunicipality");
+
+        const weatherCity =
+            document.getElementById("weatherCity");
+
+        if (weatherMunicipality && weatherCity)
+        {
+            const selectedMunicipalityName =
+                weatherMunicipality.options[
+                    weatherMunicipality.selectedIndex
+                ].text;
+
+            weatherCity.textContent =
+                selectedMunicipalityName.toUpperCase();
+        }
 
 
         // Change Temperatur.nu station
@@ -541,7 +560,7 @@
 
 
             // Check if Temperatur.nu has temporarily blocked requests
-            
+
             // if (true) // Swap "if (result.isBlocked)" for checking time limit error message
             if (result.isBlocked)
             {
@@ -635,5 +654,6 @@
 
     </script>
 }
+
 
 

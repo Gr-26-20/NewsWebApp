@@ -1,10 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿namespace NewsWebApp.Functions.Models;
 
-namespace NewsWebApp.Functions.Model
+public class TemperatureApiResponse
 {
-    internal class TemperatureApiResponse
-    {
-    }
+    public string Client { get; set; }
+
+    public List<TemperatureStation> Stations { get; set; } = new();
 }

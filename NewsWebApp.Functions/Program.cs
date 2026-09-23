@@ -4,6 +4,7 @@ using Microsoft.Azure.Functions.Worker.Builder;
 using Microsoft.Azure.Functions.Worker.OpenTelemetry;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using NewsWebApp.Services;
 using OpenTelemetry;
 
 var builder = FunctionsApplication.CreateBuilder(args);
@@ -17,5 +18,6 @@ if (!string.IsNullOrEmpty(Environment.GetEnvironmentVariable("APPLICATIONINSIGHT
         .UseAzureMonitorExporter();
 }
 builder.Services.AddHttpClient();
+builder.Services.AddScoped<TableStorageService>();
 
 builder.Build().Run();

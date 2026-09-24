@@ -1,4 +1,11 @@
 ﻿@model List<NewsWebApp.Models.ViewModels.TemperatureElectricityViewModel>
+
+<h1>Historical Weather Data</h1>
+
+<div style="max-width: 900px; height: 400px;">
+    <canvas id="historyChart"></canvas>
+</div>
+
 <table>
     <thead>
         <tr>
@@ -19,3 +26,32 @@
         }
     </tbody>
 </table>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    const ctx = document.getElementById('historyChart');
+
+    new Chart(ctx, {
+        type: 'line',
+        data: {
+                labels: [
+                    @foreach (var item in Model)
+                    {
+                            @: '@item.MeasurementTime.ToString("HH:mm")',
+                    }
+                ],
+                datasets: [
+                    {
+                        label: 'Temperature',
+                        data: [
+                            @foreach (var item in Model)
+                            {
+                                        @: @item.TemperatureC.ToString(System.Globalization.CultureInfo.InvariantCulture),
+                            }
+                        ],
+                        borderWidth: 2
+                    }
+                ]
+        }
+    });
+</script>

@@ -25,7 +25,7 @@ namespace NewsWebApp.Services
         {
             await _tableClient.CreateIfNotExistsAsync();
 
-            await _tableClient.UpsertEntityAsync(entity);
+            await _tableClient.UpsertEntityAsync(entity); // writes data to Azure
         }
 
         public async Task<List<TemperatureElectricityEntity>> GetHistoryAsync() // Azure Table read method

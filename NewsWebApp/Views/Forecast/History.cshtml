@@ -59,17 +59,19 @@
                 ],
 
             datasets: [
-                {
-                    label: 'Temperature (°C)',
-                    data: [
-                        @foreach (var item in Model)
-                        {
-                                @: @item.TemperatureC.ToString(System.Globalization.CultureInfo.InvariantCulture),
-                        }
-                    ],
-                    borderWidth: 2,
-    So every day 
-                },
+                    {
+                        label: 'Temperature (°C)',
+                        data: [
+                            @foreach (var item in Model)
+                            {
+                                    @: @item.TemperatureC.ToString(System.Globalization.CultureInfo.InvariantCulture),
+                            }
+                        ],
+                        borderWidth: 2,
+                        tension: 0.25,
+                        pointRadius: 2,
+                        yAxisID: 'y'
+                    },
                 {
                     label: 'Electricity price (SEK/MWh)',
                     data: [

@@ -7,10 +7,14 @@ namespace NewsWebApp.Controllers
     public class ForecastController : Controller
     {
         private readonly WeatherService _weatherService;
+        private readonly TableStorageService _tableStorageService;
 
-        public ForecastController(WeatherService weatherService)
+        public ForecastController(
+            WeatherService weatherService,
+            TableStorageService tableStorageService)
         {
             _weatherService = weatherService;
+            _tableStorageService = tableStorageService;
         }
 
         public async Task<IActionResult> Index()
@@ -30,6 +34,21 @@ namespace NewsWebApp.Controllers
                 HourlyForecast = hourlyForecast,
                 FiveDayForecast = fiveDayForecast
             };
+
+            return View(model);
+        }
+
+        public async Task<IActionResult> History()
+        {
+            var data =
+                await _tableStorageService.GetHistoryAsync();
+
+            var model = data.Select(item => new TemperatureElectricityViewModel
+            {
+                MeasurementTime = item.MeasurementTime,
+                TemperatureC = item.TemperatureC,
+                ElectricityPrice = item.ElectricityPrice
+            }).ToList();
 
             return View(model);
         }

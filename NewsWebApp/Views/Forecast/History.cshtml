@@ -1,0 +1,21 @@
+﻿@model List<NewsWebApp.Models.ViewModels.TemperatureElectricityViewModel>
+<table>
+    <thead>
+        <tr>
+            <th>Time</th>
+            <th>Temperature</th>
+            <th>Electricity Price</th>
+        </tr>
+    </thead>
+
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>@item.MeasurementTime</td>
+                <td>@item.TemperatureC °C</td>
+                <td>@item.ElectricityPrice SEK/MWh</td>
+            </tr>
+        }
+    </tbody>
+</table>

@@ -27,5 +27,22 @@ namespace NewsWebApp.Services
 
             await _tableClient.UpsertEntityAsync(entity);
         }
+
+        public async Task<List<TemperatureElectricityEntity>> GetHistoryAsync() // Azure Table read method
+        {
+            await _tableClient.CreateIfNotExistsAsync();
+
+            var results = new List<TemperatureElectricityEntity>();
+
+            await foreach (var entity in _tableClient.QueryAsync<TemperatureElectricityEntity>(
+                e => e.PartitionKey == "Gothenburg"))
+            {
+                results.Add(entity);
+            }
+
+            return results
+                .OrderBy(e => e.MeasurementTime)
+                .ToList();
+        }
     }
 }

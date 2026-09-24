@@ -1,4 +1,8 @@
 ﻿@model List<NewsWebApp.Models.ViewModels.TemperatureElectricityViewModel>
+@{
+    var swedishTimeZone =
+        TimeZoneInfo.FindSystemTimeZoneById("Europe/Stockholm");
+}
 
 <h1>Historical Weather Data</h1>
 
@@ -19,7 +23,14 @@
         @foreach (var item in Model)
         {
             <tr>
-                <td>@item.MeasurementTime</td>
+                @{
+                    var swedishTime =
+                        TimeZoneInfo.ConvertTimeFromUtc(
+                            item.MeasurementTime,
+                            swedishTimeZone);
+                }
+
+                <td>@swedishTime.ToString("yyyy-MM-dd HH:mm:ss")</td>
                 <td>@item.TemperatureC °C</td>
                 <td>@item.ElectricityPrice SEK/MWh</td>
             </tr>
@@ -31,27 +42,77 @@
 <script>
     const ctx = document.getElementById('historyChart');
 
-    new Chart(ctx, {
+        new Chart(ctx, {
         type: 'line',
+
         data: {
                 labels: [
                     @foreach (var item in Model)
                     {
-                            @: '@item.MeasurementTime.ToString("HH:mm")',
+                            var swedishTime =
+                                    TimeZoneInfo.ConvertTimeFromUtc(
+                                            item.MeasurementTime,
+                                            swedishTimeZone);
+
+                            @: '@swedishTime.ToString("dd MMM HH:mm")',
                     }
                 ],
-                datasets: [
-                    {
-                        label: 'Temperature',
-                        data: [
-                            @foreach (var item in Model)
-                            {
-                                        @: @item.TemperatureC.ToString(System.Globalization.CultureInfo.InvariantCulture),
-                            }
-                        ],
-                        borderWidth: 2
+
+            datasets: [
+                {
+                    label: 'Temperature (°C)',
+                    data: [
+                        @foreach (var item in Model)
+                        {
+                                @: @item.TemperatureC.ToString(System.Globalization.CultureInfo.InvariantCulture),
+                        }
+                    ],
+                    borderWidth: 2,
+                    yAxisID: 'y'
+                },
+                {
+                    label: 'Electricity price (SEK/MWh)',
+                    data: [
+                        @foreach (var item in Model)
+                        {
+                                if (item.ElectricityPrice > 0)
+                                {
+                                        @: @item.ElectricityPrice.ToString(System.Globalization.CultureInfo.InvariantCulture),
+                                }
+                                else
+                                {
+                                        @: null,
+                                }
+                        }
+                    ],
+                    borderWidth: 2,
+                    yAxisID: 'y1'
+                }
+            ]
+        },
+
+        options: {
+            scales: {
+                y: {
+                    type: 'linear',
+                    position: 'left',
+                    title: {
+                        display: true,
+                        text: 'Temperature (°C)'
                     }
-                ]
+                },
+                y1: {
+                    type: 'linear',
+                    position: 'right',
+                    title: {
+                        display: true,
+                        text: 'Electricity price (SEK/MWh)'
+                    },
+                    grid: {
+                        drawOnChartArea: false
+                    }
+                }
+            }
         }
     });
 </script>

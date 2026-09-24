@@ -27,7 +27,7 @@ public class Function1
 
     [Function("SaveTemperatureElectricity")]
     public async Task Run(
-        [TimerTrigger("*/30 * * * * *")] TimerInfo timer)
+    [TimerTrigger("0 0 * * * *")] TimerInfo timer)
     {
         _logger.LogInformation(
             "Temperature/electricity collection ran at: {time}",
@@ -66,23 +66,51 @@ public class Function1
                     station.Title,
                     temperature);
 
-                var measurementTime = DateTime.UtcNow; 
+                var spotPriceUrl =
+                    $"https://spotprices.lexlink.se/espot/{DateTime.UtcNow:yyyy-MM-dd}";
 
-                var entity = new TemperatureElectricityEntity
+                var spotPriceResponse =
+                    await _httpClient.GetStringAsync(spotPriceUrl);
+
+                var spotPrices =
+                    JsonSerializer.Deserialize<SpotPriceApiResponse>(
+                        spotPriceResponse,
+                        new JsonSerializerOptions
+                        {
+                            PropertyNameCaseInsensitive = true
+                        });
+
+                var localHour = DateTime.Now.Hour;
+
+                var currentSpotPrice =
+                    spotPrices?.SE3.FirstOrDefault(p => p.Hour == localHour);
+
+                if (currentSpotPrice != null)
                 {
-                    PartitionKey = "Gothenburg",
-                    RowKey = measurementTime.ToString("yyyy-MM-ddTHH:mm:ss"),
-                    MeasurementTime = measurementTime,
-                    TemperatureC = temperature,
-                    ElectricityPrice = 0
-                };
+                    _logger.LogInformation(
+                        "SE3 electricity price for hour {hour}: {price} SEK/MWh",
+                        currentSpotPrice.Hour,
+                        currentSpotPrice.PriceSek);
 
-                await _tableStorageService.SaveAsync(entity);
+                    var measurementTime = DateTime.UtcNow;
 
-                _logger.LogInformation(
-                    "Saved temperature {temperature} °C to Azure Table at {time}",
-                    temperature,
-                    measurementTime);
+                    var entity = new TemperatureElectricityEntity
+                    {
+                        PartitionKey = "Gothenburg",
+                        RowKey = measurementTime.ToString("yyyy-MM-ddTHH"),
+                        MeasurementTime = measurementTime,
+                        TemperatureC = temperature,
+                        ElectricityPrice = currentSpotPrice.PriceSek
+                    };
+
+                    await _tableStorageService.SaveAsync(entity);
+
+                    _logger.LogInformation(
+                        "Saved temperature {temperature} °C and electricity price {price} SEK/MWh to Azure Table at {time}",
+                        temperature,
+                        currentSpotPrice.PriceSek,
+                        measurementTime);
+                }
             }
         }
     }

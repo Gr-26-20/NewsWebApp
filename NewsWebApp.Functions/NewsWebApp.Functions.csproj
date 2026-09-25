@@ -21,7 +21,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\NewsWebApp\NewsWebApp.csproj" />
+	  <ProjectReference Include="..\NewsWebApp\NewsWebApp.csproj"
+					GlobalPropertiesToRemove="RuntimeIdentifier" /> 
   </ItemGroup>
 
 </Project>

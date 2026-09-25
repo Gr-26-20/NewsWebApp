@@ -66,8 +66,18 @@ public class Function1
                     station.Title,
                     temperature);
 
+                var stockholmTimeZone =
+                TimeZoneInfo.FindSystemTimeZoneById("Europe/Stockholm");
+
+                var stockholmNow =
+                    TimeZoneInfo.ConvertTimeFromUtc(
+                        DateTime.UtcNow,
+                        stockholmTimeZone);
+
+                var localHour = stockholmNow.Hour;
+
                 var spotPriceUrl =
-                    $"https://spotprices.lexlink.se/espot/{DateTime.UtcNow:yyyy-MM-dd}";
+                    $"https://spotprices.lexlink.se/espot/{stockholmNow:yyyy-MM-dd}";
 
                 var spotPriceResponse =
                     await _httpClient.GetStringAsync(spotPriceUrl);
@@ -79,8 +89,6 @@ public class Function1
                         {
                             PropertyNameCaseInsensitive = true
                         });
-
-                var localHour = DateTime.Now.Hour;
 
                 var currentSpotPrice =
                     spotPrices?.SE3.FirstOrDefault(p => p.Hour == localHour);

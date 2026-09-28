@@ -85,5 +85,8 @@ namespace NewsWebApp.Controllers
             }
             return Json(new { likes = article.Likes });
         }
+
+
+        
     }
 }

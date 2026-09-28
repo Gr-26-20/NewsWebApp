@@ -2,13 +2,22 @@
     For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 *@
 @{
+	
 }
-
+@using NewsWebApp.Models.ViewModels
 @model NewsWebApp.Models.ViewModels.ArticlesVM
-@if (Model.Articles == null || !Model.Articles.Any())
+@* @if (Model.Articles == null || !Model.Articles.Any())
 {
 	<h4>No articles found.</h4>
-}
+} *@
+<div>
+	<form asp-action="SortArticles" method="post" asp-controller="Writer">
+		<Select asp-for="status" class="form-control" asp-items="Model.Statuses">
+			<option value="">Please select an option</option>
+		</Select>
+		<button class="btn btn-dark" type="submit"">Sort</button>
+	</form>
+</div>
 
 @foreach (var article in Model.Articles!)
 {
@@ -32,6 +41,12 @@
 			<a class="btn btn-danger" asp-action="DeleteArticle" asp-controller="Writer" asp-route-id="@article.Id">Delete</a>
 			<a class="btn btn-warning" asp-action="Create" asp-controller="Editor" asp-route-id="@article.Id">Add feedback</a>
 			<a class="btn btn-info" asp-action="Details" asp-controller="Editor" asp-route-id="@article.Id">View feedback</a>
+			<a class="btn btn-warning" asp-action="GetAllFeedback" asp-controller="Editor">view all feedback</a>
+		</div>
+		<div class="card-footer">
+			<a class="btn btn-success" asp-action="Approve" asp-controller="Editor" asp-route-id="@article.Id">Approve</a>
+			<a class="btn btn-danger" asp-action="Reject" asp-controller="Editor" asp-route-id="@article.Id">Reject</a>
+			<a class="btn btn-warning" asp-action="Archive" asp-controller="Editor" asp-route-id="@article.Id">Archive</a>
 		</div>
 	</div>
-}
+}  

@@ -1,6 +1,8 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using NewsWebApp.Data;
 using NewsWebApp.Models;
+using System.Collections.Concurrent;
 
 namespace NewsWebApp.Services
 {
@@ -44,10 +46,10 @@ namespace NewsWebApp.Services
 
         public async Task<List<Articles>> GetApprovedArticlesAsync()
         {
-           return await _context.Articles
-                .Where(a => a.articleStatus == Articles.Status.New)
-                .OrderByDescending(a => a.CreatedAt)
-                .ToListAsync();
+            return await _context.Articles
+                 .Where(a => a.articleStatus == Articles.Status.New)
+                 .OrderByDescending(a => a.CreatedAt)
+                 .ToListAsync();
         }
 
         public async Task<List<Articles>> GetApprovedArticlesByCategoryAsync(string category)
@@ -65,7 +67,7 @@ namespace NewsWebApp.Services
                 .Where(a => a.articleStatus == Articles.Status.New)
                 .OrderByDescending(a => a.CreatedAt)
                 .ToListAsync();
-                
+
         }
 
         public async Task<List<Articles>> GetArticlesPendingAsync()
@@ -104,10 +106,36 @@ namespace NewsWebApp.Services
 
         }
 
-        public List<Feedback> GetAllFeedbackForArticle(Articles article)
+        public async Task<List<Feedback>> GetAllFeedbackForArticle(int id)
         {
-            //var article = _context.Articles.FindAsync(id);
-            return article.Feedback;
+            var article = _context.Articles.Find(id);
+            var feedbackList = _context.Feedback
+                .Where(f => f.ArticleId == id).AsNoTracking()
+                .ToListAsync();
+            return await feedbackList;
         }
+
+        //public async Task<List<Feedback>> DeleteAllFeedbackForArticle(int id)
+        //{
+        //    var article = _context.Articles.Find(id);
+        //    var allFeedback = _context.Feedback
+        //        .Where(f => f.ArticleId == id)
+        //        .ToList();
+        //    for (int i = 0; i < allFeedback.Count; i++)
+        //    {
+        //        _context.Feedback.Remove(allFeedback[i]);
+        //        await _context.SaveChangesAsync();
+        //    }
+
+        //    return await _context.Feedback
+        //        .Where(f => f.ArticleId == id)
+        //        .ToListAsync();
+        //}
+
+        public async Task<List<Feedback>> GetAllFeedback()
+        {
+            return await _context.Feedback.AsNoTracking().ToListAsync();
+        }
+
     }
 }

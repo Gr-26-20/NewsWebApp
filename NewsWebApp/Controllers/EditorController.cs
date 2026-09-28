@@ -1,8 +1,11 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using NewsWebApp.Data;
 using NewsWebApp.Models;
 using NewsWebApp.Models.ViewModels;
 using NewsWebApp.Services;
+using System.Formats.Tar;
+
 
 namespace NewsWebApp.Controllers
 {
@@ -24,61 +27,154 @@ namespace NewsWebApp.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> Create(Feedback feedback, int Id)
+        public async Task <IActionResult> Create(Feedback feedback, int Id)
         {
             if (ModelState.IsValid)
             {
-                var article = await _dbContext.Articles.FindAsync(Id);
-                
-                if (article == null)
-                {
-                    return NotFound();
-                }
+                var article = _dbContext.Articles.Find(Id);
+
+
                 feedback = new Feedback
                 {
                     Feedbackstring = feedback.Feedbackstring,
                     CreatedAt = feedback.CreatedAt,
-                    UpdatedAt = feedback.UpdatedAt
+                    UpdatedAt = feedback.UpdatedAt,
+                    ArticleId = Id,
+                    
                 };
-                if(article != null)
-                {
-                    _dbContext.Feedback.Add(feedback);
+                article.Feedback.Add(feedback);
+
+                _dbContext.Feedback.Add(feedback);
                     article.Feedback.Add(feedback);
-                    await _dbContext.SaveChangesAsync();
-                    return RedirectToAction("Articles", "Writer");
-                } 
+                await _dbContext.SaveChangesAsync();
+                return RedirectToAction("Articles", "Writer");
             }
             return View();
         }
 
-        public async Task<IActionResult> Edit()
+
+
+        public async Task<IActionResult> Edit(int id)
         {
-            return View();
+            var feedback = await _dbContext.Feedback.FindAsync(id);
+            return View(feedback);
         }
 
         [HttpPost]
         public async Task<IActionResult> Edit(Feedback feedback)
         {
-            _dbContext.Update(feedback);
-            await _dbContext.SaveChangesAsync();
-            return RedirectToAction("Details", "Articles");
+            if (ModelState.IsValid)
+            {
+                _dbContext.Update(feedback);
+                await _dbContext.SaveChangesAsync();
+                return RedirectToAction("Articles", "Writer");
+            }
+            return View(feedback);
         }
 
-        public async Task<IActionResult> Delete(Feedback feedback)
+        public async Task<IActionResult> Delete(int id)
         {
-            _dbContext.Feedback.Remove(feedback);
-            await _dbContext.SaveChangesAsync();
-            return RedirectToAction("Details", "Articles");
+            
+            if (ModelState.IsValid)
+            {
+                var feedback = await _dbContext.Feedback.FindAsync(id);
+                if (feedback == null)
+                {
+                    return NotFound();
+                }
+                _dbContext.Feedback.Remove(feedback);
+                await _dbContext.SaveChangesAsync();
+                return RedirectToAction("Details", "Editor");
+            }
+            return RedirectToAction("Details", "Editor");
         }
 
-        public async Task<IActionResult> Details(Feedback feedback, int id)
+        //public async Task<IActionResult> Delete(int id)
+        //{
+
+        //    var feedback = await _dbContext.Feedback.FindAsync(id);
+        //    if (feedback == null)
+        //    {
+        //        return NotFound();
+        //    }
+        //    //var allFeedback = _articleService.DeleteAllFeedbackForArticle(id);
+        //    _dbContext.Feedback.Remove(feedback);
+        //    await _dbContext.SaveChangesAsync();
+        //    return View("Details", "Editor");
+        //}
+
+        public async Task<IActionResult> Details(int id)
+        {
+            var feedback = await _articleService.GetAllFeedbackForArticle(id);
+            //var feedback = await _articleService.GetAllFeedback();
+            if (ModelState.IsValid)
+            {
+                return View(feedback);
+            }
+            return RedirectToAction("Articles", "Writer");
+        }
+
+
+        public async Task<IActionResult> GetAllFeedback()
+        {
+            var feedback = _articleService.GetAllFeedback();
+            if (ModelState.IsValid)
+            {
+                FeedbackVM feedbackVM = new FeedbackVM
+                {
+                    feedbackList = await feedback
+                    
+                };
+                return View(feedbackVM);
+            }
+            return View(feedback);
+        }
+
+        public async Task<IActionResult> Approve(int id)
         {
             var article = await _dbContext.Articles.FindAsync(id);
             if (ModelState.IsValid)
             {
-                //Why is this empty?
-                var test = article.Feedback;
-                return View(test);
+                if(article == null)
+                {
+                    return NotFound();
+                }
+                article.articleStatus = Articles.Status.Approved;
+                await _dbContext.SaveChangesAsync();
+                return RedirectToAction("Articles", "Writer");
+            }
+            return RedirectToAction("Articles", "Writer");
+        }
+
+        public async Task<IActionResult> Reject(int id)
+        {
+            var article = await _dbContext.Articles.FindAsync(id);
+            if (ModelState.IsValid)
+            {
+                if (article == null)
+                {
+                    return NotFound();
+                }
+                article.articleStatus = Articles.Status.Rejected;
+                await _dbContext.SaveChangesAsync();
+                return RedirectToAction("Articles", "Writer");
+            }
+            return RedirectToAction("Articles", "Writer");
+        }
+
+
+        public async Task<IActionResult> Archive(int id)
+        {
+            var article = await _dbContext.Articles.FindAsync(id);
+            if (ModelState.IsValid)
+            {
+                if (article == null)
+                {
+                    return NotFound();
+                }
+                article.articleStatus = Articles.Status.Archived;
+                await _dbContext.SaveChangesAsync();
+                return RedirectToAction("Articles", "Writer");
             }
             return RedirectToAction("Articles", "Writer");
         }

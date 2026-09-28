@@ -1,4 +1,5 @@
 ﻿using NewsWebApp.Models;
+using System.Collections.Concurrent;
 
 namespace NewsWebApp.Services
 {
@@ -24,7 +25,11 @@ namespace NewsWebApp.Services
 
         Task<List<Articles>> GetArticlesArchivedAsync();
 
-        List<Feedback> GetAllFeedbackForArticle(Articles article);
+        Task<List<Feedback>> GetAllFeedbackForArticle(int id);
+
+        //Task<List<Feedback>> DeleteAllFeedbackForArticle(int id);
+
+        Task<List<Feedback>> GetAllFeedback();
 
     }
 }

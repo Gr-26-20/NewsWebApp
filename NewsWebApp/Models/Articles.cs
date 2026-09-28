@@ -1,6 +1,10 @@
+using Microsoft.AspNetCore.Mvc.Rendering;
+using System.Collections.Concurrent;
+using System.ComponentModel.DataAnnotations;
+
 namespace NewsWebApp.Models
 {
-    public class Articles
+    public class Articles 
     {
         public int Id { get; set; }
         public string Slug { get; set; }
@@ -19,19 +23,26 @@ namespace NewsWebApp.Models
         public bool EditorChoice { get; set; }
         public string Category { get; set; }
 
-        public List<Feedback> Feedback { get; set; } = new ();
+       
+
+
+        public IList<Feedback> Feedback { get; set; } = new List<Feedback>();
 
         public enum Status
         {
+            [Display(Name = "New")]
             New,
+            [Display(Name = "Pending")]
             Pending,
+            [Display(Name = "Approved")]
             Approved,
+            [Display(Name = "Rejected")]
             Rejected,
-            Archived
-
+            [Display(Name = "Archived")]
+            Archived,
+            
         }
 
-        public Status articleStatus { get; set; } = Status.New;
-
+        public Status articleStatus { get; set; }
     }
 }

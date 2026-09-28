@@ -10,21 +10,22 @@
 - SMHI Weather API Integration
 
 
- Directory Structure
-NewsWebApp/
-├── Areas/                          # ASP.NET Identity UI (Auto-generated)
-│   └── Identity/Pages/Account/     # Login, Register, Password Recovery, 2FA, Profile Management 
-│       ├── Login.cshtml.cs 
-│       ├── Register.cshtml.cs 
-│       ├── Manage/                 # User account management pages
-│       └── ...
-│
-├── Controllers/                    # MVC Controllers - Business Logic & HTTP Handling 
-│   ├── HomeController.cs           # Home page, weather integration 
-│   ├── WriterController.cs         # Article creation/editing (Writer role)
-│   ├── ArticlesController.cs       # Article details page 
-│   ├── CategoriesController.cs     # Category management 
-│   ├── SubscriptionController.cs   # Subscription & payment flow 
+ Directory Structure  
+ 
+NewsWebApp/ 
+├── Areas/                           # ASP.NET Identity UI (Auto-generated) 
+│   └── Identity/Pages/Account/     # Login, Register, Password Recovery, 2FA, Profile Management  
+│       ├── Login.cshtml.cs  
+│       ├── Register.cshtml.cs  
+│       ├── Manage/                  # User account management pages 
+│       └── ... 
+│ 
+├── Controllers/                    # MVC Controllers - Business Logic & HTTP Handling  
+│   ├── HomeController.cs           # Home page, weather integration  
+│   ├── WriterController.cs         # Article creation/editing (Writer role) 
+│   ├── ArticlesController.cs       # Article details page  
+│   ├── CategoriesController.cs     # Category management  
+│   ├── SubscriptionController.cs   # Subscription & payment flow  
 │   ├── NewsletterController.cs     # Newsletter management 
 │   ├── FileController.cs           # File upload to blob storage 
 │   ├── ForecastController.cs       # Weather forecast 
@@ -42,9 +43,9 @@ NewsWebApp/
 │   ├── ErrorViewModel.cs           # Error page model  
 │   ├── FileUploadModel.cs          # File upload model 
 │   └── ViewModels/                 # Display & input models 
-│       ├── HomeViewModel.cs        # Home page data 
+│       ├── HomeViewModel.cs        # Home page data  
 │       ├── ArticlesVM.cs           # Articles list  
-│       ├── CreateArticleViewModel.cs # Article creation form 
+│       ├── CreateArticleViewModel.cs # Article creation form  
 │       ├── SubscribeViewModel.cs   # Subscription form 
 │       ├── NewsletterVM.cs         # Newsletter data 
 │       ├── WeatherForecast.cs      # Weather display model 
@@ -71,23 +72,23 @@ NewsWebApp/
 │   ├── ApplicationDbContext.cs     # EF Core DbContext
 │   ├── ApplicationUser.cs          # Identity user extended properties
 │   └── Migrations/                 # Database migration history
-│       ├── [timestamp]_CreateIdentitySchema.cs
-│       ├── [timestamp]_AddArticleContent.cs
-│       ├── [timestamp]_Newsletter.cs
-│       ├── [timestamp]_AddedLogoToNewsletter.cs
-│       ├── [timestamp]_PriceTypeFixAndIsSubcribedUsersInArticle.cs
-│       └── ...
-│
-├── Views/                          # Razor Views (UI Templates)
-│   ├── Writer/
+│       ├── [timestamp]_CreateIdentitySchema.cs 
+│       ├── [timestamp]_AddArticleContent.cs 
+│       ├── [timestamp]_Newsletter.cs 
+│       ├── [timestamp]_AddedLogoToNewsletter.cs  
+│       ├── [timestamp]_PriceTypeFixAndIsSubcribedUsersInArticle.cs 
+│       └── ... 
+│ 
+├── Views/                          # Razor Views (UI Templates) 
+│   ├── Writer/ 
 │   │   ├── Create.cshtml           # Article creation form
-│   │   ├── EditArticle.cshtml      # Article editing
+│   │   ├── EditArticle.cshtml      # Article editing 
 │   │   ├── Articles.cshtml         # Writer's articles list
-│   │   ├── ViewArticle.cshtml      # Article detail view
+│   │   ├── ViewArticle.cshtml      # Article detail view  
 │   │   └── Index.cshtml            # Writer dashboard
-│   ├── Articles/
-│   │   └── Details.cshtml          # Article detail page
-│   ├── Categories/
+│   ├── Articles/ 
+│   │   └── Details.cshtml          # Article detail page 
+│   ├── Categories/ 
 │   │   └── Index.cshtml            # Category listing
 │   ├── Subscription/
 │   │   ├── Index.cshtml            # Subscription plans

@@ -1,7 +1,7 @@
 ﻿@model List<NewsWebApp.Models.Articles>
 
 @{
-    ViewData["Title"] = "Sweden";
+    ViewData["Title"] = ViewBag.Category;
 }
 
 <div class="category-page">
@@ -36,6 +36,16 @@
         <h2>@ViewBag.Category</h2>
         <a href="/">BACK TO NEWS →</a>
     </div>
+
+
+    @if (ViewBag.Category == "WEATHER")
+    {
+        <div class="weather-category-link">
+            <a asp-controller="Forecast" asp-action="Index">
+                FULL FORECAST →
+            </a>
+        </div>
+    }
 
 
     <section class="category-articles">
@@ -84,4 +94,3 @@
         document.getElementById("categoryPageCategories").classList.toggle("open");
     }
 </script>
-```

@@ -4,120 +4,152 @@
         TimeZoneInfo.FindSystemTimeZoneById("Europe/Stockholm");
 }
 
-<h1>Historical Weather Data</h1>
+<div class="history-page">
+
+    <article class="history-article">
+
+        <div class="story-category">
+            DATA
+        </div>
+
+        <h1>Historical Weather & Electricity Prices</h1>
+
+        <p class="history-summary">
+            This graph shows hourly temperature and electricity price measurements for Gothenburg.
+        </p>
+
+        <p class="history-summary">
+            Electricity prices are from the Swedish <strong>SE3 price area</strong>.
+            The measurements are collected automatically and stored over time,
+            allowing the graph to reveal possible patterns between temperature and electricity prices.
+        </p>
+
+        <p class="history-summary">
+            The data is updated approximately once per hour.
+        </p>
+
+        <div class="history-meta">
+            <span>25 SEPTEMBER 2026</span>
+            <span>SE3 ELECTRICITY AREA</span>
+            <span>GOTHENBURG</span>
+        </div>
+
+        <div class="history-chart">
+            <canvas id="historyChart"></canvas>
+        </div>
+
+    </article>
+
+</div>
 
 <div style="max-width: 900px; height: 400px;">
     <canvas id="historyChart"></canvas>
 </div>
 
-<table>
-    <thead>
-        <tr>
-            <th>Time</th>
-            <th>Temperature</th>
-            <th>Electricity Price</th>
-        </tr>
-    </thead>
+<div style="max-width: 900px; height: 400px;">
+    <canvas id="historyChart"></canvas>
+</div>
 
-    <tbody>
-        @foreach (var item in Model)
-        {
-            <tr>
-                @{
-                    var swedishTime =
-                        TimeZoneInfo.ConvertTimeFromUtc(
-                            item.MeasurementTime,
-                            swedishTimeZone);
-                }
 
-                <td>@swedishTime.ToString("yyyy-MM-dd HH:mm:ss")</td>
-                <td>@item.TemperatureC °C</td>
-                <td>@item.ElectricityPrice SEK/MWh</td>
-            </tr>
-        }
-    </tbody>
-</table>
 
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
 <script>
     const ctx = document.getElementById('historyChart');
 
-        new Chart(ctx, {
+    new Chart(ctx, {
         type: 'line',
 
         data: {
-                labels: [
-                    @foreach (var item in Model)
-                    {
-                            var swedishTime =
-                                    TimeZoneInfo.ConvertTimeFromUtc(
-                                            item.MeasurementTime,
-                                            swedishTimeZone);
+            labels: [
+                @foreach (var item in Model)
+                {
+                        var swedishTime =
+                                TimeZoneInfo.ConvertTimeFromUtc(
+                                        item.MeasurementTime,
+                                        swedishTimeZone);
 
-                            @: '@swedishTime.ToString("dd MMM HH:mm")',
-                    }
-                ],
+                        @: '@swedishTime.ToString("HH:mm")',
+                }
+            ],
 
             datasets: [
-                    {
-                        label: 'Temperature (°C)',
-                        data: [
-                            @foreach (var item in Model)
-                            {
-                                    @: @item.TemperatureC.ToString(System.Globalization.CultureInfo.InvariantCulture),
-                            }
-                        ],
-                        borderWidth: 2,
-                        tension: 0.25,
-                        pointRadius: 2,
-                        yAxisID: 'y'
-                    },
                 {
-                    label: 'Electricity price (SEK/MWh)',
+                    label: 'Temperature (°C)',
                     data: [
                         @foreach (var item in Model)
                         {
-                                if (item.ElectricityPrice > 0)
-                                {
-                                        @: @item.ElectricityPrice.ToString(System.Globalization.CultureInfo.InvariantCulture),
-                                }
-                                else
-                                {
-                                        @: null,
-                                }
-                        }
-                    ],
-                    borderWidth: 2,
-                    tension: 0.15,
-                    pointRadius: 2,
-                    yAxisID: 'y1'
-                }
-            ]
-        },
+                                @: @item.TemperatureC.ToString(
+                                        System.Globalization.CultureInfo.InvariantCulture),
+                            }
+                ],
+                borderWidth: 2,
+                tension: 0.25,
+                pointRadius: 2,
+                yAxisID: 'y'
+            },
 
-        options: {
-            scales: {
-                y: {
-                    type: 'linear',
-                    position: 'left',
-                    title: {
-                        display: true,
-                        text: 'Temperature (°C)'
-                    }
+                    {
+                        label: 'Electricity price (SEK/MWh)',
+                        data: [
+                                            @foreach (var item in Model)
+                            {
+                                    if (item.ElectricityPrice > 0)
+                                    {
+                                            @: @item.ElectricityPrice.ToString(
+                                                    System.Globalization.CultureInfo.InvariantCulture),
+                                        }
+                                                    else
+                                        {
+                                                @: null,
+                                        }
+                                }
+                            ],
+                            borderWidth: 2,
+                            tension: 0.15,
+                            pointRadius: 2,
+                            yAxisID: 'y1'
+                        }
+                    ]
                 },
 
-                y1: {
-                    type: 'linear',
-                    position: 'right',
-                    title: {
-                        display: true,
-                        text: 'Electricity price (SEK/MWh)'
-                    },
-                    grid: {
-                        drawOnChartArea: false
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+
+                    scales: {
+                        y: {
+                            type: 'linear',
+                            position: 'left',
+
+                            title: {
+                                display: true,
+                                text: 'Temperature (°C)'
+                            },
+
+                            ticks: {
+                                callback: function (value) {
+                                    return Number(value)
+                                        .toFixed(1)
+                                        .replace(".", ",") + "°";
+                                }
+                            }
+                        },
+
+                        y1: {
+                            type: 'linear',
+                            position: 'right',
+
+                            title: {
+                                display: true,
+                                text: 'Electricity price (SEK/MWh)'
+                            },
+
+                            grid: {
+                                drawOnChartArea: false
+                            }
+                        }
                     }
                 }
-            }
-        }
-    });
-</script>
+            });
+        </script>

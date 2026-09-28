@@ -1,6 +1,9 @@
-**NewsWebApp** is ASP.NET Core 10 web application for managing and distributing news articles with subscription features, weather integration, and newsletter capabilities. The application supports multiple user roles (Admin, Writer, Subscriber) and integrates with Azure Blob Storage for image management and Stripe for payment processing, API for collecting weather and elecricity prices.
+# NewsWebApp
 
-**Technologies:**
+NewsWebApp is an ASP.NET Core 10 web application for managing and distributing news articles. It supports Admin, Writer, and Subscriber roles, subscriptions, weather data, electricity prices, and newsletters. It uses Azure Blob Storage for images and Stripe for payments.
+
+## Technologies
+
 - ASP.NET Core 10
 - Entity Framework Core 10 with SQL Server
 - ASP.NET Identity (Authentication & Authorization)
@@ -10,8 +13,9 @@
 - SMHI Weather API Integration
 
 
-Directory structure
+## Directory structure
 
+```text
 NewsWebApp/ 
 ├── Areas/                            # ASP.NET Identity UI (Auto-generated) 
 │   └── Identity/Pages/Account/      # Login, Register, Password Recovery, 2FA, Profile Management  
@@ -116,10 +120,12 @@ NewsWebApp/
 │
 ├── wwwroot/                        # Static Assets
 │   └── images/                     # Image storage directory (using Azure Blob)
- 
- 📱 Key Features
+```
 
-### **Article Management**
+## Key features
+
+### Article management
+
 -  Create, read, update, delete articles
 -  Category filtering
 -  Archive functionality
@@ -128,7 +134,8 @@ NewsWebApp/
 -  Image uploads to Azure Blob Storage
 -  Like/view counters
 
- **Authentication & Authorization**
+### Authentication and authorization
+
 -  Email/password registration & login
 -  Email confirmation
 -  Password reset
@@ -136,31 +143,32 @@ NewsWebApp/
 -  Role-based access control
 -  Lockout protection
 
- **Subscription & Payment**
+### Subscriptions and payments
+
 -  Stripe integration
 -  Multiple subscription tiers
 -  Subscription status tracking
 -  Payment webhook handling
 -  Subscriber-only articles
 
- **Weather Integration**
+### Weather integration
+
 -  Real-time weather data
 - Multiple municipalities (Sweden)
 -  Weather forecasts
 -  SMHI API integration
 -  Caching for performance
 
- **Newsletter**
+### Newsletter
+
 -  Newsletter creation & sending
 -  Email distribution
 -  Newsletter branding (logo)
 -  Subscriber tracking
 
----
+## Development configuration
 
- 
-### 2. Create `appsettings.Development.json`
-Create this file in the project root (same folder as `appsettings.json`).
+Create `appsettings.Development.json` in the application project directory, next to `appsettings.json`.
 Ask Angelin for the actual key values.
 
 ```json
@@ -177,7 +185,11 @@ Ask Angelin for the actual key values.
   }
 }
 ```
-### To test the subcription use the folloiwng card information
-    Scenario	Card Number	            Expiry	CVV
-✅ Success	    4242 4242 4242 4242	    12/26	123
-❌ Declined  	4000 0000 0000 0002	    12/26	123
+## Test subscription payments
+
+Use these card details to test subscription payments:
+
+| Scenario | Card number | Expiry | CVV |
+| --- | --- | --- | --- |
+| ✅ Successful payment | `4242 4242 4242 4242` | `12/26` | `123` |
+| ❌ Declined payment | `4000 0000 0000 0002` | `12/26` | `123` |

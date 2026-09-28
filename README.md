@@ -10,8 +10,8 @@
 - SMHI Weather API Integration
 
 
- Directory Structure  
- 
+Directory structure
+
 NewsWebApp/ 
 ├── Areas/                            # ASP.NET Identity UI (Auto-generated) 
 │   └── Identity/Pages/Account/      # Login, Register, Password Recovery, 2FA, Profile Management  
@@ -116,8 +116,6 @@ NewsWebApp/
 │
 ├── wwwroot/                        # Static Assets
 │   └── images/                     # Image storage directory (using Azure Blob)
-
-
  
  📱 Key Features
 

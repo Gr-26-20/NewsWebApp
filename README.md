@@ -13,60 +13,60 @@
  Directory Structure
 NewsWebApp/
 ├── Areas/                          # ASP.NET Identity UI (Auto-generated)
-│   └── Identity/Pages/Account/     # Login, Register, Password Recovery, 2FA, Profile Management
-│       ├── Login.cshtml.cs
-│       ├── Register.cshtml.cs
+│   └── Identity/Pages/Account/     # Login, Register, Password Recovery, 2FA, Profile Management 
+│       ├── Login.cshtml.cs 
+│       ├── Register.cshtml.cs 
 │       ├── Manage/                 # User account management pages
 │       └── ...
 │
-├── Controllers/                    # MVC Controllers - Business Logic & HTTP Handling
-│   ├── HomeController.cs           # Home page, weather integration
+├── Controllers/                    # MVC Controllers - Business Logic & HTTP Handling 
+│   ├── HomeController.cs           # Home page, weather integration 
 │   ├── WriterController.cs         # Article creation/editing (Writer role)
-│   ├── ArticlesController.cs       # Article details page
-│   ├── CategoriesController.cs     # Category management
-│   ├── SubscriptionController.cs   # Subscription & payment flow
-│   ├── NewsletterController.cs     # Newsletter management
-│   ├── FileController.cs           # File upload to blob storage
-│   ├── ForecastController.cs       # Weather forecast
-│   ├── EmailController.cs          # Email operations
-│   └── ContactController.cs        # Contact form
+│   ├── ArticlesController.cs       # Article details page 
+│   ├── CategoriesController.cs     # Category management 
+│   ├── SubscriptionController.cs   # Subscription & payment flow 
+│   ├── NewsletterController.cs     # Newsletter management 
+│   ├── FileController.cs           # File upload to blob storage 
+│   ├── ForecastController.cs       # Weather forecast 
+│   ├── EmailController.cs          # Email operations   
+│   └── ContactController.cs        # Contact form 
 │
-├── Models/                         # Data Models & ViewModels
-│   ├── Articles.cs                 # Article entity model
-│   ├── Category.cs                 # Article categories
-│   ├── Subscriptions.cs            # User subscription data
-│   ├── NewsLetter.cs               # Newsletter data
-│   ├── Weather.cs                  # Weather entity
-│   ├── Users.cs                    # Custom user properties
-│   ├── ContactViewModel.cs         # Contact form model
-│   ├── ErrorViewModel.cs           # Error page model
-│   ├── FileUploadModel.cs          # File upload model
-│   └── ViewModels/                 # Display & input models
-│       ├── HomeViewModel.cs        # Home page data
-│       ├── ArticlesVM.cs           # Articles list
-│       ├── CreateArticleViewModel.cs # Article creation form
-│       ├── SubscribeViewModel.cs   # Subscription form
-│       ├── NewsletterVM.cs         # Newsletter data
-│       ├── WeatherForecast.cs      # Weather display model
-│       └── ...
+├── Models/                         # Data Models & ViewModels 
+│   ├── Articles.cs                 # Article entity model 
+│   ├── Category.cs                 # Article categories  
+│   ├── Subscriptions.cs            # User subscription data 
+│   ├── NewsLetter.cs               # Newsletter data 
+│   ├── Weather.cs                  # Weather entity 
+│   ├── Users.cs                    # Custom user properties 
+│   ├── ContactViewModel.cs         # Contact form model 
+│   ├── ErrorViewModel.cs           # Error page model  
+│   ├── FileUploadModel.cs          # File upload model 
+│   └── ViewModels/                 # Display & input models 
+│       ├── HomeViewModel.cs        # Home page data 
+│       ├── ArticlesVM.cs           # Articles list  
+│       ├── CreateArticleViewModel.cs # Article creation form 
+│       ├── SubscribeViewModel.cs   # Subscription form 
+│       ├── NewsletterVM.cs         # Newsletter data 
+│       ├── WeatherForecast.cs      # Weather display model 
+│       └── ... 
 │
-├── Services/                       # Business Logic & External Integrations
-│   ├── IArticleService.cs          # Interface
-│   ├── ArticleService.cs           # Article CRUD operations
-│   ├── IFileService.cs             # Interface
-│   ├── FileService.cs              # Azure Blob Storage operations
-│   ├── ISubscriptionService.cs     # Interface
-│   ├── SubscriptionService.cs      # Subscription management
-│   ├── INewsletterService.cs       # Interface
-│   ├── NewsletterService.cs        # Newsletter sending
-│   ├── IUserAndRoleService.cs      # Interface
-│   ├── UserAndRoleService.cs       # User & role management
-│   ├── WeatherService.cs           # Weather API integration
-│   ├── SmhiWeatherService.cs       # SMHI specific weather data
-│   ├── EmailSender.cs              # Email sending (MailKit)
-│   ├── IEmailService.cs            # Interface
-│   └── RoleSeeder.cs               # Initialize default roles (Admin, Writer)
-│
+├── Services/                       # Business Logic & External Integrations 
+│   ├── IArticleService.cs          # Interface 
+│   ├── ArticleService.cs           # Article CRUD operations 
+│   ├── IFileService.cs             # Interface 
+│   ├── FileService.cs              # Azure Blob Storage operations 
+│   ├── ISubscriptionService.cs     # Interface 
+│   ├── SubscriptionService.cs      # Subscription management 
+│   ├── INewsletterService.cs       # Interface 
+│   ├── NewsletterService.cs        # Newsletter sending 
+│   ├── IUserAndRoleService.cs      # Interface   
+│   ├── UserAndRoleService.cs       # User & role management 
+│   ├── WeatherService.cs           # Weather API integration 
+│   ├── SmhiWeatherService.cs       # SMHI specific weather data  
+│   ├── EmailSender.cs              # Email sending (MailKit) 
+│   ├── IEmailService.cs            # Interface 
+│   └── RoleSeeder.cs               # Initialize default roles (Admin, Writer)  
+|
 ├── Data/                           # Entity Framework & Database
 │   ├── ApplicationDbContext.cs     # EF Core DbContext
 │   ├── ApplicationUser.cs          # Identity user extended properties

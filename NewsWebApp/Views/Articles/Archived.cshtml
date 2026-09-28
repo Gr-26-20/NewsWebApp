@@ -2,22 +2,38 @@
 
 @model List<NewsWebApp.Models.Articles>
 
-@if( Model.Any(a => a.IsArchived))
+@{
+    ViewData["Title"] = "Archived Articles";
+}
+
+<h1 class="mb-4">Archived Articles</h1>
+
+@if (Model.Any(a => a.IsArchived))
 {
-    <ul>
+    <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 g-4">
         @foreach (var article in Model.Where(a => a.IsArchived))
         {
-            <li>
-                <a href="@Url.Action("Details", "Articles", new { id = article.Id })">
-                    @article.Title
+            <div class="col">
+                <a href="@Url.Action("Details", "Articles", new { id = article.Id })" class="text-decoration-none text-reset">
+                    <div class="card h-100 shadow-sm">
+                        @if (!string.IsNullOrWhiteSpace(article.ImageUrl))
+                        {
+                            <img src="@article.ImageUrl" class="card-img-top" alt="@article.Title" style="height:180px; object-fit:cover;" />
+                        }
+                        else
+                        {
+                            <div class="card-img-top d-flex align-items-center justify-content-center bg-secondary text-white" style="height:180px;">
+                                IMAGE
+                            </div>
+                        }
+                        <div class="card-body">
+                            <h5 class="card-title">@article.Title</h5>
+                        </div>
+                    </div>
                 </a>
-                <p>@article.Summary</p>
-                <p>@article.Category</p>
-                <p>@article.Author</p>
-                <p>@article.CreatedAt</p>
-            </li>
+            </div>
         }
-    </ul>
+    </div>
 }
 else
 {

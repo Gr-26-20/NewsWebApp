@@ -50,7 +50,7 @@ namespace NewsWebApp.Controllers
             if (!ModelState.IsValid)
             {
                 ViewBag.PublishableKey = _configuration["Stripe:PublishableKey"];
-                return View("Index", model);
+                return View("Pay", model);
             }
             var user = await _userManager.GetUserAsync(User);
             if (user == null)
@@ -94,6 +94,21 @@ namespace NewsWebApp.Controllers
             var subscription = await _subscriptionService.GetActiveSubscriptionAsync(user.Email);
             
             return View(subscription);
+        }
+
+        public async Task<IActionResult> Pay()
+        { 
+            var user = await _userManager.GetUserAsync(User);
+            if(user == null)
+            {
+                return RedirectToAction("Index", "Home");
+            }
+            if(await _subscriptionService.HasActiveSubscriptionAsync(user.Email))
+            {
+                return RedirectToAction("AlreadySubscribed");
+            }
+            ViewBag.PublishableKey = _configuration["Stripe:PublishableKey"];
+            return View();
         }
     }
 }

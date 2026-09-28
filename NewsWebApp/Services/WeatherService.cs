@@ -1,6 +1,7 @@
-﻿using System.Text.Json;
-using Microsoft.Extensions.Caching.Memory;
+﻿using Microsoft.Extensions.Caching.Memory;
+using NewsWebApp.Models;
 using NewsWebApp.Models.ViewModels;
+using System.Text.Json;
 
 
 namespace NewsWebApp.Services
@@ -44,6 +45,45 @@ namespace NewsWebApp.Services
             }
 
             return station;
+        }
+        public async Task<List<WeatherForecast>> Get24HourForecastAsync(string location)
+        {
+            var url =
+                $"https://weatherapi.dreammaker-it.se/Forecast/24Hours?location={location}&lang=en";
+
+            var response =
+                await _httpClient.GetStringAsync(url);
+
+            var forecast =
+                JsonSerializer.Deserialize<List<WeatherForecast>>(
+                    response,
+                    new JsonSerializerOptions
+                    {
+                        PropertyNameCaseInsensitive = true
+                    });
+
+                        return forecast ?? new List<WeatherForecast>();
+        }
+
+        public async Task<List<WeatherForecast>> Get5DayForecastAsync(string location)
+        {
+            var url =
+                $"https://weatherapi.dreammaker-it.se/Forecast/5Days?location={location}&lang=en";
+
+
+
+            var response =
+                await _httpClient.GetStringAsync(url);
+
+            var forecast =
+                JsonSerializer.Deserialize<List<WeatherForecast>>(
+                    response,
+                    new JsonSerializerOptions
+                    {
+                        PropertyNameCaseInsensitive = true
+                    });
+
+            return forecast ?? new List<WeatherForecast>();
         }
         public async Task<WeatherStationsResult> GetStationsAsync(string municipality)
         {
@@ -91,5 +131,7 @@ namespace NewsWebApp.Services
                 Stations = stations
             };
         }
+
+        
     }
 }

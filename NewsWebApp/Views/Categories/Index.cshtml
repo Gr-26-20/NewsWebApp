@@ -1,15 +1,52 @@
 ﻿@model List<NewsWebApp.Models.Articles>
 
 @{
-    ViewData["Title"] = "Sweden";
+    ViewData["Title"] = ViewBag.Category;
 }
 
 <div class="category-page">
+
+    <!-- CATEGORY MENU -->
+    <nav class="main-nav category-page-nav">
+
+        <button class="navbar-toggler"
+                type="button"
+                onclick="toggleCategoryNavigation()"
+                aria-label="Toggle categories">
+            ☰
+        </button>
+
+        <div class="nav-categories category-page-categories"
+             id="categoryPageCategories">
+
+            <a href="/Categories/News">NEWS</a>
+            <a href="/Categories/World">WORLD</a>
+            <a href="/Categories/Sweden">SWEDEN</a>
+            <a href="/Categories/Weather">WEATHER</a>
+            <a href="/Categories/Sports">SPORTS</a>
+            <a href="/Categories/EditorsChoice">EDITOR'S CHOICE</a>
+            <a href="/Categories/Newsletter">NEWSLETTER</a>
+
+        </div>
+
+    </nav>
+
 
     <div class="section-title">
         <h2>@ViewBag.Category</h2>
         <a href="/">BACK TO NEWS →</a>
     </div>
+
+
+    @if (ViewBag.Category == "WEATHER")
+    {
+        <div class="weather-category-link">
+            <a asp-controller="Forecast" asp-action="Index">
+                FULL FORECAST →
+            </a>
+        </div>
+    }
+
 
     <section class="category-articles">
 
@@ -50,3 +87,10 @@
     </section>
 
 </div>
+
+
+<script>
+    function toggleCategoryNavigation() {
+        document.getElementById("categoryPageCategories").classList.toggle("open");
+    }
+</script>

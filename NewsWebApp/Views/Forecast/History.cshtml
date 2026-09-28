@@ -2,6 +2,16 @@
 @{
     var swedishTimeZone =
         TimeZoneInfo.FindSystemTimeZoneById("Europe/Stockholm");
+
+    var latestMeasurement = Model
+        .OrderByDescending(x => x.MeasurementTime)
+        .FirstOrDefault();
+
+    var latestDate = latestMeasurement == null
+        ? DateTime.Now
+        : TimeZoneInfo.ConvertTimeFromUtc(
+            latestMeasurement.MeasurementTime,
+            swedishTimeZone);
 }
 
 <div class="history-page">
@@ -29,7 +39,7 @@
         </p>
 
         <div class="history-meta">
-            <span>25 SEPTEMBER 2026</span>
+            <span>@latestDate.ToString("dd MMMM yyyy").ToUpper()</span>
             <span>SE3 ELECTRICITY AREA</span>
             <span>GOTHENBURG</span>
         </div>
@@ -42,13 +52,7 @@
 
 </div>
 
-<div style="max-width: 900px; height: 400px;">
-    <canvas id="historyChart"></canvas>
-</div>
 
-<div style="max-width: 900px; height: 400px;">
-    <canvas id="historyChart"></canvas>
-</div>
 
 
 

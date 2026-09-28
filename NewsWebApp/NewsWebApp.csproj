@@ -8,6 +8,13 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Helpers\**" />
+    <Content Remove="Helpers\**" />
+    <EmbeddedResource Remove="Helpers\**" />
+    <None Remove="Helpers\**" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="Azure.Data.Tables" Version="12.12.0" />
     <PackageReference Include="MailKit" Version="4.17.0" />
     <PackageReference Include="Azure.Storage.Blobs" Version="12.29.2" />
@@ -24,11 +31,11 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Helpers\" />
     <PackageReference Include="Stripe.net" Version="52.4.1" />
   </ItemGroup>
 
   <ItemGroup>
+    <Folder Include="Views\Feedback\" />
     <Folder Include="wwwroot\images\" />
   </ItemGroup>
 

@@ -1,11 +1,14 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
+using Microsoft.CodeAnalysis.Options;
 using Microsoft.EntityFrameworkCore;
 using NewsWebApp.Data;
 using NewsWebApp.Models;
 using NewsWebApp.Models.ViewModels;
 using NewsWebApp.Services;
+using Stripe;
 
 namespace NewsWebApp.Controllers
 {
@@ -32,10 +35,10 @@ namespace NewsWebApp.Controllers
 
         public async Task<IActionResult> Upload()
         {
-            
+
             return View();
         }
-       
+
 
         [Authorize(Roles = "Writer")]
         public async Task<IActionResult> Create()
@@ -69,7 +72,9 @@ namespace NewsWebApp.Controllers
                     UpdatedAt = DateTime.UtcNow,
                     IsArchived = false,
                     EditorChoice = article.EditorChoice,
-                    Category = article.Category
+                    Category = article.Category,
+                    articleStatus = Models.Articles.Status.New
+
                 };
 
                 _context.Articles.Add(article);
@@ -87,6 +92,7 @@ namespace NewsWebApp.Controllers
             {
                 return NotFound();
             }
+            //var feedbacklist = article.Feedback;
             return View(article);
         }
 
@@ -113,14 +119,24 @@ namespace NewsWebApp.Controllers
             return View(article);
         }
 
-        [Authorize(Roles = "WRITER")]
+        [Authorize(Roles = "Writer")]
         public async Task<IActionResult> DeleteArticle(int id)
         {
-            var article = await _context.Articles.FindAsync(id);
+
+            var article = await _context.Articles.Include(f => f.Feedback).FirstOrDefaultAsync();
+            foreach (var item in article.Feedback)
+            {
+                if (item.ArticleId == id)
+                {
+                    _context.Feedback.Remove(item);
+                }
+            }
+            //var article = await _context.Articles.Include(f => f.Feedback).Where(_context.Feedbac)
             if (article == null)
             {
                 return NotFound();
             }
+            //var allFeedback = _articleService.DeleteAllFeedbackForArticle(id);
             _context.Articles.Remove(article);
             await _context.SaveChangesAsync();
             return RedirectToAction("Articles");
@@ -270,5 +286,91 @@ namespace NewsWebApp.Controllers
             }
             return View(article);
         }
+
+        [HttpPost]
+        public async Task<IActionResult> ApproveArticle(int id)
+        {
+            var article = await _context.Articles.FindAsync(id);
+            if (ModelState.IsValid)
+            {
+                if (article == null)
+                {
+                    return NotFound();
+                }
+                else
+                {
+                    article.articleStatus = Models.Articles.Status.Approved;
+                    _context.Update(article);
+                    await _context.SaveChangesAsync();
+                    return RedirectToAction(nameof(Articles));
+                }
+            }
+            return RedirectToAction(nameof(Articles));
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> SortArticles(ArticlesVM articlesVM)
+        {
+            if (ModelState.IsValid)
+            {
+                switch (articlesVM.status)
+                {
+                    case "New":
+                        var newArticles = await _context.Articles
+                            .Where(s => s.articleStatus == Models.Articles.Status.New)
+                            .AsNoTracking().ToListAsync();
+                        ArticlesVM newArticlesVM = new ArticlesVM
+                        {
+                            Articles = newArticles
+                        };
+                        return View("Articles", newArticlesVM);
+
+
+                    case "Pending":
+                            var pendingArticle = await _context.Articles
+                                .Where(s => s.articleStatus == Models.Articles.Status.Pending)
+                                .AsNoTracking().ToListAsync();
+                        ArticlesVM pendingArticlesVM = new ArticlesVM
+                        {
+                            Articles = pendingArticle
+                        };
+                        return View("Articles", pendingArticlesVM);
+
+
+                    case "Approved":
+                        var approvedArticle = await _context.Articles
+                            .Where(s => s.articleStatus == Models.Articles.Status.Approved)
+                            .AsNoTracking().ToListAsync();
+                        ArticlesVM approvedArticlesVM = new ArticlesVM
+                        {
+                            Articles = approvedArticle
+                        };
+                        return View("Articles", approvedArticlesVM);
+
+                    case "Rejected":
+                        var rejectedArticle = await _context.Articles
+                            .Where(s => s.articleStatus == Models.Articles.Status.Rejected)
+                            .AsNoTracking().ToListAsync();
+                        ArticlesVM rejectedArticlesVM = new ArticlesVM
+                        {
+                            Articles = rejectedArticle
+                        };
+                        return View("Articles", rejectedArticlesVM);
+                    case "Archived":
+                        var archivedArticle = await _context.Articles
+                            .Where(s => s.articleStatus == Models.Articles.Status.Archived)
+                            .AsNoTracking().ToListAsync();
+                        ArticlesVM archivedArticlesVM = new ArticlesVM
+                        {
+                            Articles = archivedArticle
+                        };
+                        return View("Articles", archivedArticlesVM);
+                }
+                return RedirectToAction("Articles", "Writer");
+
+            }
+            return RedirectToAction("Articles", "Writer");
+        }
     }
 }
+

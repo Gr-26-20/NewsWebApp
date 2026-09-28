@@ -76,6 +76,14 @@
                 <input asp-for="IsArchived" class="form-check-input" />
                 <span asp-validation-for="IsArchived" class="text-danger"></span>
             </div>
+                @if(User.IsInRole("Editor") || User.IsInRole("Admin"))
+                {
+                <div class="form-group">
+                    <label asp-for="articleStatus" class="control-label"></label>
+                    <input asp-for="articleStatus" class="form-check-input" />
+                    <span asp-validation-for="articleStatus" class="text-danger"></span>
+                </div>
+                } 
             <div class="form-group">
                 <label asp-for="EditorChoice" class="control-label"></label>
                 <input asp-for="EditorChoice" class="form-check-input" />
@@ -98,6 +106,9 @@
             </div>
             <div class="form-group">
                 <input type="submit" value="Save" class="btn btn-primary" />
+                <input asp-controller="Writer" asp-action="ApproveArticle" type="submit" value="Approve" class="btn btn-success" />
+                <a class="btn btn-lg" asp-action="Create" asp-controller="Editor">Submit feedback</a>
+                <a class="btn btn-info" asp-action="Details" asp-controller="Editor"></a>
             </div>
         </form>
     </div>

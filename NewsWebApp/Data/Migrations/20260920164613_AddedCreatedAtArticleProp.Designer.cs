@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using NewsWebApp.Data;
 
@@ -11,9 +12,11 @@ using NewsWebApp.Data;
 namespace NewsWebApp.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260920164613_AddedCreatedAtArticleProp")]
+    partial class AddedCreatedAtArticleProp
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -265,9 +268,6 @@ namespace NewsWebApp.Data.Migrations
                     b.Property<bool>("EditorChoice")
                         .HasColumnType("bit");
 
-                    b.Property<int>("EnumCountry")
-                        .HasColumnType("int");
-
                     b.Property<string>("ImageUrl")
                         .HasColumnType("nvarchar(max)");
 
@@ -333,15 +333,8 @@ namespace NewsWebApp.Data.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<int>("ArticleId")
-                        .HasColumnType("int");
-
                     b.Property<int?>("ArticlesId")
                         .HasColumnType("int");
-
-                    b.Property<string>("Category")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
@@ -576,7 +569,7 @@ namespace NewsWebApp.Data.Migrations
             modelBuilder.Entity("NewsWebApp.Models.Feedback", b =>
                 {
                     b.HasOne("NewsWebApp.Models.Articles", null)
-                        .WithMany("Feedback")
+                        .WithMany("feedback")
                         .HasForeignKey("ArticlesId");
                 });
 
@@ -600,7 +593,7 @@ namespace NewsWebApp.Data.Migrations
 
             modelBuilder.Entity("NewsWebApp.Models.Articles", b =>
                 {
-                    b.Navigation("Feedback");
+                    b.Navigation("feedback");
                 });
 
             modelBuilder.Entity("NewsWebApp.Models.Category", b =>

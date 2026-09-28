@@ -13,5 +13,7 @@ namespace NewsWebApp.Data
         public DbSet<Weather> Weather { get; set; }
 
         public DbSet<NewsLetter> NewsLetters { get; set; }
+
+        public DbSet<Feedback> Feedback { get; set; }
     }
 }

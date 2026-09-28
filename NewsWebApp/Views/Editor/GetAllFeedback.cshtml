@@ -1,0 +1,38 @@
+﻿@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@{
+}
+
+@model NewsWebApp.Models.ViewModels.FeedbackVM
+@if (Model.feedbackList == null || !Model.feedbackList.Any())
+{
+	<h4>No articles found.</h4>
+}
+
+@foreach (var feedback in Model.feedbackList!)
+{
+	<div class="card">
+		<div class="card-header">
+			<p><strong>Created At:</strong> @feedback.CreatedAt.ToString()</p>
+			<p><strong>Article status: </strong>@feedback.UpdatedAt</p>
+		</div>
+		<div class="card-body">
+			<h2>@feedback.Id</h2>
+			<p>@feedback.Feedbackstring</p>
+			@* <p><strong>Author:</strong> @article.Author</p>
+			<p><strong>Slug:</strong> @article.Slug</p>
+			<p><strong>Category:</strong> @article.Category</p>
+			<p><strong>Views:</strong> @article.Views</p>
+			<p><strong>Likes:</strong> @article.Likes</p>
+			<img src="@article.ImageUrl" alt="@article.Title" /> *@
+		</div>
+		<div class="card-footer">
+		 @* 	<a class="btn btn-primary" asp-action="EditArticle" asp-controller="Writer" asp-route-id="@article.Id">Edit</a>
+			<a class="btn btn-danger" asp-action="DeleteArticle" asp-controller="Writer" asp-route-id="@article.Id">Delete</a>
+			<a class="btn btn-warning" asp-action="Create" asp-controller="Editor" asp-route-id="@article.Id">Add feedback</a>
+			<a class="btn btn-info" asp-action="Details" asp-controller="Editor" asp-route-id="@article.Id">View feedback</a>
+			<a class="btn btn-warning" asp-action="Edit" asp-controller="Editor" asp-route-id="@article.Id">Edit feedback</a> *@
+		</div> 
+	</div>
+}

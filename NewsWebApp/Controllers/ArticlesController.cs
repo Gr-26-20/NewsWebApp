@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using NewsWebApp.Data;
+using NewsWebApp.Models;
 using NewsWebApp.Services;
 
 namespace NewsWebApp.Controllers
@@ -10,6 +11,11 @@ namespace NewsWebApp.Controllers
     {
         private readonly ApplicationDbContext _context;
         private readonly IArticleService _articleService;
+
+        private readonly UserManager<ApplicationUser> _userManager;
+        private readonly ISubscriptionService _subscriptionService;
+
+        public ArticlesController(ApplicationDbContext context, UserManager<ApplicationUser> userManager, ISubscriptionService subscriptionService, IArticleService articleService)
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly ISubscriptionService _subscriptionService;
 
@@ -88,5 +94,8 @@ namespace NewsWebApp.Controllers
             }
             return Json(new { likes = article.Likes });
         }
+
+
+        
     }
 }

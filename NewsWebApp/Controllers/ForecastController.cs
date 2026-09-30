@@ -57,17 +57,29 @@ namespace NewsWebApp.Controllers
 
         public async Task<IActionResult> History()
         {
-            var data =
-                await _tableStorageService.GetHistoryAsync();
-
-            var model = data.Select(item => new TemperatureElectricityViewModel
+            try
             {
-                MeasurementTime = item.MeasurementTime,
-                TemperatureC = item.TemperatureC,
-                ElectricityPrice = item.ElectricityPrice
-            }).ToList();
+                // throw new Exception("Test: Azure Table Storage is unavailable.");
 
-            return View(model);
+                var data =
+                    await _tableStorageService.GetHistoryAsync();
+
+                var model = data.Select(item => new TemperatureElectricityViewModel
+                {
+                    MeasurementTime = item.MeasurementTime,
+                    TemperatureC = item.TemperatureC,
+                    ElectricityPrice = item.ElectricityPrice
+                }).ToList();
+
+                return View(model);
+            }
+            catch (Exception)
+            {
+                ViewData["HistoryError"] =
+                    "Historical weather and/or electricity data is currently unavailable. Please try again later.";
+
+                return View(new List<TemperatureElectricityViewModel>());
+            }
         }
     }
 }

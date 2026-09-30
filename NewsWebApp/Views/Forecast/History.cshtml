@@ -1,5 +1,9 @@
-﻿@model List<NewsWebApp.Models.ViewModels.TemperatureElectricityViewModel>
+﻿
+@model List<NewsWebApp.Models.ViewModels.TemperatureElectricityViewModel>
+
 @{
+    var historyError = ViewData["HistoryError"] as string;
+
     var swedishTimeZone =
         TimeZoneInfo.FindSystemTimeZoneById("Europe/Stockholm");
 
@@ -24,136 +28,179 @@
 
         <h1>Historical Weather & Electricity Prices</h1>
 
-        <p class="history-summary">
-            This graph shows hourly temperature and electricity price measurements for Gothenburg.
-        </p>
+        @if (!string.IsNullOrEmpty(historyError))
+        {
+            <div class="forecast-unavailable">
 
-        <p class="history-summary">
-            Electricity prices are from the Swedish <strong>SE3 price area</strong>.
-            The measurements are collected automatically and stored over time,
-            allowing the graph to reveal possible patterns between temperature and electricity prices.
-        </p>
+                <svg class="service-unavailable-icon"
+                     viewBox="0 0 80 80"
+                     aria-hidden="true">
 
-        <p class="history-summary">
-            The data is updated approximately once per hour.
-        </p>
+                    <!-- Antenna mast -->
+                    <line x1="40" y1="31" x2="40" y2="62" />
 
-        <div class="history-meta">
-            <span>@latestDate.ToString("dd MMMM yyyy").ToUpper()</span>
-            <span>SE3 ELECTRICITY AREA</span>
-            <span>GOTHENBURG</span>
-        </div>
+                    <!-- Base -->
+                    <line x1="29" y1="62" x2="51" y2="62" />
 
-        <div class="history-chart">
-            <canvas id="historyChart"></canvas>
-        </div>
+                    <!-- Antenna tip -->
+                    <circle cx="40" cy="24" r="3" />
+
+                    <!-- Transmission waves -->
+                    <path d="M28 29 Q22 35 22 43" />
+                    <path d="M52 29 Q58 35 58 43" />
+
+                    <!-- Outer transmission waves -->
+                    <path d="M19 25 Q12 34 12 45" />
+                    <path d="M61 25 Q68 34 68 45" />
+
+                    <!-- Red interruption mark -->
+                    <line class="break-mark"
+                          x1="31" y1="39"
+                          x2="49" y2="53" />
+                </svg>
+
+                <strong>HISTORICAL DATA UNAVAILABLE</strong>
+
+                <span>
+                    @historyError
+                </span>
+
+            </div>
+        }
+        else
+        {
+            <p class="history-summary">
+                This graph shows hourly temperature and electricity price measurements for Gothenburg.
+            </p>
+
+            <p class="history-summary">
+                Electricity prices are from the Swedish <strong>SE3 price area</strong>.
+                The measurements are collected automatically and stored over time,
+                allowing the graph to reveal possible patterns between temperature and electricity prices.
+            </p>
+
+            <p class="history-summary">
+                The data is updated approximately once per hour.
+            </p>
+
+            <div class="history-meta">
+                <span>@latestDate.ToString("dd MMMM yyyy").ToUpper()</span>
+                <span>SE3 ELECTRICITY AREA</span>
+                <span>GOTHENBURG</span>
+            </div>
+
+            <div class="history-chart">
+                <canvas id="historyChart"></canvas>
+            </div>
+        }
 
     </article>
 
 </div>
 
 
+@if (string.IsNullOrEmpty(historyError))
+{
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
+    <script>
+        const ctx = document.getElementById('historyChart');
 
+        new Chart(ctx, {
+            type: 'line',
 
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-
-<script>
-    const ctx = document.getElementById('historyChart');
-
-    new Chart(ctx, {
-        type: 'line',
-
-        data: {
-            labels: [
-                @foreach (var item in Model)
-                {
+            data: {
+                labels: [
+                    @foreach (var item in Model)
+                    {
                         var swedishTime =
-                                TimeZoneInfo.ConvertTimeFromUtc(
-                                        item.MeasurementTime,
-                                        swedishTimeZone);
+                            TimeZoneInfo.ConvertTimeFromUtc(
+                                item.MeasurementTime,
+                                swedishTimeZone);
 
                         @: '@swedishTime.ToString("HH:mm")',
-                }
-            ],
-
-            datasets: [
-                {
-                    label: 'Temperature (°C)',
-                    data: [
-                        @foreach (var item in Model)
-                        {
-                                @: @item.TemperatureC.ToString(
-                                        System.Globalization.CultureInfo.InvariantCulture),
-                            }
+                    }
                 ],
-                borderWidth: 2,
-                tension: 0.25,
-                pointRadius: 2,
-                yAxisID: 'y'
-            },
+
+                datasets: [
+                    {
+                        label: 'Temperature (°C)',
+                        data: [
+                            @foreach (var item in Model)
+                            {
+                                @: @item.TemperatureC.ToString(
+                                    System.Globalization.CultureInfo.InvariantCulture),
+                            }
+                        ],
+                        borderWidth: 2,
+                        tension: 0.25,
+                        pointRadius: 2,
+                        yAxisID: 'y'
+                    },
 
                     {
                         label: 'Electricity price (SEK/MWh)',
                         data: [
-                                            @foreach (var item in Model)
+                            @foreach (var item in Model)
                             {
-                                    if (item.ElectricityPrice > 0)
-                                    {
-                                            @: @item.ElectricityPrice.ToString(
-                                                    System.Globalization.CultureInfo.InvariantCulture),
-                                        }
-                                                    else
-                                        {
-                                                @: null,
-                                        }
+                                if (item.ElectricityPrice > 0)
+                                {
+                                    @: @item.ElectricityPrice.ToString(
+                                        System.Globalization.CultureInfo.InvariantCulture),
                                 }
-                            ],
-                            borderWidth: 2,
-                            tension: 0.15,
-                            pointRadius: 2,
-                            yAxisID: 'y1'
-                        }
-                    ]
-                },
-
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-
-                    scales: {
-                        y: {
-                            type: 'linear',
-                            position: 'left',
-
-                            title: {
-                                display: true,
-                                text: 'Temperature (°C)'
-                            },
-
-                            ticks: {
-                                callback: function (value) {
-                                    return Number(value)
-                                        .toFixed(1)
-                                        .replace(".", ",") + "°";
+                                else
+                                {
+                                    @: null,
                                 }
                             }
+                        ],
+                        borderWidth: 2,
+                        tension: 0.15,
+                        pointRadius: 2,
+                        yAxisID: 'y1'
+                    }
+                ]
+            },
+
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+
+                scales: {
+                    y: {
+                        type: 'linear',
+                        position: 'left',
+
+                        title: {
+                            display: true,
+                            text: 'Temperature (°C)'
                         },
 
-                        y1: {
-                            type: 'linear',
-                            position: 'right',
-
-                            title: {
-                                display: true,
-                                text: 'Electricity price (SEK/MWh)'
-                            },
-
-                            grid: {
-                                drawOnChartArea: false
+                        ticks: {
+                            callback: function (value) {
+                                return Number(value)
+                                    .toFixed(1)
+                                    .replace(".", ",") + "°";
                             }
+                        }
+                    },
+
+                    y1: {
+                        type: 'linear',
+                        position: 'right',
+
+                        title: {
+                            display: true,
+                            text: 'Electricity price (SEK/MWh)'
+                        },
+
+                        grid: {
+                            drawOnChartArea: false
                         }
                     }
                 }
-            });
-        </script>
+            }
+        });
+    </script>
+}
+

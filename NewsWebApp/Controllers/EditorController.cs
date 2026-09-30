@@ -110,6 +110,10 @@ namespace NewsWebApp.Controllers
             if (ModelState.IsValid)
             {
                 return View(feedback);
+                //return ViewComponent("FeedbackViewcomponent", new
+                //{
+                //    InvokeAsync(id)
+                //});
             }
             return RedirectToAction("Articles", "Writer");
         }

@@ -1,0 +1,30 @@
+﻿@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@{
+}
+
+@* @foreach (var item in Model)
+{
+	<div class="card">
+		<div class="card-header">
+			<p><strong>Created At:</strong> @item.CreatedAt.ToString()</p>
+			<p><strong>Updated at: </strong>@item.UpdatedAt</p>
+		</div>
+		<div class="card-body">
+			<p>@item.Feedbackstring</p>
+		</div>
+		<div class="card-footer">
+			<a class="btn btn-primary" asp-action="Edit" asp-controller="Editor" asp-route-id="@item.Id">Edit</a>
+			<a class="btn btn-danger" asp-action="Delete" asp-controller="Editor" asp-route-id="@item.Id">Delete</a>
+		</div>
+	</div>
+} *@
+
+@* @await Component.InvokeAsync("FeedbackViewcomponent", new
+	{
+		
+	}) *@
+
+
+	<h1>Hello from viewcomponent</h1>

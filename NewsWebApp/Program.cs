@@ -12,7 +12,20 @@ namespace NewsWebApp
     {
         public static async Task Main(string[] args)
         {
-            var builder = WebApplication.CreateBuilder(args);
+            //added to check if the command is "bootstrap-admin" and if the correct number of arguments is provided
+            var bootstrapAdmin = args.Length > 0 &&
+                string.Equals(args[0], "bootstrap-admin", StringComparison.OrdinalIgnoreCase);
+
+            if (bootstrapAdmin && args.Length != 2)
+            {
+                Console.Error.WriteLine("Usage: bootstrap-admin <email>");
+                Environment.ExitCode = 1;
+                return;
+            }
+
+            // The command name and email are not ASP.NET configuration arguments.
+            var builder = WebApplication.CreateBuilder(bootstrapAdmin ? Array.Empty<string>() : args);
+
             Stripe.StripeConfiguration.ApiKey = builder.Configuration["Stripe:SecretKey"];
 
             // Add services to the container.
@@ -30,7 +43,7 @@ namespace NewsWebApp
 
             // Add services
             builder.Services.AddScoped<IUserAndRoleService, UserAndRoleService>();
-           
+
             builder.Services.AddScoped<IFileService, FileService>();
             builder.Services.AddScoped<RoleSeeder>();
 
@@ -56,6 +69,12 @@ namespace NewsWebApp
 
             builder.Services.AddSession();
             var app = builder.Build();
+
+            if (bootstrapAdmin)
+            {
+                Environment.ExitCode = await AdminBootstrapper.RunAsync(app.Services, args[1]) ? 0 : 1;
+                return;
+            }
 
             // Configure the HTTP request pipeline.
             if (app.Environment.IsDevelopment())

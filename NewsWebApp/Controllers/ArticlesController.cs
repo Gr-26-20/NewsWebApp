@@ -15,9 +15,12 @@ namespace NewsWebApp.Controllers
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly ISubscriptionService _subscriptionService;
 
-        public ArticlesController(ApplicationDbContext context, UserManager<ApplicationUser> userManager, ISubscriptionService subscriptionService, IArticleService articleService)
-        private readonly UserManager<ApplicationUser> _userManager;
-        private readonly ISubscriptionService _subscriptionService;
+        //public ArticlesController(ApplicationDbContext context, UserManager<ApplicationUser> userManager, ISubscriptionService subscriptionService, IArticleService articleService)
+        //{
+        //    _
+        //}
+        //private readonly UserManager<ApplicationUser> _userManager;
+        //private readonly ISubscriptionService _subscriptionService;
 
         public ArticlesController(
             ApplicationDbContext context,

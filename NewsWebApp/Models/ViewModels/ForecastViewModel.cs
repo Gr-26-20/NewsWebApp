@@ -4,8 +4,11 @@ namespace NewsWebApp.Models.ViewModels
 {
     public class ForecastViewModel
     {
-        public List<WeatherForecast> HourlyForecast { get; set; } = new();
+        public List<WeatherForecast> HourlyForecast { get; set; }
+        public List<WeatherForecast> FiveDayForecast { get; set; }
 
-        public List<WeatherForecast> FiveDayForecast { get; set; } = new();
+        public string? HourlyForecastError { get; set; }
+        public string? FiveDayForecastError { get; set; }
     }
 }
+

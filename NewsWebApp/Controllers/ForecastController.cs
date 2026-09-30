@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using NewsWebApp.Models;
 using NewsWebApp.Models.ViewModels;
 using NewsWebApp.Services;
 
@@ -23,17 +24,33 @@ namespace NewsWebApp.Controllers
                 HttpContext.Session.GetString("SelectedWeatherMunicipality")
                 ?? "Gothenburg";
 
-            var hourlyForecast =
-                await _weatherService.Get24HourForecastAsync(municipality);
-
-            var fiveDayForecast =
-                await _weatherService.Get5DayForecastAsync(municipality);
-
             var model = new ForecastViewModel
             {
-                HourlyForecast = hourlyForecast,
-                FiveDayForecast = fiveDayForecast
+                HourlyForecast = new List<WeatherForecast>(),
+                FiveDayForecast = new List<WeatherForecast>()
             };
+
+            try
+            {
+                model.HourlyForecast =
+                    await _weatherService.Get24HourForecastAsync(municipality);
+            }
+            catch (HttpRequestException)
+            {
+                model.HourlyForecastError =
+                    "24-hour forecast is currently unavailable. Please try again later.";
+            }
+
+            try
+            {
+                model.FiveDayForecast =
+                    await _weatherService.Get5DayForecastAsync(municipality);
+            }
+            catch (HttpRequestException)
+            {
+                model.FiveDayForecastError =
+                    "5-day forecast is currently unavailable. Please try again later.";
+            }
 
             return View(model);
         }

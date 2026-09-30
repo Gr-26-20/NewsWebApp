@@ -1003,12 +1003,12 @@ a {
             margin-bottom: 18px;
         }
 
-            .forecast-page-header h1 {
-                margin: 0;
-                font-size: 1.4rem;
-                font-weight: 800;
-                letter-spacing: .06em;
-            }
+        .forecast-page-header h1 {
+            margin: 0;
+            font-size: 1.4rem;
+            font-weight: 800;
+            letter-spacing: .06em;
+        }
 
         .full-forecast-link {
             color: var(--text);
@@ -1018,10 +1018,49 @@ a {
             letter-spacing: .04em;
         }
 
-            .full-forecast-link:hover {
-                color: var(--accent);
-                text-decoration: underline;
-            }
+        .full-forecast-link:hover {
+            color: var(--accent);
+            text-decoration: underline;
+        }
+
+        .service-unavailable-icon {
+            width: 42px;
+            height: 42px;
+            display: block;
+            margin: 0 auto 10px;
+            fill: none;
+            stroke: var(--text);
+            stroke-width: 3;
+            stroke-linecap: square;
+            stroke-linejoin: miter;
+        }
+
+        .service-unavailable-icon .break-mark {
+            stroke: var(--accent);
+            stroke-width: 4;
+        }
+
+        .forecast-unavailable {
+            padding: 22px 10px;
+            text-align: center;
+            border-top: 1px solid var(--border);
+            border-bottom: 1px solid var(--border);
+        }
+
+        .forecast-unavailable strong {
+            display: block;
+            font-size: 11px;
+            font-weight: 900;
+            letter-spacing: .04em;
+        }
+
+        .forecast-unavailable span {
+            display: block;
+            margin-top: 4px;
+            font-size: 11px;
+            color: var(--muted);
+        }
+
         /* ---------------------------------------------------------
    CURRENT WEATHER
 --------------------------------------------------------- */

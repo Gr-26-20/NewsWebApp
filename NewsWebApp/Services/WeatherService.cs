@@ -75,7 +75,7 @@ namespace NewsWebApp.Services
             var response =
                 await _httpClient.GetStringAsync(url);
 
-            var forecast =
+                var forecast =
                 JsonSerializer.Deserialize<List<WeatherForecast>>(
                     response,
                     new JsonSerializerOptions

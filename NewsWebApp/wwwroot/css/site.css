@@ -1075,6 +1075,11 @@ a {
             margin-bottom: 25px;
         }
 
+        .current-weather .forecast-unavailable {
+            width: 100%;
+            text-align: center;
+        }
+
         .current-weather-main {
             display: flex;
             align-items: baseline;

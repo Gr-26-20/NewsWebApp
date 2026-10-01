@@ -32,6 +32,8 @@ namespace NewsWebApp.Controllers
 
             try
             {
+                // TEST: simulate 24-hour weather API failure by uncommenting next line
+                // throw new HttpRequestException("Test: 24-hour weather API is unavailable.");
                 model.HourlyForecast =
                     await _weatherService.Get24HourForecastAsync(municipality);
             }
@@ -43,6 +45,8 @@ namespace NewsWebApp.Controllers
 
             try
             {
+                // TEST: simulate 5-day weather API failure
+                // throw new HttpRequestException("Test: 5-day weather API is unavailable.");
                 model.FiveDayForecast =
                     await _weatherService.Get5DayForecastAsync(municipality);
             }

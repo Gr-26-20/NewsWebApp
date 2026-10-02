@@ -17,10 +17,10 @@ namespace NewsWebApp.Components
         }
 
 
-        public async Task<IViewComponentResult> InvokeAsync(int id)
+        public async Task<IViewComponentResult> InvokeAsync()
         {
-            var feedback = await _articleService.GetAllFeedbackForArticle(id);
-            return View(feedback);
+            //var feedback = await _articleService.GetAllFeedbackForArticle(id);
+            return View();
         }
     }
 }

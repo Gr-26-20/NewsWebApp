@@ -27,6 +27,8 @@ namespace NewsWebApp.Services
 
         Task<List<Feedback>> GetAllFeedbackForArticle(int id);
 
+        Task<Feedback> GetFeedbackById(int id);
+
         //Task<List<Feedback>> DeleteAllFeedbackForArticle(int id);
 
         Task<List<Feedback>> GetAllFeedback();

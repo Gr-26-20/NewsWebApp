@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.IdentityModel.Tokens;
 using NewsWebApp.Data;
 using NewsWebApp.Models;
 using NewsWebApp.Models.ViewModels;
@@ -15,10 +16,13 @@ namespace NewsWebApp.Controllers
 
         private readonly ApplicationDbContext _dbContext;
 
-        public EditorController(IArticleService articleService, ApplicationDbContext dbContext)
+        private readonly ISessionHelper _sessionHelper;
+
+        public EditorController(IArticleService articleService, ApplicationDbContext dbContext, ISessionHelper sessionHelper)
         {
             _articleService = articleService;
             _dbContext = dbContext;
+            _sessionHelper = sessionHelper;
         }
 
         public async Task<IActionResult> Create()
@@ -42,10 +46,7 @@ namespace NewsWebApp.Controllers
                     ArticleId = Id,
                     
                 };
-                article.Feedback.Add(feedback);
-
                 _dbContext.Feedback.Add(feedback);
-                    article.Feedback.Add(feedback);
                 await _dbContext.SaveChangesAsync();
                 return RedirectToAction("Articles", "Writer");
             }
@@ -61,17 +62,19 @@ namespace NewsWebApp.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> Edit(Feedback feedback)
+        public async Task<IActionResult> Edit(int id,Feedback feedback)
         {
             if (ModelState.IsValid)
             {
+                feedback.ArticleId = Convert.ToInt32(TempData["ArticleId"]);
                 _dbContext.Update(feedback);
                 await _dbContext.SaveChangesAsync();
-                return RedirectToAction("Articles", "Writer");
+                return RedirectToAction("Details", "Editor");
             }
             return View(feedback);
         }
 
+        
         public async Task<IActionResult> Delete(int id)
         {
             
@@ -89,34 +92,88 @@ namespace NewsWebApp.Controllers
             return RedirectToAction("Details", "Editor");
         }
 
-        //public async Task<IActionResult> Delete(int id)
-        //{
 
-        //    var feedback = await _dbContext.Feedback.FindAsync(id);
-        //    if (feedback == null)
-        //    {
-        //        return NotFound();
-        //    }
-        //    //var allFeedback = _articleService.DeleteAllFeedbackForArticle(id);
-        //    _dbContext.Feedback.Remove(feedback);
-        //    await _dbContext.SaveChangesAsync();
-        //    return View("Details", "Editor");
-        //}
+       
+
+        
 
         public async Task<IActionResult> Details(int id)
         {
-            var feedback = await _articleService.GetAllFeedbackForArticle(id);
-            //var feedback = await _articleService.GetAllFeedback();
-            if (ModelState.IsValid)
+            if (id != 0)
             {
-                return View(feedback);
-                //return ViewComponent("FeedbackViewcomponent", new
-                //{
-                //    InvokeAsync(id)
-                //});
+                //Tempdata to store the id of the article if the feedback gets deleted.
+                int feedbackidTemp = id;
+                TempData["FeedbackId"] = feedbackidTemp.ToString();
+                TempData.Keep("FeedbackId");
+                //Tempdata to store the article id if the feedback gets modified.
+                int articleidTemp = id;
+                TempData["ArticleId"] = articleidTemp.ToString();
+                TempData.Keep("ArticleId");
             }
-            return RedirectToAction("Articles", "Writer");
-        }
+            if (id == 0 && TempData["ArticleId"] != null)
+            {
+                //Tempdata to store the id of the article if the feedback gets deleted.
+                int feedbackidTemp = Convert.ToInt32(TempData["FeedbackId"]);
+                id = feedbackidTemp;
+                TempData.Keep("FeedbackId");
+                //Tempdata to store the article id if the feedback gets modified.
+                int articleidTemp = id;
+                TempData["ArticleId"] = articleidTemp.ToString();
+                TempData.Keep("ArticleId");
+            }
+
+            var feedback = await _articleService.GetAllFeedbackForArticle(id);
+            //var feedbackIds = _sessionHelper.Get<List<int>>(SessionKeys.Feedback) ?? new List<int>();
+            //var article = await _dbContext.Articles.FindAsync(id);
+            //if (article != null)
+            //{
+            //    foreach (var feedbackItem in feedback)
+            //    {
+            //        if (!article.Feedback.Any(f => f.Id == feedbackItem.Id))
+            //        {
+            //            {
+            //                article.Feedback.Add(feedbackItem);
+            //            }
+            //        }
+            //        await _dbContext.SaveChangesAsync();
+            //    }
+
+
+                //var feedbacks = feedbackIds
+                //    .Select(id => _articleService.GetFeedbackById(id))
+                //    .Where(p => p != null)
+                //    .ToList();
+                //foreach (var feedbackItem in feedback)
+                //{
+                //    if (!feedbackIds.Contains(feedbackItem.Id))
+                //    {
+                //        feedbackIds.Add(feedbackItem.Id);
+                //    }
+                //}
+                //_sessionHelper.Set(SessionKeys.Feedback, feedbackIds);
+                //List<Feedback> feedbackList = new List<Feedback>();
+                //foreach (var feedbackId in feedbackIds)
+                //{
+                //    var feedbackItem = await _dbContext.Feedback.FindAsync(feedbackId);
+                //    if (feedbackItem != null)
+                //    {
+                //        feedbackList.Add(feedbackItem);
+                //    }
+                //}
+
+
+                if (ModelState.IsValid)
+                {
+                    //if (article != null)
+                    //{
+                        ViewBag.FeedbackList = feedback;
+                    //}
+                    return View(ViewBag.FeedbackList);
+
+                }
+                return RedirectToAction("Articles", "Writer");
+            }
+        
 
 
         public async Task<IActionResult> GetAllFeedback()

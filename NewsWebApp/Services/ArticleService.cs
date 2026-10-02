@@ -108,11 +108,17 @@ namespace NewsWebApp.Services
 
         public async Task<List<Feedback>> GetAllFeedbackForArticle(int id)
         {
-            var article = _context.Articles.Find(id);
+            var article = await _context.Articles.FindAsync(id);
             var feedbackList = _context.Feedback
                 .Where(f => f.ArticleId == id).AsNoTracking()
                 .ToListAsync();
             return await feedbackList;
+        }
+
+        public async Task<Feedback> GetFeedbackById(int id)
+        {
+            var feedback = await _context.Feedback.FirstOrDefaultAsync(f => f.Id == id);
+            return feedback;
         }
 
         //public async Task<List<Feedback>> DeleteAllFeedbackForArticle(int id)

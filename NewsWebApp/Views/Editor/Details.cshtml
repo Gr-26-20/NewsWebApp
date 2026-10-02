@@ -1,6 +1,8 @@
  @model IEnumerable<NewsWebApp.Models.Feedback> 
 @{
     ViewData["Title"] = "Details";
+	<script src="~/Js/Feedback.js"></script>
+
 }
 
 <h1>Details</h1>
@@ -11,14 +13,13 @@
 
 	
 }
-
-@if(Model != null)
+@* @await Component.InvokeAsync("LatestNews")  *@
+@if(ViewBag.FeedbackList != null)
 {
-	@await Component.InvokeAsync("Feedback")
-	@foreach(var item in Model)
-    {
+	@foreach (var item in ViewBag.FeedbackList)
+	{
 		
-		<div class="card">
+		 <div class="card">
 			<div class="card-header">
 				<p><strong>Created At:</strong> @item.CreatedAt.ToString()</p>
 				<p><strong>Updated at: </strong>@item.UpdatedAt</p>
@@ -27,10 +28,13 @@
 				<p>@item.Feedbackstring</p>
 			</div>
 			<div class="card-footer">
-			<a class="btn btn-primary" asp-action="Edit" asp-controller="Editor" asp-route-id="@item.Id">Edit</a>
-			<a class="btn btn-danger" asp-action="Delete" asp-controller="Editor" asp-route-id="@item.Id">Delete</a>
-			</div>
-		</div>
-    }
+				<a class="btn btn-primary" asp-action="Edit" asp-controller="Editor" asp-route-id="@item.Id">Edit</a>
+				<a class="btn btn-danger" asp-action="Delete" asp-controller="Editor" asp-route-id="@item.Id">Delete</a> 
+			 </div>
+		 </div>  
+	 }  
+
 }
+
+
 

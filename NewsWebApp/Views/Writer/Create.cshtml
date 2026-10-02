@@ -83,150 +83,622 @@
 	</div>
 
 	<div class="col-md-6">
-    <h4>Image Preview</h4>
 
-    <div id="focalPointEditor">
+		<!-- IMAGE PREVIEW HEADER -->
 
-        <p id="previewMessage">
-            Select an image to set the focal point.
-        </p>
+		<div class="image-preview-header">
 
-        <div id="imagePreviewContainer">
-            <img id="imagePreview"
-                 src=""
-                 alt="Selected image preview" />
+			<div>
+				<h4>Image Preview</h4>
 
-            <div id="focalPointMarker"></div>
-        </div>
+				<p id="previewMessage">
+					Select an image to set the focal point.
+				</p>
+			</div>
 
-        <div id="focalPointValues">
-            Focal X: <span id="focalXDisplay">50</span>%<br />
-            Focal Y: <span id="focalYDisplay">50</span>%
-        </div>
+			<div id="focalPointValues">
+				Focal X: <span id="focalXDisplay">50</span>%<br />
+				Focal Y: <span id="focalYDisplay">50</span>%
+			</div>
 
-    </div>
-</div>
+		</div>
 
-<div>
-    <a asp-action="Articles" asp-controller="Writer">Back to List</a>
-</div>
+
+		<!-- MAIN NEWS -->
+
+		<div class="image-preview-section">
+
+			<h5>Main News</h5>
+
+			<div id="mainPreviewContainer"
+				 class="crop-preview main-preview">
+
+				<img id="mainImagePreview"
+					 src=""
+					 alt="Main news preview" />
+
+			</div>
+
+			<p class="preview-help">
+				Drag the image to choose the visible area.
+			</p>
+
+		</div>
+
+
+		<!-- SECONDARY + CATEGORY -->
+
+		<div class="small-preview-row">
+
+			<div class="image-preview-section">
+
+				<h5>Secondary</h5>
+
+				<div id="secondaryPreviewContainer"
+					 class="crop-preview secondary-preview">
+
+					<img id="secondaryImagePreview"
+						 src=""
+						 alt="Secondary news preview" />
+
+				</div>
+
+			</div>
+
+
+			<div class="image-preview-section">
+
+				<h5>Category</h5>
+
+				<div id="categoryPreviewContainer"
+					 class="crop-preview category-preview">
+
+					<img id="categoryImagePreview"
+						 src=""
+						 alt="Category preview" />
+
+				</div>
+
+			</div>
+
+		</div>
+
 	</div>
 </div>
+
 
 <div>
 	<a asp-action="Articles" asp-controller="Writer">Back to List</a>
 </div>
 
+
 @section Scripts {
-    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
 
-<script>
-const imageFile = document.getElementById("ImageFile");
-const imagePreview = document.getElementById("imagePreview");
-const previewMessage = document.getElementById("previewMessage");
+	@{
+		await Html.RenderPartialAsync("_ValidationScriptsPartial");
+	}
 
-const imagePreviewContainer =
-    document.getElementById("imagePreviewContainer");
+	<script>
 
-const targetArea = 270000;
+		const imageFile =
+			document.getElementById("ImageFile");
 
-imageFile.addEventListener("change", async function () {
+		const previewMessage =
+			document.getElementById("previewMessage");
 
-    const file = this.files[0];
+		const mainImagePreview =
+			document.getElementById("mainImagePreview");
 
-    if (!file) {
-        imagePreview.style.display = "none";
-        previewMessage.style.display = "block";
-        return;
-    }
+		const secondaryImagePreview =
+			document.getElementById("secondaryImagePreview");
 
-    try {
+		const categoryImagePreview =
+			document.getElementById("categoryImagePreview");
 
-        // Read the image first so we know its correctly
-        // oriented dimensions before displaying it.
-        const bitmap = await createImageBitmap(file, {
-            imageOrientation: "from-image"
-        });
+		const focalPointX =
+			document.getElementById("ImageFocalPointX");
 
-        const width = bitmap.width;
-        const height = bitmap.height;
+		const focalPointY =
+			document.getElementById("ImageFocalPointY");
 
-        bitmap.close();
+		const focalXDisplay =
+			document.getElementById("focalXDisplay");
 
-        // Calculate the display width needed for the
-        // chosen preview area.
-        const aspectRatio = width / height;
-
-        const displayWidth =
-            Math.sqrt(targetArea * aspectRatio);
-
-        // Keep the image hidden while setting everything up.
-        imagePreview.style.display = "none";
-
-        // Set the size BEFORE assigning the image source.
-        imagePreview.style.width = displayWidth + "px";
-        imagePreview.style.height = "auto";
-
-		imagePreviewContainer.style.width = displayWidth + "px";
-
-        // Now assign the image.
-        imagePreview.src = URL.createObjectURL(file);
-
-        // Only show it after the browser has loaded it.
-        imagePreview.onload = function () {
-		imagePreview.style.display = "block";
-
-		const focalPointMarker =
-			document.getElementById("focalPointMarker");
-
-		focalPointMarker.style.display = "block";
-
-		previewMessage.style.display = "none";
-};
-
-    }
-    catch (error) {
-        console.error("Could not read image:", error);
-    }
-});
-const focalPointMarker =
-    document.getElementById("focalPointMarker");
-
-const focalPointX =
-    document.getElementById("ImageFocalPointX");
-
-const focalPointY =
-    document.getElementById("ImageFocalPointY");
-
-imagePreview.addEventListener("click", function (event) {
-
-    const rect = imagePreview.getBoundingClientRect();
-
-    // Calculate click position as percentages
-    // of the displayed image.
-    let x = ((event.clientX - rect.left) / rect.width) * 100;
-    let y = ((event.clientY - rect.top) / rect.height) * 100;
-
-    // Keep the values between 0 and 100.
-    x = Math.max(0, Math.min(100, x));
-    y = Math.max(0, Math.min(100, y));
-
-    // Move the marker.
-    focalPointMarker.style.left = x + "%";
-    focalPointMarker.style.top = y + "%";
-
-    // Store the focal point.
-    focalPointX.value = x.toFixed(2).replace(".", ",");
-    focalPointY.value = y.toFixed(2).replace(".", ",");
-
-    // Update the displayed values.
-    document.getElementById("focalXDisplay").textContent =
-        x.toFixed(2);
-
-    document.getElementById("focalYDisplay").textContent =
-        y.toFixed(2);
+		const focalYDisplay =
+			document.getElementById("focalYDisplay");
 
 
-});
-    </script>
+		const previews = [
+			{
+				image: mainImagePreview,
+				width: 622,
+				height: 310
+			},
+			{
+				image: secondaryImagePreview,
+				width: 366,
+				height: 100
+			},
+			{
+				image: categoryImagePreview,
+				width: 130,
+				height: 110
+			}
+		];
+
+
+		/*
+		 * IMAGE SELECTION
+		 */
+
+		imageFile.addEventListener("change", async function () {
+
+			const file = this.files[0];
+
+			if (!file) {
+
+				previews.forEach(function (preview) {
+
+					preview.image.style.display = "none";
+
+				});
+
+				previewMessage.style.display = "block";
+
+				return;
+			}
+
+
+			try {
+
+				const bitmap =
+					await createImageBitmap(file, {
+						imageOrientation: "from-image"
+					});
+
+
+				const naturalWidth =
+					bitmap.width;
+
+				const naturalHeight =
+					bitmap.height;
+
+
+				bitmap.close();
+
+
+				const imageUrl =
+					URL.createObjectURL(file);
+
+
+				previews.forEach(function (preview) {
+
+					const image =
+						preview.image;
+
+					const containerWidth =
+						preview.width;
+
+					const containerHeight =
+						preview.height;
+
+
+					/*
+					 * Scale the image so that it
+					 * completely covers the preview.
+					 */
+
+					const scale =
+						Math.max(
+							containerWidth / naturalWidth,
+							containerHeight / naturalHeight
+						);
+
+
+					const displayWidth =
+						naturalWidth * scale;
+
+					const displayHeight =
+						naturalHeight * scale;
+
+
+					image.style.width =
+						displayWidth + "px";
+
+					image.style.height =
+						displayHeight + "px";
+
+
+					image.style.left =
+						((containerWidth - displayWidth) / 2) + "px";
+
+					image.style.top =
+						((containerHeight - displayHeight) / 2) + "px";
+
+
+					image.src =
+						imageUrl;
+
+					image.style.display =
+						"block";
+
+				});
+
+
+				previewMessage.style.display =
+					"none";
+
+
+				/*
+				 * Start the focal point at the
+				 * current saved value, or 50 / 50.
+				 */
+
+				const x =
+					parseFloat(
+						focalPointX.value.replace(",", ".")
+					) || 50;
+
+				const y =
+					parseFloat(
+						focalPointY.value.replace(",", ".")
+					) || 50;
+
+
+				focalXDisplay.textContent =
+					x.toFixed(2);
+
+				focalYDisplay.textContent =
+					y.toFixed(2);
+
+
+				/*
+				 * Apply the focal point to the
+				 * secondary and category previews.
+				 */
+
+				updateSmallPreviews(x, y);
+
+			}
+			catch (error) {
+
+				console.error(
+					"Could not read image:",
+					error
+				);
+
+			}
+
+		});
+
+
+		/*
+		 * SECONDARY + CATEGORY FOCAL POINT
+		 */
+
+		function updateSmallPreviews(x, y) {
+
+			applyFocalPoint(
+				secondaryImagePreview,
+				366,
+				100,
+				x,
+				y
+			);
+
+
+			applyFocalPoint(
+				categoryImagePreview,
+				130,
+				110,
+				x,
+				y
+			);
+
+		}
+
+
+		function applyFocalPoint(
+			image,
+			containerWidth,
+			containerHeight,
+			x,
+			y
+		) {
+
+			const imageWidth =
+				image.offsetWidth;
+
+			const imageHeight =
+				image.offsetHeight;
+
+
+			let left =
+				containerWidth / 2 -
+				imageWidth * x / 100;
+
+
+			let top =
+				containerHeight / 2 -
+				imageHeight * y / 100;
+
+
+			const minLeft =
+				containerWidth - imageWidth;
+
+			const minTop =
+				containerHeight - imageHeight;
+
+
+			left =
+				Math.max(
+					minLeft,
+					Math.min(0, left)
+				);
+
+
+			top =
+				Math.max(
+					minTop,
+					Math.min(0, top)
+				);
+
+
+			image.style.left =
+				left + "px";
+
+			image.style.top =
+				top + "px";
+
+		}
+
+
+		/*
+		 * CLICK SECONDARY OR CATEGORY
+		 * TO SET FOCAL POINT
+		 */
+
+		secondaryImagePreview.addEventListener(
+			"click",
+			setFocalPoint
+		);
+
+
+		categoryImagePreview.addEventListener(
+			"click",
+			setFocalPoint
+		);
+
+
+		function setFocalPoint(event) {
+
+			const image =
+				event.currentTarget;
+
+
+			const rect =
+				image.getBoundingClientRect();
+
+
+			let x =
+				((event.clientX - rect.left) /
+					rect.width) * 100;
+
+
+			let y =
+				((event.clientY - rect.top) /
+					rect.height) * 100;
+
+
+			x =
+				Math.max(
+					0,
+					Math.min(100, x)
+				);
+
+
+			y =
+				Math.max(
+					0,
+					Math.min(100, y)
+				);
+
+
+			focalPointX.value =
+				x.toFixed(2).replace(".", ",");
+
+
+			focalPointY.value =
+				y.toFixed(2).replace(".", ",");
+
+
+			focalXDisplay.textContent =
+				x.toFixed(2);
+
+
+			focalYDisplay.textContent =
+				y.toFixed(2);
+
+
+			updateSmallPreviews(x, y);
+
+		}
+
+
+		/*
+		 * MAIN NEWS DRAGGING
+		 */
+
+		let dragging =
+			false;
+
+		let dragStartX =
+			0;
+
+		let dragStartY =
+			0;
+
+		let imageStartLeft =
+			0;
+
+		let imageStartTop =
+			0;
+
+
+		const mainPreviewContainer =
+			document.getElementById(
+				"mainPreviewContainer"
+			);
+
+
+		mainPreviewContainer.addEventListener(
+			"pointerdown",
+			function (event) {
+
+				if (
+					event.target !==
+					mainImagePreview
+				) {
+					return;
+				}
+
+
+				dragging =
+					true;
+
+
+				mainPreviewContainer.setPointerCapture(
+					event.pointerId
+				);
+
+
+				dragStartX =
+					event.clientX;
+
+				dragStartY =
+					event.clientY;
+
+
+				imageStartLeft =
+					parseFloat(
+						mainImagePreview.style.left
+					) || 0;
+
+
+				imageStartTop =
+					parseFloat(
+						mainImagePreview.style.top
+					) || 0;
+
+
+				mainImagePreview.style.cursor =
+					"grabbing";
+
+			}
+		);
+
+
+		mainPreviewContainer.addEventListener(
+			"pointermove",
+			function (event) {
+
+				if (!dragging) {
+					return;
+				}
+
+
+				const dx =
+					event.clientX -
+					dragStartX;
+
+
+				const dy =
+					event.clientY -
+					dragStartY;
+
+
+				const imageWidth =
+					mainImagePreview.offsetWidth;
+
+
+				const imageHeight =
+					mainImagePreview.offsetHeight;
+
+
+				const minLeft =
+					622 -
+					imageWidth;
+
+
+				const minTop =
+					310 -
+					imageHeight;
+
+
+				let newLeft =
+					imageStartLeft + dx;
+
+
+				let newTop =
+					imageStartTop + dy;
+
+
+				/*
+				 * Only allow movement where the
+				 * image extends beyond the crop.
+				 */
+
+				newLeft =
+					Math.max(
+						minLeft,
+						Math.min(0, newLeft)
+					);
+
+
+				newTop =
+					Math.max(
+						minTop,
+						Math.min(0, newTop)
+					);
+
+
+				mainImagePreview.style.left =
+					newLeft + "px";
+
+
+				mainImagePreview.style.top =
+					newTop + "px";
+
+			}
+		);
+
+
+		mainPreviewContainer.addEventListener(
+			"pointerup",
+			function () {
+
+				dragging =
+					false;
+
+				mainImagePreview.style.cursor =
+					"grab";
+
+			}
+		);
+
+
+		mainPreviewContainer.addEventListener(
+			"pointercancel",
+			function () {
+
+				dragging =
+					false;
+
+				mainImagePreview.style.cursor =
+					"grab";
+
+			}
+		);
+
+	</script>
 }

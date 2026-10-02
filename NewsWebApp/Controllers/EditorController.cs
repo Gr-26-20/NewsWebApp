@@ -93,25 +93,7 @@ namespace NewsWebApp.Controllers
         }
 
 
-        //public IActionResult UpdateFeedbackJson(int feedbackId)
-        //{
-
-        //    if (ModelState.IsValid)
-        //    {
-        //        var feedbackIds = _sessionHelper.Get<List<int>>(SessionKeys.Feedback) ?? new List<int>();
-        //        var feedback = _dbContext.Feedback.Find(feedbackId);
-        //        if (feedback == null)
-        //        {
-        //            return NotFound();
-        //        }
-        //        _dbContext.Feedback.Remove(feedback);
-        //        feedbackIds.Remove(feedbackId);
-        //        _sessionHelper.Set(SessionKeys.Feedback, feedbackIds);
-        //        _dbContext.SaveChangesAsync();
-        //        return RedirectToAction("Details", "Editor");
-        //    }
-        //    return RedirectToAction("Details", "Editor");
-        //}
+       
 
         
 

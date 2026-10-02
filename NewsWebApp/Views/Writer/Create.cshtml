@@ -147,6 +147,8 @@
 					   value="50"
 					   step="1" />
 
+
+
 				<label for="mainPositionY">
 					Position Y: <span id="mainPositionYDisplay">50%</span>
 				</label>
@@ -363,6 +365,15 @@
 
 					image.style.height =
 						displayHeight + "px";
+
+					if (image === mainImagePreview) {
+
+						mainImageBaseWidth =
+							displayWidth;
+
+						mainImageBaseHeight =
+							displayHeight;
+		}
 
 
 					image.style.left =
@@ -608,8 +619,15 @@
 				"mainPreviewContainer"
 			);
 
-					const mainPositionX =
+		const mainPositionX =
 			document.getElementById("mainPositionX");
+
+		/* ZOOM */
+		const mainZoom =
+			document.getElementById("mainZoom");
+
+		const mainZoomDisplay =
+			document.getElementById("mainZoomDisplay");
 
 		const mainPositionXDisplay =
 			document.getElementById("mainPositionXDisplay");
@@ -646,19 +664,116 @@
 						focalPointY.value.replace(",", ".")
 					) || 50;
 
-				mainFocalPointMarker.style.left =
+				requestAnimationFrame(function () {
+
+					mainFocalPointMarker.style.left =
+						(
+							left +
+							mainImagePreview.offsetWidth * focalX / 100
+						) + "px";
+
+					mainFocalPointMarker.style.top =
+						(
+							parseFloat(mainImagePreview.style.top) +
+							mainImagePreview.offsetHeight * focalY / 100
+						) + "px";
+					 });
+			}
+		);
+
+			mainZoom.addEventListener(
+			"input",
+			function () {
+
+				const zoom =
+					parseFloat(this.value);
+
+				mainZoomDisplay.textContent =
+					zoom + "%";
+
+				const scale =
+					zoom / 100;
+
+				const newWidth =
+					mainImageBaseWidth * scale;
+
+				const newHeight =
+					mainImageBaseHeight * scale;
+
+				mainImagePreview.style.width =
+					newWidth + "px";
+
+				mainImagePreview.style.height =
+					newHeight + "px";
+
+
+				const positionX =
+					parseFloat(mainPositionX.value);
+
+				const positionY =
+					parseFloat(mainPositionY.value);
+
+				const minLeft =
+					622 - newWidth;
+
+				const minTop =
+					310 - newHeight;
+
+				const left =
+					minLeft * positionX / 100;
+
+				const top =
+					minTop * positionY / 100;
+
+				mainImagePreview.style.left =
+					left + "px";
+
+				mainImagePreview.style.top =
+					top + "px";
+
+
+				const focalX =
+					parseFloat(
+						focalPointX.value.replace(",", ".")
+					) || 50;
+
+				const focalY =
+					parseFloat(
+						focalPointY.value.replace(",", ".")
+					) || 50;
+
+						mainFocalPointMarker.style.left =
 					(
 						left +
-						mainImagePreview.offsetWidth * focalX / 100
+						newWidth * focalX / 100
 					) + "px";
 
 				mainFocalPointMarker.style.top =
 					(
-						parseFloat(mainImagePreview.style.top) +
-						mainImagePreview.offsetHeight * focalY / 100
+						top +
+						newHeight * focalY / 100
 					) + "px";
+
+				requestAnimationFrame(function () {
+
+					mainFocalPointMarker.style.left =
+						(
+							left +
+							mainImagePreview.offsetWidth * focalX / 100
+						) + "px";
+
+					mainFocalPointMarker.style.top =
+						(
+							top +
+							mainImagePreview.offsetHeight * focalY / 100
+						) + "px";
+
+					
+				});
 			}
 		);
+
+		
 
 
 		mainPreviewContainer.addEventListener(

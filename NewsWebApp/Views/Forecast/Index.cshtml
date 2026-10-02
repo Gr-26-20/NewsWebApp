@@ -1,4 +1,5 @@
-﻿@model NewsWebApp.Models.ViewModels.ForecastViewModel
+﻿
+@model NewsWebApp.Models.ViewModels.ForecastViewModel
 
 @{
     ViewData["Title"] = "Weather";
@@ -49,51 +50,95 @@
     <div class="forecast-page-header">
         <h1>WEATHER</h1>
 
-        <a href="/" class="full-forecast-link">
-            BACK TO NEWS →
-        </a>
+        <a href="/" class="section-link">BACK TO NEWS →</a>
     </div>
 
 
     <!-- CURRENT WEATHER -->
 
-    <section class="current-weather">
+    @if (!string.IsNullOrEmpty(Model.HourlyForecastError))
+    {
+        <section class="current-weather">
 
-        <div class="current-weather-main">
+            <div class="forecast-unavailable">
 
-            <div class="current-location">
-                @Model.HourlyForecast.FirstOrDefault()?.City
+                <svg class="service-unavailable-icon"
+                     viewBox="0 0 80 80"
+                     aria-hidden="true">
+
+                    <!-- Antenna mast -->
+                    <line x1="40" y1="31" x2="40" y2="62" />
+
+                    <!-- Base -->
+                    <line x1="29" y1="62" x2="51" y2="62" />
+
+                    <!-- Antenna tip -->
+                    <circle cx="40" cy="24" r="3" />
+
+                    <!-- Transmission waves -->
+                    <path d="M28 29 Q22 35 22 43" />
+                    <path d="M52 29 Q58 35 58 43" />
+
+                    <!-- Outer transmission waves -->
+                    <path d="M19 25 Q12 34 12 45" />
+                    <path d="M61 25 Q68 34 68 45" />
+
+                    <!-- Red interruption mark -->
+                    <line class="break-mark"
+                          x1="31" y1="39"
+                          x2="49" y2="53" />
+                </svg>
+
+                <strong>WEATHER SERVICE UNAVAILABLE</strong>
+
+                <span>
+                    @Model.HourlyForecastError
+                </span>
+
             </div>
 
-            <div class="current-temperature">
-                @Model.HourlyForecast.FirstOrDefault()?.TemperatureC°C
+        </section>
+    }
+    else
+    {
+        <section class="current-weather">
+
+            <div class="current-weather-main">
+
+                <div class="current-location">
+                    @Model.HourlyForecast.FirstOrDefault()?.City
+                </div>
+
+                <div class="current-temperature">
+                    @Model.HourlyForecast.FirstOrDefault()?.TemperatureC°C
+                </div>
+
+                <div class="current-condition">
+                    @Model.HourlyForecast.FirstOrDefault()?.Summary
+                </div>
+
             </div>
 
-            <div class="current-condition">
-                @Model.HourlyForecast.FirstOrDefault()?.Summary
+            <div class="current-weather-details">
+
+                <div class="weather-detail">
+                    <span>HUMIDITY</span>
+                    <strong>
+                        @Model.HourlyForecast.FirstOrDefault()?.Humidity%
+                    </strong>
+                </div>
+
+                <div class="weather-detail">
+                    <span>WIND</span>
+                    <strong>
+                        @Model.HourlyForecast.FirstOrDefault()?.WindSpeed m/s
+                    </strong>
+                </div>
+
             </div>
 
-        </div>
-
-        <div class="current-weather-details">
-
-            <div class="weather-detail">
-                <span>HUMIDITY</span>
-                <strong>
-                    @Model.HourlyForecast.FirstOrDefault()?.Humidity%
-                </strong>
-            </div>
-
-            <div class="weather-detail">
-                <span>WIND</span>
-                <strong>
-                    @Model.HourlyForecast.FirstOrDefault()?.WindSpeed m/s
-                </strong>
-            </div>
-
-        </div>
-
-    </section>
+        </section>
+    }
 
 
     <!-- NEXT 24 HOURS -->
@@ -104,69 +149,118 @@
             <h2>NEXT 24 HOURS</h2>
         </div>
 
-        <!-- DESKTOP -->
+        @if (!string.IsNullOrEmpty(Model.HourlyForecastError))
+        {
+            <div class="forecast-unavailable">
 
-        <div class="hourly-desktop">
+                <svg class="service-unavailable-icon"
+                     viewBox="0 0 80 80"
+                     aria-hidden="true">
 
-            <div class="hourly-day">
-                TODAY
+                    <!-- Antenna mast -->
+                    <line x1="40" y1="31" x2="40" y2="62" />
+
+                    <!-- Base -->
+                    <line x1="29" y1="62" x2="51" y2="62" />
+
+                    <!-- Antenna tip -->
+                    <circle cx="40" cy="24" r="3" />
+
+                    <!-- Transmission waves -->
+                    <path d="M28 29 Q22 35 22 43" />
+                    <path d="M52 29 Q58 35 58 43" />
+
+                    <!-- Outer transmission waves -->
+                    <path d="M19 25 Q12 34 12 45" />
+                    <path d="M61 25 Q68 34 68 45" />
+
+                    <!-- Red interruption mark -->
+                    <line class="break-mark"
+                          x1="31" y1="39"
+                          x2="49" y2="53" />
+                </svg>
+
+                <strong>FORECAST SERVICE UNAVAILABLE</strong>
+
+                <span>
+                    @Model.HourlyForecastError
+                </span>
+
+            </div>
+        }
+        else
+        {
+            <!-- DESKTOP -->
+
+            <div class="hourly-desktop">
+
+                <div class="hourly-day">
+                    TODAY
+                </div>
+
+                <div class="hourly-grid">
+
+                    @foreach (var weather in Model.HourlyForecast)
+                    {
+                        <div class="hourly-column">
+
+                            <strong class="hourly-time">
+                                @weather.Date.ToString("HH:mm")
+                            </strong>
+
+                            <strong class="hourly-temperature">
+                                @weather.TemperatureC°C
+                            </strong>
+
+                            <span class="hourly-symbol">
+                                @GetWeatherSymbol(weather)
+                            </span>
+
+                            <span class="hourly-wind">
+                                @weather.WindSpeed m/s
+                            </span>
+
+                            <span class="hourly-humidity">
+                                @weather.Humidity%
+                            </span>
+
+                        </div>
+                    }
+
+                </div>
+
             </div>
 
-            <div class="hourly-grid">
+
+            <!-- MOBILE -->
+
+            <div class="hourly-mobile">
 
                 @foreach (var weather in Model.HourlyForecast)
                 {
-                    <div class="hourly-column">
-                        <strong class="hourly-time">
+                    <div class="forecast-row">
+
+                        <strong>
                             @weather.Date.ToString("HH:mm")
                         </strong>
 
-                        <strong class="hourly-temperature">
-                            @weather.TemperatureC°C
-                        </strong>
-
-                        <span class="hourly-symbol">
+                        <span class="forecast-symbol">
                             @GetWeatherSymbol(weather)
                         </span>
 
-                        <span class="hourly-wind">
-                            @weather.WindSpeed m/s
+                        <strong>
+                            @weather.TemperatureC°C
+                        </strong>
+
+                        <span>
+                            @weather.Summary
                         </span>
 
-                        <span class="hourly-humidity">
-                            @weather.Humidity%
-                        </span>
                     </div>
                 }
 
             </div>
-
-        </div>
-
-
-        <!-- MOBILE -->
-        <div class="hourly-mobile">
-            @foreach (var weather in Model.HourlyForecast)
-            {
-                <div class="forecast-row">
-                    <strong>
-                        @weather.Date.ToString("HH:mm")
-                    </strong>
-
-                    <span class="forecast-symbol">
-                        @GetWeatherSymbol(weather)
-                    </span>
-
-                    <strong>
-                        @weather.TemperatureC°C
-                    </strong>
-
-                    <span>
-                        @weather.Summary
-                    </span>
-                </div>
-            }
-        </div>
+        }
 
     </section>
 
@@ -186,40 +280,89 @@
                     <text>5 DAY FORECAST</text>
                 }
             </h2>
-       </div>
-
-        <div class="five-day-forecast">
-
-            @foreach (var weather in Model.FiveDayForecast)
-            {
-                <div class="forecast-day">
-
-                    <strong>
-                        @weather.Date.ToString("ddd").ToUpper()
-                    </strong>
-
-                    <span>
-                        @weather.TemperatureC°C
-                    </span>
-
-                    <small>
-                        @weather.Summary
-                    </small>
-
-                </div>
-            }
-
         </div>
+
+        @if (!string.IsNullOrEmpty(Model.FiveDayForecastError))
+        {
+            <div class="forecast-unavailable">
+
+                <svg class="service-unavailable-icon"
+                     viewBox="0 0 80 80"
+                     aria-hidden="true">
+
+                    <!-- Antenna mast -->
+                    <line x1="40" y1="31" x2="40" y2="62" />
+
+                    <!-- Base -->
+                    <line x1="29" y1="62" x2="51" y2="62" />
+
+                    <!-- Antenna tip -->
+                    <circle cx="40" cy="24" r="3" />
+
+                    <!-- Transmission waves -->
+                    <path d="M28 29 Q22 35 22 43" />
+                    <path d="M52 29 Q58 35 58 43" />
+
+                    <!-- Outer transmission waves -->
+                    <path d="M19 25 Q12 34 12 45" />
+                    <path d="M61 25 Q68 34 68 45" />
+
+                    <!-- Red interruption mark -->
+                    <line class="break-mark"
+                          x1="31" y1="39"
+                          x2="49" y2="53" />
+                </svg>
+
+                <strong>FORECAST SERVICE UNAVAILABLE</strong>
+
+                <span>
+                    @Model.FiveDayForecastError
+                </span>
+
+            </div>
+        }
+        else
+        {
+            <div class="five-day-forecast">
+
+                @foreach (var weather in Model.FiveDayForecast)
+                {
+                    <div class="forecast-day">
+
+                        <strong>
+                            @weather.Date.ToString("ddd").ToUpper()
+                        </strong>
+
+                        <span>
+                            @weather.TemperatureC°C
+                        </span>
+
+                        <small>
+                            @weather.Summary
+                        </small>
+
+                    </div>
+                }
+
+            </div>
+        }
+
         <div class="forecast-credit">
             Forecast data provided by DreamMaker IT · weatherapi.dreammaker-it.se
         </div>
 
     </section>
+
+
     <div class="history-link">
-    <a asp-controller="Forecast" asp-action="History">
-        HISTORICAL WEATHER & ELECTRICITY →
-    </a>
-</div>
+
+        <a asp-controller="Forecast"
+           asp-action="History"
+           class="section-link">
+            HISTORICAL WEATHER & ELECTRICITY →
+        </a>
+
+    </div>
 
 </div>
 

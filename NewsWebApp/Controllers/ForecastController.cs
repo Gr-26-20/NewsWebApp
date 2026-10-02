@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using NewsWebApp.Models;
 using NewsWebApp.Models.ViewModels;
 using NewsWebApp.Services;
 
@@ -23,34 +24,66 @@ namespace NewsWebApp.Controllers
                 HttpContext.Session.GetString("SelectedWeatherMunicipality")
                 ?? "Gothenburg";
 
-            var hourlyForecast =
-                await _weatherService.Get24HourForecastAsync(municipality);
-
-            var fiveDayForecast =
-                await _weatherService.Get5DayForecastAsync(municipality);
-
             var model = new ForecastViewModel
             {
-                HourlyForecast = hourlyForecast,
-                FiveDayForecast = fiveDayForecast
+                HourlyForecast = new List<WeatherForecast>(),
+                FiveDayForecast = new List<WeatherForecast>()
             };
+
+            try
+            {
+                // TEST: simulate 24-hour weather API failure by uncommenting next line
+                // throw new HttpRequestException("Test: 24-hour weather API is unavailable.");
+                model.HourlyForecast =
+                    await _weatherService.Get24HourForecastAsync(municipality);
+            }
+            catch (HttpRequestException)
+            {
+                model.HourlyForecastError =
+                    "24-hour forecast is currently unavailable. Please try again later.";
+            }
+
+            try
+            {
+                // TEST: simulate 5-day weather API failure
+                // throw new HttpRequestException("Test: 5-day weather API is unavailable.");
+                model.FiveDayForecast =
+                    await _weatherService.Get5DayForecastAsync(municipality);
+            }
+            catch (HttpRequestException)
+            {
+                model.FiveDayForecastError =
+                    "5-day forecast is currently unavailable. Please try again later.";
+            }
 
             return View(model);
         }
 
         public async Task<IActionResult> History()
         {
-            var data =
-                await _tableStorageService.GetHistoryAsync();
-
-            var model = data.Select(item => new TemperatureElectricityViewModel
+            try
             {
-                MeasurementTime = item.MeasurementTime,
-                TemperatureC = item.TemperatureC,
-                ElectricityPrice = item.ElectricityPrice
-            }).ToList();
+                // throw new Exception("Test: Azure Table Storage is unavailable.");
 
-            return View(model);
+                var data =
+                    await _tableStorageService.GetHistoryAsync();
+
+                var model = data.Select(item => new TemperatureElectricityViewModel
+                {
+                    MeasurementTime = item.MeasurementTime,
+                    TemperatureC = item.TemperatureC,
+                    ElectricityPrice = item.ElectricityPrice
+                }).ToList();
+
+                return View(model);
+            }
+            catch (Exception)
+            {
+                ViewData["HistoryError"] =
+                    "Historical weather and/or electricity data is currently unavailable. Please try again later.";
+
+                return View(new List<TemperatureElectricityViewModel>());
+            }
         }
     }
 }

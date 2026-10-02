@@ -244,12 +244,14 @@
 
                         @if (!string.IsNullOrWhiteSpace(article.ImageUrl))
                         {
-                            <img src="@article.ImageUrl"
-                                 alt="@article.Title"
-                                 class="article-image"
-                                 data-focal-x="@article.ImageFocalPointX.ToString(System.Globalization.CultureInfo.InvariantCulture)"
-                                 data-focal-y="@article.ImageFocalPointY.ToString(System.Globalization.CultureInfo.InvariantCulture)" />
-                        }
+                            <div class="compact-image">
+                                <img src="@article.ImageUrl"
+                                     alt="@article.Title"
+                                     class="article-image"
+                                     data-focal-x="@article.ImageFocalPointX.ToString(System.Globalization.CultureInfo.InvariantCulture)"
+                                     data-focal-y="@article.ImageFocalPointY.ToString(System.Globalization.CultureInfo.InvariantCulture)" />
+                            </div>
+                            }
                         else
                         {
                             <div class="image-placeholder">
@@ -305,11 +307,13 @@
 
                         @if (!string.IsNullOrWhiteSpace(article.ImageUrl))
                         {
-                            <img src="@article.ImageUrl"
-                                 alt="@article.Title"
-                                 class="article-image"
-                                 data-focal-x="@article.ImageFocalPointX.ToString(System.Globalization.CultureInfo.InvariantCulture)"
-                                 data-focal-y="@article.ImageFocalPointY.ToString(System.Globalization.CultureInfo.InvariantCulture)" />
+                            <div class="compact-image">
+                                <img src="@article.ImageUrl"
+                                     alt="@article.Title"
+                                     class="article-image"
+                                     data-focal-x="@article.ImageFocalPointX.ToString(System.Globalization.CultureInfo.InvariantCulture)"
+                                     data-focal-y="@article.ImageFocalPointY.ToString(System.Globalization.CultureInfo.InvariantCulture)" />
+                            </div>
                         }
                         else
                         {
@@ -366,11 +370,13 @@
 
                         @if (!string.IsNullOrWhiteSpace(article.ImageUrl))
                         {
-                            <img src="@article.ImageUrl"
-                                 alt="@article.Title"
-                                 class="article-image"
-                                 data-focal-x="@article.ImageFocalPointX.ToString(System.Globalization.CultureInfo.InvariantCulture)"
-                                 data-focal-y="@article.ImageFocalPointY.ToString(System.Globalization.CultureInfo.InvariantCulture)" />
+                            <div class="compact-image">
+                                <img src="@article.ImageUrl"
+                                     alt="@article.Title"
+                                     class="article-image"
+                                     data-focal-x="@article.ImageFocalPointX.ToString(System.Globalization.CultureInfo.InvariantCulture)"
+                                     data-focal-y="@article.ImageFocalPointY.ToString(System.Globalization.CultureInfo.InvariantCulture)" />
+                            </div>
                         }
                         else
                         {
@@ -791,6 +797,144 @@ function calculateObjectPosition(image, focalX, focalY) {
 window.addEventListener("load", applyFocalPoints);
 
 window.addEventListener("resize", applyFocalPoints);
+
+function applyCompactImageFocalPoints() {
+
+    const images =
+        document.querySelectorAll(".compact-image .article-image[data-focal-x]");
+
+    const secondaryImage =
+        document.querySelector(".story .article-image.secondary");
+
+    let secondaryWidth = 366;
+    let secondaryHeight = 100;
+
+    if (secondaryImage) {
+        secondaryWidth = secondaryImage.clientWidth;
+        secondaryHeight = secondaryImage.clientHeight;
+    }
+
+    images.forEach(function (image) {
+
+        const focalX = parseFloat(image.dataset.focalX);
+        const focalY = parseFloat(image.dataset.focalY);
+
+        if (isNaN(focalX) || isNaN(focalY)) {
+            return;
+        }
+
+        if (!image.complete) {
+            image.addEventListener("load", function () {
+                positionCompactImage(
+                    image,
+                    focalX,
+                    focalY,
+                    secondaryWidth,
+                    secondaryHeight
+                );
+            }, { once: true });
+
+            return;
+        }
+
+        positionCompactImage(
+            image,
+            focalX,
+            focalY,
+            secondaryWidth,
+            secondaryHeight
+        );
+    });
+}
+
+
+function positionCompactImage(
+    image,
+    focalX,
+    focalY,
+    secondaryWidth,
+    secondaryHeight
+) {
+
+    const container = image.parentElement;
+
+    const naturalWidth = image.naturalWidth;
+    const naturalHeight = image.naturalHeight;
+
+    const containerWidth = container.clientWidth;
+    const containerHeight = container.clientHeight;
+
+    if (!naturalWidth || !naturalHeight ||
+        !containerWidth || !containerHeight) {
+        return;
+    }
+
+    /*
+     * Calculate the scale used by the secondary image
+     * with object-fit: cover.
+     */
+    const secondaryScale = Math.max(
+        secondaryWidth / naturalWidth,
+        secondaryHeight / naturalHeight
+    );
+
+    /*
+     * Category image is approximately 20% less zoomed.
+     */
+    let categoryScale = secondaryScale * 0.7;
+
+    /*
+     * Make sure the image still completely covers
+     * the 130 x 110 category window.
+     */
+    const minimumScale = Math.max(
+        containerWidth / naturalWidth,
+        containerHeight / naturalHeight
+    );
+
+    categoryScale = Math.max(
+        categoryScale,
+        minimumScale
+    );
+
+    const imageWidth = naturalWidth * categoryScale;
+    const imageHeight = naturalHeight * categoryScale;
+
+    image.style.width = imageWidth + "px";
+    image.style.height = imageHeight + "px";
+
+    /*
+     * Position the focal point in the centre of
+     * the category window.
+     */
+    let left =
+        (containerWidth / 2) -
+        (imageWidth * focalX / 100);
+
+    let top =
+        (containerHeight / 2) -
+        (imageHeight * focalY / 100);
+
+    /*
+     * Prevent empty space around the image.
+     */
+    const minLeft = containerWidth - imageWidth;
+    const minTop = containerHeight - imageHeight;
+
+    left = Math.max(minLeft, Math.min(0, left));
+    top = Math.max(minTop, Math.min(0, top));
+
+    image.style.position = "absolute";
+    image.style.left = left + "px";
+    image.style.top = top + "px";
+}
+
+
+window.addEventListener("load", applyCompactImageFocalPoints);
+window.addEventListener("resize", applyCompactImageFocalPoints);
+
+
+
 
 
 

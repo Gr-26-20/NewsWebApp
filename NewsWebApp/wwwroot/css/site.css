@@ -568,11 +568,18 @@ a {
                 font-weight: 900;
             }
 
-            .compact-story .article-image {
+            .compact-image {
                 width: 130px;
                 height: 110px;
-                max-width: 130px;
-                object-fit: cover;
+                overflow: hidden;
+                position: relative;
+            }
+
+            .compact-image .article-image {
+                width: auto;
+                height: auto;
+                max-width: none;
+                object-fit: unset;
                 display: block;
             }
         /* ---------------------------------------------------------

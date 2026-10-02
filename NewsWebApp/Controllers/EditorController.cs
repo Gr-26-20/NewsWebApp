@@ -46,10 +46,7 @@ namespace NewsWebApp.Controllers
                     ArticleId = Id,
                     
                 };
-                //article.Feedback.Add(feedback);
-
                 _dbContext.Feedback.Add(feedback);
-                    //article.Feedback.Add(feedback);
                 await _dbContext.SaveChangesAsync();
                 return RedirectToAction("Articles", "Writer");
             }
@@ -67,29 +64,9 @@ namespace NewsWebApp.Controllers
         [HttpPost]
         public async Task<IActionResult> Edit(int id,Feedback feedback)
         {
-            //if (id == feedback.Id)
-            //{
-            //    int feedbackidTemp = id;
-            //    TempData["FeedbackId"] = feedbackidTemp.ToString();
-            //    TempData.Keep("FeedbackId");
-            //    int articleidTemp = id;
-            //    TempData["ArticleId"] = articleidTemp.ToString();
-            //    TempData.Keep("ArticleId");
-            //}
-            //if (id == 0 && TempData["FeedbackId"] != null)
-            //{
-            //    int feedbackidTemp = Convert.ToInt32(TempData["FeedbackId"]);
-            //    id = feedbackidTemp;
-            //    TempData.Keep("FeedbackId");
-            //    int articleidTemp = id;
-            //    TempData["ArticleId"] = articleidTemp.ToString();
-            //    TempData.Keep("ArticleId");
-            //}
-
             if (ModelState.IsValid)
             {
                 feedback.ArticleId = Convert.ToInt32(TempData["ArticleId"]);
-                //var feedback = await _dbContext.Feedback.FindAsync(id);
                 _dbContext.Update(feedback);
                 await _dbContext.SaveChangesAsync();
                 return RedirectToAction("Details", "Editor");
@@ -103,9 +80,6 @@ namespace NewsWebApp.Controllers
             
             if (ModelState.IsValid)
             {
-                var feedbackIds = _sessionHelper.Get<List<int>>(SessionKeys.Feedback) ?? new List<int>();
-                //feedbackIds.Add(id);
-                //_sessionHelper.Set(SessionKeys.Feedback, feedbackIds);
                 var feedback = await _dbContext.Feedback.FindAsync(id);
                 if (feedback == null)
                 {
@@ -139,19 +113,7 @@ namespace NewsWebApp.Controllers
         //    return RedirectToAction("Details", "Editor");
         //}
 
-        //public async Task<IActionResult> Delete(int id)
-        //{
-
-        //    var feedback = await _dbContext.Feedback.FindAsync(id);
-        //    if (feedback == null)
-        //    {
-        //        return NotFound();
-        //    }
-        //    //var allFeedback = _articleService.DeleteAllFeedbackForArticle(id);
-        //    _dbContext.Feedback.Remove(feedback);
-        //    await _dbContext.SaveChangesAsync();
-        //    return View("Details", "Editor");
-        //}
+        
 
         public async Task<IActionResult> Details(int id)
         {

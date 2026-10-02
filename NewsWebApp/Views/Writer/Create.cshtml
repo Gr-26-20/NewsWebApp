@@ -117,11 +117,49 @@
 					 src=""
 					 alt="Main news preview" />
 
+				<div id="mainFocalPointMarker"></div>
+
 			</div>
 
 			<p class="preview-help">
-				Drag the image to choose the visible area.
+				Click the image to set the focal point.
 			</p>
+			<label for="mainZoom">Zoom: <span id="mainZoomDisplay">100%</span></label>
+			<input type="range"
+				   id="mainZoom"
+				   class="zoom-control"
+				   min="100"
+				   max="300"
+				   value="100"
+				   step="1" />
+
+			<div id="mainPositionControls">
+
+				<label for="mainPositionX">
+					Position X: <span id="mainPositionXDisplay">50%</span>
+				</label>
+
+				<input type="range"
+					   id="mainPositionX"
+					   class="zoom-control"
+					   min="0"
+					   max="100"
+					   value="50"
+					   step="1" />
+
+				<label for="mainPositionY">
+					Position Y: <span id="mainPositionYDisplay">50%</span>
+				</label>
+
+				<input type="range"
+					   id="mainPositionY"
+					   class="zoom-control"
+					   min="0"
+					   max="100"
+					   value="50"
+					   step="1" />
+
+			</div>
 
 		</div>
 
@@ -142,7 +180,14 @@
 						 alt="Secondary news preview" />
 
 				</div>
-
+				<label for="secondaryZoom">Zoom: <span id="secondaryZoomDisplay">100%</span></label>
+				<input type="range"
+					   id="secondaryZoom"
+					   class="zoom-control"
+					   min="100"
+					   max="300"
+					   value="100"
+					   step="1" />
 			</div>
 
 
@@ -158,6 +203,14 @@
 						 alt="Category preview" />
 
 				</div>
+				<label for="categoryZoom">Zoom: <span id="categoryZoomDisplay">100%</span></label>
+				<input type="range"
+					   id="categoryZoom"
+					   class="zoom-control"
+					   min="100"
+					   max="300"
+					   value="100"
+					   step="1" />
 
 			</div>
 
@@ -188,6 +241,9 @@
 
 		const mainImagePreview =
 			document.getElementById("mainImagePreview");
+
+		const mainFocalPointMarker =
+			document.getElementById("mainFocalPointMarker");
 
 		const secondaryImagePreview =
 			document.getElementById("secondaryImagePreview");
@@ -351,6 +407,14 @@
 				focalYDisplay.textContent =
 					y.toFixed(2);
 
+						mainFocalPointMarker.style.left =
+				x + "%";
+
+				mainFocalPointMarker.style.top =
+					y + "%";
+
+				mainFocalPointMarker.style.display =
+					"block";
 
 				/*
 				 * Apply the focal point to the
@@ -452,50 +516,37 @@
 
 		}
 
-
-		/*
-		 * CLICK SECONDARY OR CATEGORY
-		 * TO SET FOCAL POINT
-		 */
-
-		secondaryImagePreview.addEventListener(
+				mainImagePreview.addEventListener(
 			"click",
 			setFocalPoint
 		);
 
 
-		categoryImagePreview.addEventListener(
-			"click",
-			setFocalPoint
-		);
+		
+		
 
 
-		function setFocalPoint(event) {
+				function setFocalPoint(event) {
 
-			const image =
-				event.currentTarget;
-
+			const container =
+				document.getElementById("mainPreviewContainer");
 
 			const rect =
-				image.getBoundingClientRect();
-
+				container.getBoundingClientRect();
 
 			let x =
 				((event.clientX - rect.left) /
 					rect.width) * 100;
 
-
 			let y =
 				((event.clientY - rect.top) /
 					rect.height) * 100;
-
 
 			x =
 				Math.max(
 					0,
 					Math.min(100, x)
 				);
-
 
 			y =
 				Math.max(
@@ -507,7 +558,6 @@
 			focalPointX.value =
 				x.toFixed(2).replace(".", ",");
 
-
 			focalPointY.value =
 				y.toFixed(2).replace(".", ",");
 
@@ -515,9 +565,18 @@
 			focalXDisplay.textContent =
 				x.toFixed(2);
 
-
 			focalYDisplay.textContent =
 				y.toFixed(2);
+
+
+			mainFocalPointMarker.style.left =
+				x + "%";
+
+			mainFocalPointMarker.style.top =
+				y + "%";
+
+			mainFocalPointMarker.style.display =
+				"block";
 
 
 			updateSmallPreviews(x, y);
@@ -525,8 +584,7 @@
 		}
 
 
-		/*
-		 * MAIN NEWS DRAGGING
+		 /* MAIN NEWS DRAGGING
 		 */
 
 		let dragging =
@@ -563,8 +621,7 @@
 				}
 
 
-				dragging =
-					true;
+				return;
 
 
 				mainPreviewContainer.setPointerCapture(

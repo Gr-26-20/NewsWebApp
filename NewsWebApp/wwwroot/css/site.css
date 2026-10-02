@@ -776,6 +776,16 @@ a {
             object-fit: cover;
             display: block;
         }
+
+        .zoom-control {
+            display: block;
+            width: 100%;
+            margin-top: 5px;
+        }
+
+        .zoom-control input[type="range"] {
+            width: 100%;
+        }
        
 
        
@@ -814,12 +824,28 @@ a {
     background: #deded9;
 }
 
-    .crop-preview img {
-        position: absolute;
-        display: block;
-        max-width: none;
-        user-select: none;
-    }
+.crop-preview img {
+    position: absolute;
+    display: block;
+    max-width: none;
+    user-select: none;
+}
+
+#mainFocalPointMarker {
+    position: absolute;
+    width: 18px;
+    height: 18px;
+    border: 3px solid white;
+    border-radius: 50%;
+    background: #d71920;
+    transform: translate(-50%, -50%);
+    left: 50%;
+    top: 50%;
+    display: none;
+    pointer-events: none;
+    box-sizing: border-box;
+    z-index: 10;
+}
 
 .main-preview {
     width: 622px;

@@ -147,8 +147,10 @@
                                 @if (!string.IsNullOrWhiteSpace(article.ImageUrl))
                                 {
                                     <img src="@article.ImageUrl"
-                                         alt="@article.Title"
-                                         class="article-image secondary" />
+                                     alt="@article.Title"
+                                     class="article-image secondary"
+                                     data-focal-x="@article.ImageFocalPointX"
+                                     data-focal-y="@article.ImageFocalPointY" />
                                 }
                                 else
                                 {
@@ -244,7 +246,9 @@
                         {
                             <img src="@article.ImageUrl"
                                  alt="@article.Title"
-                                 class="article-image" />
+                                 class="article-image"
+                                 data-focal-x="@article.ImageFocalPointX.ToString(System.Globalization.CultureInfo.InvariantCulture)"
+                                 data-focal-y="@article.ImageFocalPointY.ToString(System.Globalization.CultureInfo.InvariantCulture)" />
                         }
                         else
                         {
@@ -303,7 +307,9 @@
                         {
                             <img src="@article.ImageUrl"
                                  alt="@article.Title"
-                                 class="article-image" />
+                                 class="article-image"
+                                 data-focal-x="@article.ImageFocalPointX.ToString(System.Globalization.CultureInfo.InvariantCulture)"
+                                 data-focal-y="@article.ImageFocalPointY.ToString(System.Globalization.CultureInfo.InvariantCulture)" />
                         }
                         else
                         {
@@ -362,7 +368,9 @@
                         {
                             <img src="@article.ImageUrl"
                                  alt="@article.Title"
-                                 class="article-image" />
+                                 class="article-image"
+                                 data-focal-x="@article.ImageFocalPointX.ToString(System.Globalization.CultureInfo.InvariantCulture)"
+                                 data-focal-y="@article.ImageFocalPointY.ToString(System.Globalization.CultureInfo.InvariantCulture)" />
                         }
                         else
                         {
@@ -651,6 +659,140 @@
                 smhiWeather.symbolDescription.toUpperCase();
 
         });
+        function applyFocalPoints() {
+
+        const images =
+            document.querySelectorAll(".article-image[data-focal-x]");
+
+        images.forEach(function (image) {
+
+            const focalX =
+                parseFloat(image.dataset.focalX);
+
+            const focalY =
+                parseFloat(image.dataset.focalY);
+
+            if (isNaN(focalX) || isNaN(focalY)) {
+                return;
+            }
+
+            if (!image.complete) {
+                image.addEventListener("load", function () {
+                    calculateObjectPosition(image, focalX, focalY);
+                }, { once: true });
+
+                return;
+            }
+
+            calculateObjectPosition(image, focalX, focalY);
+        });
+    }
+
+
+    function applyFocalPoints() {
+
+    const images =
+        document.querySelectorAll(".article-image[data-focal-x]");
+
+    images.forEach(function (image) {
+
+        const focalX =
+            parseFloat(image.dataset.focalX);
+
+        const focalY =
+            parseFloat(image.dataset.focalY);
+
+        if (isNaN(focalX) || isNaN(focalY)) {
+            return;
+        }
+
+        if (!image.complete) {
+            image.addEventListener("load", function () {
+                calculateObjectPosition(image, focalX, focalY);
+            }, { once: true });
+
+            return;
+        }
+
+        calculateObjectPosition(image, focalX, focalY);
+    });
+}
+
+
+function calculateObjectPosition(image, focalX, focalY) {
+
+    const imageWidth = image.naturalWidth;
+    const imageHeight = image.naturalHeight;
+
+    const containerWidth = image.clientWidth;
+    const containerHeight = image.clientHeight;
+
+    if (!imageWidth || !imageHeight ||
+        !containerWidth || !containerHeight) {
+        return;
+    }
+
+    const imageRatio =
+        imageWidth / imageHeight;
+
+    const containerRatio =
+        containerWidth / containerHeight;
+
+
+    // How much of the original image is visible
+    // in the crop area.
+
+    const visibleWidth =
+        Math.min(1, containerRatio / imageRatio);
+
+    const visibleHeight =
+        Math.min(1, imageRatio / containerRatio);
+
+
+    // Calculate the object-position needed to put
+    // the selected focal point as close as possible
+    // to the centre of the crop.
+
+    let positionX =
+        ((focalX / 100) - (visibleWidth / 2)) /
+        (1 - visibleWidth);
+
+    let positionY =
+        ((focalY / 100) - (visibleHeight / 2)) /
+        (1 - visibleHeight);
+
+
+    // If the whole dimension is visible, position
+    // does not matter in that direction.
+
+    if (visibleWidth >= 1) {
+        positionX = 0.5;
+    }
+
+    if (visibleHeight >= 1) {
+        positionY = 0.5;
+    }
+
+
+    // Keep the values between 0 and 1.
+
+    positionX =
+        Math.max(0, Math.min(1, positionX));
+
+    positionY =
+        Math.max(0, Math.min(1, positionY));
+
+
+    image.style.objectPosition =
+        `${positionX * 100}% ${positionY * 100}%`;
+}
+
+
+window.addEventListener("load", applyFocalPoints);
+
+window.addEventListener("resize", applyFocalPoints);
+
+
 
     </script>
 }

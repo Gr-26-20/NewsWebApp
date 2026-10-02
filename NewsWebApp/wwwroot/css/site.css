@@ -569,8 +569,11 @@ a {
             }
 
             .compact-story .article-image {
-                max-width: 100%;
-                height: auto;
+                width: 130px;
+                height: 110px;
+                max-width: 130px;
+                object-fit: cover;
+                display: block;
             }
         /* ---------------------------------------------------------
    WEATHER
@@ -766,12 +769,41 @@ a {
             object-fit: cover;
             display: block;
         }
-        /* HOME PAGE - WORLD / SWEDEN / SPORTS */
-        .compact-story .article-image {
-            width: 130px;
-            height: 110px;
-            object-fit: cover;
-            display: block;
+       
+
+        #focalPointEditor {
+            width: 100%;
+        }
+
+        #imagePreviewContainer {
+            position: relative;
+            display: inline-block;
+            width: fit-content;
+            height: fit-content;
+            line-height: 0;
+            overflow: visible;
+        }
+
+        #imagePreview {
+            display: none;
+            width: auto;
+            height: auto;
+            object-fit: contain;
+        }
+
+        #focalPointMarker {
+            position: absolute;
+            width: 18px;
+            height: 18px;
+            border: 3px solid white;
+            border-radius: 50%;
+            background: #d71920;
+            transform: translate(-50%, -50%);
+            left: 50%;
+            top: 50%;
+            display: none;
+            pointer-events: none;
+            box-sizing: border-box;
         }
 
 

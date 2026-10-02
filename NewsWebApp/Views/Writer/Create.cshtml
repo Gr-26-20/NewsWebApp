@@ -13,6 +13,9 @@
 		<form asp-action="Create" method="post" enctype="multipart/form-data">
 			<div asp-validation-summary="ModelOnly" class="text-danger"></div>
 
+			<input asp-for="ImageFocalPointX" type="hidden" />
+			<input asp-for="ImageFocalPointY" type="hidden" />
+
 			<div class="form-group">
 				<label asp-for="Slug" class="control-label"></label>
 				<input asp-for="Slug" class="form-control" />
@@ -75,7 +78,38 @@
 			<div class="form-group">
 				<input type="submit" value="Create" class="btn btn-primary" />
 			</div>
+
 		</form>
+	</div>
+
+	<div class="col-md-6">
+    <h4>Image Preview</h4>
+
+    <div id="focalPointEditor">
+
+        <p id="previewMessage">
+            Select an image to set the focal point.
+        </p>
+
+        <div id="imagePreviewContainer">
+            <img id="imagePreview"
+                 src=""
+                 alt="Selected image preview" />
+
+            <div id="focalPointMarker"></div>
+        </div>
+
+        <div id="focalPointValues">
+            Focal X: <span id="focalXDisplay">50</span>%<br />
+            Focal Y: <span id="focalYDisplay">50</span>%
+        </div>
+
+    </div>
+</div>
+
+<div>
+    <a asp-action="Articles" asp-controller="Writer">Back to List</a>
+</div>
 	</div>
 </div>
 
@@ -84,5 +118,115 @@
 </div>
 
 @section Scripts {
-	@{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+
+<script>
+const imageFile = document.getElementById("ImageFile");
+const imagePreview = document.getElementById("imagePreview");
+const previewMessage = document.getElementById("previewMessage");
+
+const imagePreviewContainer =
+    document.getElementById("imagePreviewContainer");
+
+const targetArea = 270000;
+
+imageFile.addEventListener("change", async function () {
+
+    const file = this.files[0];
+
+    if (!file) {
+        imagePreview.style.display = "none";
+        previewMessage.style.display = "block";
+        return;
+    }
+
+    try {
+
+        // Read the image first so we know its correctly
+        // oriented dimensions before displaying it.
+        const bitmap = await createImageBitmap(file, {
+            imageOrientation: "from-image"
+        });
+
+        const width = bitmap.width;
+        const height = bitmap.height;
+
+        bitmap.close();
+
+        // Calculate the display width needed for the
+        // chosen preview area.
+        const aspectRatio = width / height;
+
+        const displayWidth =
+            Math.sqrt(targetArea * aspectRatio);
+
+        // Keep the image hidden while setting everything up.
+        imagePreview.style.display = "none";
+
+        // Set the size BEFORE assigning the image source.
+        imagePreview.style.width = displayWidth + "px";
+        imagePreview.style.height = "auto";
+
+		imagePreviewContainer.style.width = displayWidth + "px";
+
+        // Now assign the image.
+        imagePreview.src = URL.createObjectURL(file);
+
+        // Only show it after the browser has loaded it.
+        imagePreview.onload = function () {
+		imagePreview.style.display = "block";
+
+		const focalPointMarker =
+			document.getElementById("focalPointMarker");
+
+		focalPointMarker.style.display = "block";
+
+		previewMessage.style.display = "none";
+};
+
+    }
+    catch (error) {
+        console.error("Could not read image:", error);
+    }
+});
+const focalPointMarker =
+    document.getElementById("focalPointMarker");
+
+const focalPointX =
+    document.getElementById("ImageFocalPointX");
+
+const focalPointY =
+    document.getElementById("ImageFocalPointY");
+
+imagePreview.addEventListener("click", function (event) {
+
+    const rect = imagePreview.getBoundingClientRect();
+
+    // Calculate click position as percentages
+    // of the displayed image.
+    let x = ((event.clientX - rect.left) / rect.width) * 100;
+    let y = ((event.clientY - rect.top) / rect.height) * 100;
+
+    // Keep the values between 0 and 100.
+    x = Math.max(0, Math.min(100, x));
+    y = Math.max(0, Math.min(100, y));
+
+    // Move the marker.
+    focalPointMarker.style.left = x + "%";
+    focalPointMarker.style.top = y + "%";
+
+    // Store the focal point.
+    focalPointX.value = x.toFixed(2).replace(".", ",");
+    focalPointY.value = y.toFixed(2).replace(".", ",");
+
+    // Update the displayed values.
+    document.getElementById("focalXDisplay").textContent =
+        x.toFixed(2);
+
+    document.getElementById("focalYDisplay").textContent =
+        y.toFixed(2);
+
+
+});
+    </script>
 }

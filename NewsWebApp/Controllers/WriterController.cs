@@ -50,38 +50,58 @@ namespace NewsWebApp.Controllers
         [Authorize(Roles = "Writer")]
         public async Task<IActionResult> Create(Articles article, IFormFile? ImageFile)
         {
-            if (ModelState.IsValid)
+            if (!ModelState.IsValid)
             {
-                string imageUrl = article.ImageUrl;
-                if (ImageFile != null && ImageFile.Length > 0)
+                Console.WriteLine("===== MODELSTATE IS INVALID =====");
+
+                foreach (var modelState in ModelState)
                 {
-                    imageUrl = await _fileService.UploadImageAsync(ImageFile);
+                    foreach (var error in modelState.Value.Errors)
+                    {
+                        Console.WriteLine(
+                            $"Validation error - {modelState.Key}: {error.ErrorMessage}");
+                    }
                 }
 
-                article = new Articles
-                {
-                    Slug = article.Slug,
-                    Title = article.Title,
-                    Author = article.Author,
-                    Summary = article.Summary,
-                    Content = article.Content,
-                    ImageUrl = imageUrl,
-                    Views = 0,
-                    Likes = 0,
-                    CreatedAt = DateTime.UtcNow,
-                    UpdatedAt = DateTime.UtcNow,
-                    IsArchived = false,
-                    EditorChoice = article.EditorChoice,
-                    Category = article.Category,
-                    articleStatus = Models.Articles.Status.New
-
-                };
-
-                _context.Articles.Add(article);
-                await _context.SaveChangesAsync();
-                return RedirectToAction("Articles");
+                return View(article);
             }
-            return View(article);
+
+            Console.WriteLine("===== MODELSTATE IS VALID =====");
+
+            string imageUrl = article.ImageUrl;
+
+            if (ImageFile != null && ImageFile.Length > 0)
+            {
+                imageUrl = await _fileService.UploadImageAsync(ImageFile);
+            }
+
+            article = new Articles
+            {
+                Slug = article.Slug,
+                Title = article.Title,
+                Author = article.Author,
+                Summary = article.Summary,
+                Content = article.Content,
+                ImageUrl = imageUrl,
+
+                ImageFocalPointX = article.ImageFocalPointX,
+                ImageFocalPointY = article.ImageFocalPointY,
+
+                Views = 0,
+                Likes = 0,
+                CreatedAt = DateTime.UtcNow,
+                UpdatedAt = DateTime.UtcNow,
+                IsArchived = false,
+                EditorChoice = article.EditorChoice,
+                Category = article.Category,
+                articleStatus = Models.Articles.Status.New
+            };
+
+            _context.Articles.Add(article);
+
+            await _context.SaveChangesAsync();
+
+            return RedirectToAction("Articles");
         }
 
         [Authorize(Roles = "Writer")]
@@ -143,19 +163,17 @@ namespace NewsWebApp.Controllers
         }
 
         //[Authorize(Roles = "WRITER")]
-        public async Task<IActionResult> Articles()
-        {
-            var article = _articleService.GetAllArticlesAsync();
-            if (ModelState.IsValid)
-            {
-                ArticlesVM articlesVM = new ArticlesVM
-                {
-                    Articles = await article
-                };
-                return View(articlesVM);
-            }
-            return View(article);
-        }
+public async Task<IActionResult> Articles()
+{
+    var articles = await _articleService.GetAllArticlesAsync();
+
+    ArticlesVM articlesVM = new ArticlesVM
+    {
+        Articles = articles
+    };
+
+    return View(articlesVM);
+}
 
         public async Task<IActionResult> Search(string searchString)
         {

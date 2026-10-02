@@ -47,6 +47,11 @@ namespace NewsWebApp
             builder.Services.AddHttpClient<SmhiWeatherService>();
             builder.Services.AddScoped<TableStorageService>();
 
+            //Add session support
+            builder.Services.AddSession();
+            builder.Services.AddHttpContextAccessor();
+            builder.Services.AddScoped<ISessionHelper, SessionHelper>();
+
             builder.Services.Configure<CookiePolicyOptions>(options =>
             {
                 options.CheckConsentNeeded = context => true;

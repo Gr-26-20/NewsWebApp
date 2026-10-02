@@ -608,6 +608,58 @@
 				"mainPreviewContainer"
 			);
 
+					const mainPositionX =
+			document.getElementById("mainPositionX");
+
+		const mainPositionXDisplay =
+			document.getElementById("mainPositionXDisplay");
+
+		mainPositionX.addEventListener(
+			"input",
+			function () {
+
+				const positionX =
+					parseFloat(this.value);
+
+				mainPositionXDisplay.textContent =
+					positionX + "%";
+
+				const imageWidth =
+					mainImagePreview.offsetWidth;
+
+				const minLeft =
+					622 - imageWidth;
+
+				const left =
+					minLeft * positionX / 100;
+
+				mainImagePreview.style.left =
+					left + "px";
+
+				const focalX =
+					parseFloat(
+						focalPointX.value.replace(",", ".")
+					) || 50;
+
+				const focalY =
+					parseFloat(
+						focalPointY.value.replace(",", ".")
+					) || 50;
+
+				mainFocalPointMarker.style.left =
+					(
+						left +
+						mainImagePreview.offsetWidth * focalX / 100
+					) + "px";
+
+				mainFocalPointMarker.style.top =
+					(
+						parseFloat(mainImagePreview.style.top) +
+						mainImagePreview.offsetHeight * focalY / 100
+					) + "px";
+			}
+		);
+
 
 		mainPreviewContainer.addEventListener(
 			"pointerdown",

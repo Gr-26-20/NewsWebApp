@@ -84,7 +84,7 @@ namespace NewsWebApp.Controllers
             return View(article);
         }
 
-        [Authorize(Roles = "Writer")]
+        [Authorize(Roles = "Writer, Editor")]
         public async Task<IActionResult> EditArticle(int id)
         {
             var article = await _context.Articles.FindAsync(id);
@@ -97,7 +97,7 @@ namespace NewsWebApp.Controllers
         }
 
         [HttpPost]
-        [Authorize(Roles = "Writer")]
+        [Authorize(Roles = "Writer, Editor")]
         public async Task<IActionResult> EditArticle(int id, Articles article, IFormFile? ImageFile)
         {
             if (id != article.Id)
@@ -287,26 +287,27 @@ namespace NewsWebApp.Controllers
             return View(article);
         }
 
-        [HttpPost]
-        public async Task<IActionResult> ApproveArticle(int id)
-        {
-            var article = await _context.Articles.FindAsync(id);
-            if (ModelState.IsValid)
-            {
-                if (article == null)
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    article.articleStatus = Models.Articles.Status.Approved;
-                    _context.Update(article);
-                    await _context.SaveChangesAsync();
-                    return RedirectToAction(nameof(Articles));
-                }
-            }
-            return RedirectToAction(nameof(Articles));
-        }
+        //[HttpPost]
+        //[Authorize(Roles = "Editor, Admin")]
+        //public async Task<IActionResult> ApproveArticle(int id)
+        //{
+        //    var article = await _context.Articles.FindAsync(id);
+        //    if (ModelState.IsValid)
+        //    {
+        //        if (article == null)
+        //        {
+        //            return NotFound();
+        //        }
+        //        else
+        //        {
+        //            article.articleStatus = Models.Articles.Status.Approved;
+        //            _context.Update(article);
+        //            await _context.SaveChangesAsync();
+        //            return RedirectToAction(nameof(Articles));
+        //        }
+        //    }
+        //    return RedirectToAction(nameof(Articles));
+        //}
 
         [HttpPost]
         public async Task<IActionResult> SortArticles(ArticlesVM articlesVM)

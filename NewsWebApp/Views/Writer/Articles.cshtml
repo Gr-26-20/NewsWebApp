@@ -43,10 +43,13 @@
 			<a class="btn btn-info" asp-action="Details" asp-controller="Editor" asp-route-id="@article.Id">View feedback</a>
 			<a class="btn btn-warning" asp-action="GetAllFeedback" asp-controller="Editor">view all feedback</a>
 		</div>
-		<div class="card-footer">
-			<a class="btn btn-success" asp-action="Approve" asp-controller="Editor" asp-route-id="@article.Id">Approve</a>
-			<a class="btn btn-danger" asp-action="Reject" asp-controller="Editor" asp-route-id="@article.Id">Reject</a>
-			<a class="btn btn-warning" asp-action="Archive" asp-controller="Editor" asp-route-id="@article.Id">Archive</a>
-		</div>
+		@if (User.IsInRole("Editor") || User.IsInRole("Admin"))
+		{
+			<div class="card-footer">
+				<a class="btn btn-success" asp-action="Approve" asp-controller="Editor" asp-route-id="@article.Id">Approve</a>
+				<a class="btn btn-danger" asp-action="Reject" asp-controller="Editor" asp-route-id="@article.Id">Reject</a>
+				<a class="btn btn-warning" asp-action="Archive" asp-controller="Editor" asp-route-id="@article.Id">Archive</a>
+			</div>
+		}
 	</div>
 }  

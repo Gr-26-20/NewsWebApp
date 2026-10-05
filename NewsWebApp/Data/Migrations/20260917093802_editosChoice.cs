@@ -17,22 +17,11 @@ namespace NewsWebApp.Data.Migrations
                 nullable: true,
                 oldClrType: typeof(string),
                 oldType: "nvarchar(max)");
-
-            migrationBuilder.AddColumn<bool>(
-                name: "EditorChoice",
-                table: "Articles",
-                type: "bit",
-                nullable: false,
-                defaultValue: false);
         }
 
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.DropColumn(
-                name: "EditorChoice",
-                table: "Articles");
-
             migrationBuilder.AlterColumn<string>(
                 name: "ImageUrl",
                 table: "Articles",

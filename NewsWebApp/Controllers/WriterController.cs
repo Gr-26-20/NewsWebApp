@@ -87,6 +87,9 @@ namespace NewsWebApp.Controllers
                 ImageFocalPointX = article.ImageFocalPointX,
                 ImageFocalPointY = article.ImageFocalPointY,
 
+                SecondaryImageZoom = article.SecondaryImageZoom,
+                CategoryImageZoom = article.CategoryImageZoom,
+
                 Views = 0,
                 Likes = 0,
                 CreatedAt = DateTime.UtcNow,

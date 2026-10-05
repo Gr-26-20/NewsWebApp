@@ -16,6 +16,9 @@
 			<input asp-for="ImageFocalPointX" type="hidden" />
 			<input asp-for="ImageFocalPointY" type="hidden" />
 
+			<input type="hidden" asp-for="SecondaryImageZoom" id="secondaryImageZoomValue" />
+			<input type="hidden" asp-for="CategoryImageZoom" id="categoryImageZoomValue" />
+
 			<div class="form-group">
 				<label asp-for="Slug" class="control-label"></label>
 				<input asp-for="Slug" class="form-control" />
@@ -253,6 +256,12 @@
 		const categoryImagePreview =
 			document.getElementById("categoryImagePreview");
 
+		let secondaryBaseWidth = 0;
+		let secondaryBaseHeight = 0;
+
+		let categoryBaseWidth = 0;
+		let categoryBaseHeight = 0;
+
 		const focalPointX =
 			document.getElementById("ImageFocalPointX");
 
@@ -359,12 +368,28 @@
 					const displayHeight =
 						naturalHeight * scale;
 
+					if (image === secondaryImagePreview) {
 
-					image.style.width =
-						displayWidth + "px";
+						secondaryBaseWidth =
+							displayWidth;
 
-					image.style.height =
-						displayHeight + "px";
+						secondaryBaseHeight =
+							displayHeight;
+
+
+					
+
+					
+		}
+
+					if (image === categoryImagePreview) {
+
+						categoryBaseWidth =
+							displayWidth;
+
+						categoryBaseHeight =
+							displayHeight;
+		}
 
 					if (image === mainImagePreview) {
 
@@ -374,6 +399,12 @@
 						mainImageBaseHeight =
 							displayHeight;
 		}
+
+					image.style.width =
+						displayWidth + "px";
+
+					image.style.height =
+						displayHeight + "px";
 
 
 					image.style.left =
@@ -537,21 +568,20 @@
 		
 
 
-				function setFocalPoint(event) {
+		function setFocalPoint(event) {
 
-			const container =
-				document.getElementById("mainPreviewContainer");
+			const imageRect =
+				mainImagePreview.getBoundingClientRect();
 
-			const rect =
-				container.getBoundingClientRect();
 
 			let x =
-				((event.clientX - rect.left) /
-					rect.width) * 100;
+				((event.clientX - imageRect.left) /
+					imageRect.width) * 100;
 
 			let y =
-				((event.clientY - rect.top) /
-					rect.height) * 100;
+				((event.clientY - imageRect.top) /
+					imageRect.height) * 100;
+
 
 			x =
 				Math.max(
@@ -581,10 +611,12 @@
 
 
 			mainFocalPointMarker.style.left =
-				x + "%";
+				(mainImagePreview.offsetLeft +
+				mainImagePreview.offsetWidth * x / 100) + "px";
 
 			mainFocalPointMarker.style.top =
-				y + "%";
+				(mainImagePreview.offsetTop +
+				mainImagePreview.offsetHeight * y / 100) + "px";
 
 			mainFocalPointMarker.style.display =
 				"block";
@@ -593,7 +625,6 @@
 			updateSmallPreviews(x, y);
 
 		}
-
 
 		 /* MAIN NEWS DRAGGING
 		 */
@@ -622,6 +653,9 @@
 		const mainPositionX =
 			document.getElementById("mainPositionX");
 
+		const mainPositionY =
+			document.getElementById("mainPositionY");
+
 		/* ZOOM */
 		const mainZoom =
 			document.getElementById("mainZoom");
@@ -631,6 +665,98 @@
 
 		const mainPositionXDisplay =
 			document.getElementById("mainPositionXDisplay");
+
+		const mainPositionYDisplay =
+			document.getElementById("mainPositionYDisplay");
+
+		const secondaryZoom =
+			document.getElementById("secondaryZoom");
+
+		const secondaryZoomDisplay =
+			document.getElementById("secondaryZoomDisplay");
+
+		const categoryZoom =
+			document.getElementById("categoryZoom");
+
+		const categoryZoomDisplay =
+			document.getElementById("categoryZoomDisplay");
+
+		secondaryZoom.addEventListener("input", function () {
+
+			const zoom =
+				parseFloat(this.value) / 100;
+
+			const x =
+				parseFloat(
+					focalPointX.value.replace(",", ".")
+				) || 50;
+
+			const y =
+				parseFloat(
+					focalPointY.value.replace(",", ".")
+				) || 50;
+
+
+			secondaryImagePreview.style.width =
+				(secondaryBaseWidth * zoom) + "px";
+
+			secondaryImagePreview.style.height =
+				(secondaryBaseHeight * zoom) + "px";
+
+
+			secondaryZoomDisplay.textContent =
+				this.value + "%";
+
+			document.getElementById("secondaryImageZoomValue").value = this.value;
+
+
+			applyFocalPoint(
+				secondaryImagePreview,
+				366,
+				100,
+				x,
+				y
+			);
+
+		});
+
+				categoryZoom.addEventListener("input", function () {
+
+			const zoom =
+				parseFloat(this.value) / 100;
+
+			const x =
+				parseFloat(
+					focalPointX.value.replace(",", ".")
+				) || 50;
+
+			const y =
+				parseFloat(
+					focalPointY.value.replace(",", ".")
+				) || 50;
+
+
+			categoryImagePreview.style.width =
+				(categoryBaseWidth * zoom) + "px";
+
+			categoryImagePreview.style.height =
+				(categoryBaseHeight * zoom) + "px";
+
+
+			categoryZoomDisplay.textContent =
+				this.value + "%";
+
+			document.getElementById("categoryImageZoomValue").value = this.value;
+
+			applyFocalPoint(
+				categoryImagePreview,
+				130,
+				110,
+				x,
+				y
+			);
+
+		});
 
 		mainPositionX.addEventListener(
 			"input",
@@ -678,8 +804,61 @@
 							mainImagePreview.offsetHeight * focalY / 100
 						) + "px";
 					 });
+				}
+				
+			);
+
+			mainPositionY.addEventListener(
+				"input",
+				function () {
+
+					const positionY =
+						parseFloat(this.value);
+
+					mainPositionYDisplay.textContent =
+						positionY + "%";
+
+					const imageHeight =
+						mainImagePreview.offsetHeight;
+
+					const minTop =
+						310 - imageHeight;
+
+					const top =
+						minTop * positionY / 100;
+
+					mainImagePreview.style.top =
+						top + "px";
+
+					const focalX =
+						parseFloat(
+							focalPointX.value.replace(",", ".")
+						) || 50;
+
+					const focalY =
+						parseFloat(
+							focalPointY.value.replace(",", ".")
+						) || 50;
+
+					requestAnimationFrame(function () {
+
+						mainFocalPointMarker.style.left =
+							(
+								parseFloat(mainImagePreview.style.left) +
+								mainImagePreview.offsetWidth * focalX / 100
+							) + "px";
+
+						mainFocalPointMarker.style.top =
+							(
+								top +
+								mainImagePreview.offsetHeight * focalY / 100
+							) + "px";
+				});
 			}
 		);
+
+
+		
 
 			mainZoom.addEventListener(
 			"input",

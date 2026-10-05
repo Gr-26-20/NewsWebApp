@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.IdentityModel.Tokens;
 using NewsWebApp.Data;
@@ -190,7 +191,7 @@ namespace NewsWebApp.Controllers
             }
             return View(feedback);
         }
-
+        [Authorize(Roles = "Editor, Admin")]
         public async Task<IActionResult> Approve(int id)
         {
             var article = await _dbContext.Articles.FindAsync(id);
@@ -207,6 +208,7 @@ namespace NewsWebApp.Controllers
             return RedirectToAction("Articles", "Writer");
         }
 
+        [Authorize(Roles = "Editor, Admin")]
         public async Task<IActionResult> Reject(int id)
         {
             var article = await _dbContext.Articles.FindAsync(id);
@@ -223,7 +225,7 @@ namespace NewsWebApp.Controllers
             return RedirectToAction("Articles", "Writer");
         }
 
-
+        [Authorize(Roles = "Editor, Admin")]
         public async Task<IActionResult> Archive(int id)
         {
             var article = await _dbContext.Articles.FindAsync(id);

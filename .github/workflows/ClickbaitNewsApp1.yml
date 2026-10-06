@@ -48,9 +48,9 @@ jobs:
     - name: Azure Login
       uses: azure/login@v2
       with:
-        client-id: ${{ vars.ClickbaitNewsApp_CLIENT_ID_DBCF }}
-        tenant-id: ${{ vars.ClickbaitNewsApp_TENANT_ID_DBCF }}
-        subscription-id: ${{ vars.ClickbaitNewsApp_SUBSCRIPTION_ID_DBCF }}
+        client-id: ${{ secrets.ClickbaitNewsApp_CLIENT_ID_DBCF }}
+        tenant-id: ${{ secrets.ClickbaitNewsApp_TENANT_ID_DBCF }}
+        subscription-id: ${{ secrets.ClickbaitNewsApp_SUBSCRIPTION_ID_DBCF }}
     - name: Deploy to Azure WebApp
       uses: azure/webapps-deploy@v2
       with:

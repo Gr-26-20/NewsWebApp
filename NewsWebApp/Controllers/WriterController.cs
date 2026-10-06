@@ -52,31 +52,14 @@ namespace NewsWebApp.Controllers
         {
             if (!ModelState.IsValid)
             {
-                Console.WriteLine("===== MODELSTATE IS INVALID =====");
-
-                foreach (var modelState in ModelState)
-                {
-                    foreach (var error in modelState.Value.Errors)
-                    {
-                        Console.WriteLine(
-                            $"Validation error - {modelState.Key}: {error.ErrorMessage}");
-                    }
-                }
-
                 return View(article);
             }
-
-            Console.WriteLine("===== MODELSTATE IS VALID =====");
 
             string imageUrl = article.ImageUrl;
 
             if (ImageFile != null && ImageFile.Length > 0)
             {
-                Console.WriteLine("===== CALLING UPLOAD IMAGE =====");
-
                 imageUrl = await _fileService.UploadImageAsync(ImageFile);
-
-                Console.WriteLine("===== UPLOAD IMAGE RETURNED =====");
             }
 
             article = new Articles
@@ -109,7 +92,6 @@ namespace NewsWebApp.Controllers
             };
 
             _context.Articles.Add(article);
-
             await _context.SaveChangesAsync();
 
             return RedirectToAction("Articles");

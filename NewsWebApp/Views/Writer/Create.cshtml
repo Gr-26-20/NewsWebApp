@@ -13,6 +13,15 @@
 		<form asp-action="Create" method="post" enctype="multipart/form-data">
 			<div asp-validation-summary="ModelOnly" class="text-danger"></div>
 
+			<input asp-for="ImageFocalPointX" type="hidden" />
+			<input asp-for="ImageFocalPointY" type="hidden" />
+
+			<input type="hidden" asp-for="SecondaryImageZoom" id="secondaryImageZoomValue" />
+			<input type="hidden" asp-for="CategoryImageZoom" id="categoryImageZoomValue" />
+			<input type="hidden" asp-for="MainImageZoom" id="mainImageZoomValue" />
+			<input type="hidden" asp-for="MainImagePositionX" id="mainImagePositionXValue" />
+			<input type="hidden" asp-for="MainImagePositionY" id="mainImagePositionYValue" />
+
 			<div class="form-group">
 				<label asp-for="Slug" class="control-label"></label>
 				<input asp-for="Slug" class="form-control" />
@@ -75,14 +84,1008 @@
 			<div class="form-group">
 				<input type="submit" value="Create" class="btn btn-primary" />
 			</div>
+
 		</form>
 	</div>
+
+	<div class="col-md-6">
+
+		<!-- IMAGE PREVIEW HEADER -->
+
+		<div class="image-preview-header">
+
+			<div>
+				<h4>Image Preview</h4>
+
+				<p id="previewMessage">
+					Select an image to set the focal point.
+				</p>
+			</div>
+
+			<div id="focalPointValues">
+				Focal X: <span id="focalXDisplay">50</span>%<br />
+				Focal Y: <span id="focalYDisplay">50</span>%
+			</div>
+
+		</div>
+
+
+		<!-- MAIN NEWS -->
+
+		<div class="image-preview-section">
+
+			<h5>Main News</h5>
+
+			<div id="mainPreviewContainer"
+				 class="crop-preview main-preview">
+
+				<img id="mainImagePreview"
+					 src=""
+					 alt="Main news preview" />
+
+				<div id="mainFocalPointMarker"></div>
+
+			</div>
+
+			<p class="preview-help">
+				Click the image to set the focal point.
+			</p>
+			<label for="mainZoom">Zoom: <span id="mainZoomDisplay">100%</span></label>
+			<input type="range"
+				   id="mainZoom"
+				   class="zoom-control"
+				   min="100"
+				   max="300"
+				   value="100"
+				   step="1" />
+
+			<div id="mainPositionControls">
+
+				<label for="mainPositionX">
+					Position X: <span id="mainPositionXDisplay">50%</span>
+				</label>
+
+				<input type="range"
+					   id="mainPositionX"
+					   class="zoom-control"
+					   min="0"
+					   max="100"
+					   value="50"
+					   step="1" />
+
+
+
+				<label for="mainPositionY">
+					Position Y: <span id="mainPositionYDisplay">50%</span>
+				</label>
+
+				<input type="range"
+					   id="mainPositionY"
+					   class="zoom-control"
+					   min="0"
+					   max="100"
+					   value="50"
+					   step="1" />
+
+			</div>
+
+		</div>
+
+
+		<!-- SECONDARY + CATEGORY -->
+
+		<div class="small-preview-row">
+
+			<div class="image-preview-section">
+
+				<h5>Secondary</h5>
+
+				<div id="secondaryPreviewContainer"
+					 class="crop-preview secondary-preview">
+
+					<img id="secondaryImagePreview"
+						 src=""
+						 alt="Secondary news preview" />
+
+				</div>
+				<label for="secondaryZoom">Zoom: <span id="secondaryZoomDisplay">100%</span></label>
+				<input type="range"
+					   id="secondaryZoom"
+					   class="zoom-control"
+					   min="100"
+					   max="300"
+					   value="100"
+					   step="1" />
+			</div>
+
+
+			<div class="image-preview-section">
+
+				<h5>Category</h5>
+
+				<div id="categoryPreviewContainer"
+					 class="crop-preview category-preview">
+
+					<img id="categoryImagePreview"
+						 src=""
+						 alt="Category preview" />
+
+				</div>
+				<label for="categoryZoom">Zoom: <span id="categoryZoomDisplay">100%</span></label>
+				<input type="range"
+					   id="categoryZoom"
+					   class="zoom-control"
+					   min="100"
+					   max="300"
+					   value="100"
+					   step="1" />
+
+			</div>
+
+		</div>
+
+	</div>
 </div>
+
 
 <div>
 	<a asp-action="Articles" asp-controller="Writer">Back to List</a>
 </div>
 
-@section Scripts {
-	@{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+
+@section Scripts
+{
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+
+    <script>
+
+        const imageFile =
+            document.getElementById("ImageFile");
+
+        const previewMessage =
+            document.getElementById("previewMessage");
+
+        const mainImagePreview =
+            document.getElementById("mainImagePreview");
+
+        const mainFocalPointMarker =
+            document.getElementById("mainFocalPointMarker");
+
+        const secondaryImagePreview =
+            document.getElementById("secondaryImagePreview");
+
+        const categoryImagePreview =
+            document.getElementById("categoryImagePreview");
+
+
+        let mainImageBaseWidth = 0;
+        let mainImageBaseHeight = 0;
+
+        let secondaryBaseWidth = 0;
+        let secondaryBaseHeight = 0;
+
+        let categoryBaseWidth = 0;
+        let categoryBaseHeight = 0;
+
+
+        const focalPointX =
+            document.getElementById("ImageFocalPointX");
+
+        const focalPointY =
+            document.getElementById("ImageFocalPointY");
+
+        const focalXDisplay =
+            document.getElementById("focalXDisplay");
+
+        const focalYDisplay =
+            document.getElementById("focalYDisplay");
+
+
+        const previews = [
+            {
+                image: mainImagePreview,
+                width: 622,
+                height: 310
+            },
+            {
+                image: secondaryImagePreview,
+                width: 366,
+                height: 100
+            },
+            {
+                image: categoryImagePreview,
+                width: 130,
+                height: 110
+            }
+        ];
+
+
+        /*
+         * IMAGE SELECTION
+         */
+
+        imageFile.addEventListener(
+            "change",
+            async function()
+            {
+                const file =
+                    this.files[0];
+
+                if (!file)
+                {
+                    previews.forEach(function(preview)
+                    {
+                        preview.image.style.display =
+                            "none";
+                    });
+
+                    previewMessage.style.display =
+                        "block";
+
+                    return;
+                }
+
+
+                try
+                {
+                    const bitmap =
+                        await createImageBitmap(
+                            file,
+                            {
+                                imageOrientation: "from-image"
+                            }
+                        );
+
+
+                    const naturalWidth =
+                        bitmap.width;
+
+                    const naturalHeight =
+                        bitmap.height;
+
+
+                    bitmap.close();
+
+
+                    const imageUrl =
+                        URL.createObjectURL(file);
+
+
+                    previews.forEach(function(preview)
+                    {
+                        const image =
+                            preview.image;
+
+                        const containerWidth =
+                            preview.width;
+
+                        const containerHeight =
+                            preview.height;
+
+
+                        /*
+                         * Scale the image so that it
+                         * completely covers the preview.
+                         */
+
+                        const scale =
+                            Math.max(
+                                containerWidth / naturalWidth,
+                                containerHeight / naturalHeight
+                            );
+
+
+                        const displayWidth =
+                            naturalWidth * scale;
+
+                        const displayHeight =
+                            naturalHeight * scale;
+
+
+                        if (image === mainImagePreview)
+                        {
+                            mainImageBaseWidth =
+                                displayWidth;
+
+                            mainImageBaseHeight =
+                                displayHeight;
+                        }
+
+
+                        if (image === secondaryImagePreview)
+                        {
+                            secondaryBaseWidth =
+                                displayWidth;
+
+                            secondaryBaseHeight =
+                                displayHeight;
+                        }
+
+
+                        if (image === categoryImagePreview)
+                        {
+                            categoryBaseWidth =
+                                displayWidth;
+
+                            categoryBaseHeight =
+                                displayHeight;
+                        }
+
+
+                        image.style.width =
+                            displayWidth + "px";
+
+                        image.style.height =
+                            displayHeight + "px";
+
+
+                        image.style.left =
+                            (
+                                (containerWidth - displayWidth) / 2
+                            ) + "px";
+
+                        image.style.top =
+                            (
+                                (containerHeight - displayHeight) / 2
+                            ) + "px";
+
+
+                        image.src =
+                            imageUrl;
+
+                        image.style.display =
+                            "block";
+                    });
+
+
+                    previewMessage.style.display =
+                        "none";
+
+
+                    /*
+                     * Start the focal point at the
+                     * current saved value, or 50 / 50.
+                     */
+
+                    const x =
+                        parseFloat(
+                            focalPointX.value.replace(",", ".")
+                        ) || 50;
+
+                    const y =
+                        parseFloat(
+                            focalPointY.value.replace(",", ".")
+                        ) || 50;
+
+                    focalPointX.value =
+                        x.toFixed(2).replace(".", ",");
+
+                    focalPointY.value =
+                        y.toFixed(2).replace(".", ",");
+
+
+                    focalXDisplay.textContent =
+                        x.toFixed(2);
+
+                    focalYDisplay.textContent =
+                        y.toFixed(2);
+
+
+                    mainFocalPointMarker.style.left =
+                        x + "%";
+
+                    mainFocalPointMarker.style.top =
+                        y + "%";
+
+                    mainFocalPointMarker.style.display =
+                        "block";
+
+
+                    /*
+                     * Apply the focal point to the
+                     * secondary and category previews.
+                     */
+
+                    updateSmallPreviews(x, y);
+                }
+                catch (error)
+                {
+                    console.error(
+                        "Could not read image:",
+                        error
+                    );
+                }
+            }
+        );
+
+
+        /*
+         * SECONDARY + CATEGORY FOCAL POINT
+         */
+
+        function updateSmallPreviews(x, y)
+        {
+            applyFocalPoint(
+                secondaryImagePreview,
+                366,
+                100,
+                x,
+                y
+            );
+
+
+            applyFocalPoint(
+                categoryImagePreview,
+                130,
+                110,
+                x,
+                y
+            );
+        }
+
+
+        function applyFocalPoint(
+            image,
+            containerWidth,
+            containerHeight,
+            x,
+            y
+        )
+        {
+            const imageWidth =
+                image.offsetWidth;
+
+            const imageHeight =
+                image.offsetHeight;
+
+
+            let left =
+                containerWidth / 2 -
+                imageWidth * x / 100;
+
+            let top =
+                containerHeight / 2 -
+                imageHeight * y / 100;
+
+
+            const minLeft =
+                containerWidth - imageWidth;
+
+            const minTop =
+                containerHeight - imageHeight;
+
+
+            left =
+                Math.max(
+                    minLeft,
+                    Math.min(0, left)
+                );
+
+            top =
+                Math.max(
+                    minTop,
+                    Math.min(0, top)
+                );
+
+
+            image.style.left =
+                left + "px";
+
+            image.style.top =
+                top + "px";
+        }
+
+
+        mainImagePreview.addEventListener(
+            "click",
+            setFocalPoint
+        );
+
+
+        function setFocalPoint(event)
+        {
+            const imageRect =
+                mainImagePreview.getBoundingClientRect();
+
+
+            let x =
+                (
+                    (event.clientX - imageRect.left) /
+                    imageRect.width
+                ) * 100;
+
+            let y =
+                (
+                    (event.clientY - imageRect.top) /
+                    imageRect.height
+                ) * 100;
+
+
+            x =
+                Math.max(
+                    0,
+                    Math.min(100, x)
+                );
+
+            y =
+                Math.max(
+                    0,
+                    Math.min(100, y)
+                );
+
+
+            focalPointX.value =
+                x.toFixed(2).replace(".", ",");
+
+            focalPointY.value =
+                y.toFixed(2).replace(".", ",");
+
+
+            focalXDisplay.textContent =
+                x.toFixed(2);
+
+            focalYDisplay.textContent =
+                y.toFixed(2);
+
+
+            mainFocalPointMarker.style.left =
+                (
+                    mainImagePreview.offsetLeft +
+                    mainImagePreview.offsetWidth * x / 100
+                ) + "px";
+
+            mainFocalPointMarker.style.top =
+                (
+                    mainImagePreview.offsetTop +
+                    mainImagePreview.offsetHeight * y / 100
+                ) + "px";
+
+            mainFocalPointMarker.style.display =
+                "block";
+
+
+            updateSmallPreviews(x, y);
+        }
+
+
+        /*
+         * IMAGE POSITION AND ZOOM CONTROLS
+         */
+
+        const mainPreviewContainer =
+            document.getElementById(
+                "mainPreviewContainer"
+            );
+
+        const mainPositionX =
+            document.getElementById(
+                "mainPositionX"
+            );
+
+        const mainPositionY =
+            document.getElementById(
+                "mainPositionY"
+            );
+
+
+        const mainZoom =
+            document.getElementById(
+                "mainZoom"
+            );
+
+        const mainZoomDisplay =
+            document.getElementById(
+                "mainZoomDisplay"
+            );
+
+        const mainPositionXDisplay =
+            document.getElementById(
+                "mainPositionXDisplay"
+            );
+
+        const mainPositionYDisplay =
+            document.getElementById(
+                "mainPositionYDisplay"
+            );
+
+
+        const secondaryZoom =
+            document.getElementById(
+                "secondaryZoom"
+            );
+
+        const secondaryZoomDisplay =
+            document.getElementById(
+                "secondaryZoomDisplay"
+            );
+
+
+        const categoryZoom =
+            document.getElementById(
+                "categoryZoom"
+            );
+
+        const categoryZoomDisplay =
+            document.getElementById(
+                "categoryZoomDisplay"
+            );
+
+
+        /*
+         * SECONDARY IMAGE ZOOM
+         */
+
+        secondaryZoom.addEventListener(
+            "input",
+            function()
+            {
+                const zoom =
+                    parseFloat(this.value) / 100;
+
+                const x =
+                    parseFloat(
+                        focalPointX.value.replace(",", ".")
+                    ) || 50;
+
+                const y =
+                    parseFloat(
+                        focalPointY.value.replace(",", ".")
+                    ) || 50;
+
+
+                secondaryImagePreview.style.width =
+                    (
+                        secondaryBaseWidth * zoom
+                    ) + "px";
+
+                secondaryImagePreview.style.height =
+                    (
+                        secondaryBaseHeight * zoom
+                    ) + "px";
+
+
+                secondaryZoomDisplay.textContent =
+                    this.value + "%";
+
+
+                document.getElementById(
+                    "secondaryImageZoomValue"
+                ).value =
+                    this.value;
+
+
+                applyFocalPoint(
+                    secondaryImagePreview,
+                    366,
+                    100,
+                    x,
+                    y
+                );
+            }
+        );
+
+
+        /*
+         * CATEGORY IMAGE ZOOM
+         */
+
+        categoryZoom.addEventListener(
+            "input",
+            function()
+            {
+                const zoom =
+                    parseFloat(this.value) / 100;
+
+                const x =
+                    parseFloat(
+                        focalPointX.value.replace(",", ".")
+                    ) || 50;
+
+                const y =
+                    parseFloat(
+                        focalPointY.value.replace(",", ".")
+                    ) || 50;
+
+
+                categoryImagePreview.style.width =
+                    (
+                        categoryBaseWidth * zoom
+                    ) + "px";
+
+                categoryImagePreview.style.height =
+                    (
+                        categoryBaseHeight * zoom
+                    ) + "px";
+
+
+                categoryZoomDisplay.textContent =
+                    this.value + "%";
+
+
+                document.getElementById(
+                    "categoryImageZoomValue"
+                ).value =
+                    this.value;
+
+
+                applyFocalPoint(
+                    categoryImagePreview,
+                    130,
+                    110,
+                    x,
+                    y
+                );
+            }
+        );
+
+
+        /*
+         * MAIN IMAGE POSITION X
+         */
+
+        mainPositionX.addEventListener(
+            "input",
+            function()
+            {
+                const positionX =
+                    parseFloat(this.value);
+
+                mainPositionXDisplay.textContent =
+                    positionX + "%";
+
+
+                document.getElementById(
+                    "mainImagePositionXValue"
+                ).value =
+                    this.value;
+
+
+                const imageWidth =
+                    mainImagePreview.offsetWidth;
+
+                const minLeft =
+                    622 - imageWidth;
+
+                const left =
+                    minLeft * positionX / 100;
+
+
+                mainImagePreview.style.left =
+                    left + "px";
+
+
+                const focalX =
+                    parseFloat(
+                        focalPointX.value.replace(",", ".")
+                    ) || 50;
+
+                const focalY =
+                    parseFloat(
+                        focalPointY.value.replace(",", ".")
+                    ) || 50;
+
+
+                requestAnimationFrame(function()
+                {
+                    mainFocalPointMarker.style.left =
+                        (
+                            left +
+                            mainImagePreview.offsetWidth *
+                            focalX / 100
+                        ) + "px";
+
+
+                    mainFocalPointMarker.style.top =
+                        (
+                            parseFloat(
+                                mainImagePreview.style.top
+                            ) +
+                            mainImagePreview.offsetHeight *
+                            focalY / 100
+                        ) + "px";
+                });
+            }
+        );
+
+
+        /*
+         * MAIN IMAGE POSITION Y
+         */
+
+        mainPositionY.addEventListener(
+            "input",
+            function()
+            {
+                const positionY =
+                    parseFloat(this.value);
+
+                mainPositionYDisplay.textContent =
+                    positionY + "%";
+
+
+                document.getElementById(
+                    "mainImagePositionYValue"
+                ).value =
+                    this.value;
+
+
+                const imageHeight =
+                    mainImagePreview.offsetHeight;
+
+                const minTop =
+                    310 - imageHeight;
+
+                const top =
+                    minTop * positionY / 100;
+
+
+                mainImagePreview.style.top =
+                    top + "px";
+
+
+                const focalX =
+                    parseFloat(
+                        focalPointX.value.replace(",", ".")
+                    ) || 50;
+
+                const focalY =
+                    parseFloat(
+                        focalPointY.value.replace(",", ".")
+                    ) || 50;
+
+
+                requestAnimationFrame(function()
+                {
+                    mainFocalPointMarker.style.left =
+                        (
+                            parseFloat(
+                                mainImagePreview.style.left
+                            ) +
+                            mainImagePreview.offsetWidth *
+                            focalX / 100
+                        ) + "px";
+
+
+                    mainFocalPointMarker.style.top =
+                        (
+                            top +
+                            mainImagePreview.offsetHeight *
+                            focalY / 100
+                        ) + "px";
+                });
+            }
+        );
+
+
+        /*
+         * MAIN IMAGE ZOOM
+         */
+
+        mainZoom.addEventListener(
+            "input",
+            function()
+            {
+                const zoom =
+                    parseFloat(this.value);
+
+                mainZoomDisplay.textContent =
+                    zoom + "%";
+
+
+                document.getElementById(
+                    "mainImageZoomValue"
+                ).value =
+                    zoom;
+
+
+                const scale =
+                    zoom / 100;
+
+                const newWidth =
+                    mainImageBaseWidth * scale;
+
+                const newHeight =
+                    mainImageBaseHeight * scale;
+
+
+                mainImagePreview.style.width =
+                    newWidth + "px";
+
+                mainImagePreview.style.height =
+                    newHeight + "px";
+
+
+                const positionX =
+                    parseFloat(
+                        mainPositionX.value
+                    );
+
+                const positionY =
+                    parseFloat(
+                        mainPositionY.value
+                    );
+
+
+                const minLeft =
+                    622 - newWidth;
+
+                const minTop =
+                    310 - newHeight;
+
+
+                const left =
+                    minLeft * positionX / 100;
+
+                const top =
+                    minTop * positionY / 100;
+
+
+                mainImagePreview.style.left =
+                    left + "px";
+
+                mainImagePreview.style.top =
+                    top + "px";
+
+
+                const focalX =
+                    parseFloat(
+                        focalPointX.value.replace(",", ".")
+                    ) || 50;
+
+                const focalY =
+                    parseFloat(
+                        focalPointY.value.replace(",", ".")
+                    ) || 50;
+
+
+                mainFocalPointMarker.style.left =
+                    (
+                        left +
+                        newWidth * focalX / 100
+                    ) + "px";
+
+                mainFocalPointMarker.style.top =
+                    (
+                        top +
+                        newHeight * focalY / 100
+                    ) + "px";
+
+
+                requestAnimationFrame(function()
+                {
+                    mainFocalPointMarker.style.left =
+                        (
+                            left +
+                            mainImagePreview.offsetWidth *
+                            focalX / 100
+                        ) + "px";
+
+
+                    mainFocalPointMarker.style.top =
+                        (
+                            top +
+                            mainImagePreview.offsetHeight *
+                            focalY / 100
+                        ) + "px";
+                });
+            }
+        );
+        document.getElementById("mainImageZoomValue").value =
+        document.getElementById("mainZoom").value;
+
+        document.getElementById("mainImagePositionXValue").value =
+        document.getElementById("mainPositionX").value;
+
+        document.getElementById("mainImagePositionYValue").value =
+        document.getElementById("mainPositionY").value;
+
+        document.getElementById("secondaryImageZoomValue").value =
+        document.getElementById("secondaryZoom").value;
+
+        document.getElementById("categoryImageZoomValue").value =
+        document.getElementById("categoryZoom").value;
+
+    </script>
 }

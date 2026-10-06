@@ -19,6 +19,16 @@ namespace NewsWebApp.Models
         //[Required]
         public string Content { get; set; }
         public string? ImageUrl { get; set; }
+        public double ImageFocalPointX { get; set; } = 50;
+        public double ImageFocalPointY { get; set; } = 50;
+
+        public double MainImageZoom { get; set; } = 100;
+        public double MainImagePositionX { get; set; } = 50;
+        public double MainImagePositionY { get; set; } = 50;
+
+        public double SecondaryImageZoom { get; set; } = 100;
+        public double CategoryImageZoom { get; set; } = 100;
+
         //[Required]
         public int Views { get; set; }
         //[Required]

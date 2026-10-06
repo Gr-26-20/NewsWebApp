@@ -109,9 +109,14 @@
 
                         @if (!string.IsNullOrWhiteSpace(mainArticle.ImageUrl))
                         {
-                            <img src="@mainArticle.ImageUrl"
-                                 alt="@mainArticle.Title"
-                                 class="article-image large" />
+                            <div class="main-image-container">
+                                <img src="@mainArticle.ImageUrl"
+                                     alt="@mainArticle.Title"
+                                     class="article-image large"
+                                     data-main-zoom="@mainArticle.MainImageZoom"
+                                     data-main-position-x="@mainArticle.MainImagePositionX"
+                                     data-main-position-y="@mainArticle.MainImagePositionY" />
+                            </div>
                         }
                         else
                         {
@@ -150,7 +155,9 @@
                                      alt="@article.Title"
                                      class="article-image secondary"
                                      data-focal-x="@article.ImageFocalPointX"
-                                     data-focal-y="@article.ImageFocalPointY" />
+                                     data-focal-y="@article.ImageFocalPointY"
+                                     data-secondary-zoom="@article.SecondaryImageZoom"
+                                     />
                                 }
                                 else
                                 {
@@ -515,316 +522,561 @@
 
 
         // Change Temperatur.nu station
-        document.getElementById("weatherStation").addEventListener("change", async function()
-        {
 
-            const stationId = this.value;
-
-            const response =
-                await fetch(`/Home/GetWeather?stationId=${stationId}`);
-
-            if (!response.ok)
+        document.getElementById("weatherStation").addEventListener(
+            "change",
+            async function()
             {
-                return;
+                const stationId = this.value;
+
+                const response =
+                    await fetch(
+                        `/Home/GetWeather?stationId=${stationId}`
+                    );
+
+                if (!response.ok)
+                {
+                    return;
+                }
+
+                const weather =
+                    await response.json();
+
+                document.getElementById("weatherTemperature").textContent =
+                    weather.temp + "°";
             }
-
-            const weather = await response.json();
-
-            document.getElementById("weatherTemperature").textContent =
-                weather.temp + "°";
-        });
+        );
 
 
         // Change municipality
-        document.getElementById("weatherMunicipality").addEventListener("change", async function()
-        {
 
-            const municipality = this.value;
-
-            const municipalityName =
-                this.options[this.selectedIndex].text;
-
-            document.getElementById("weatherCity").textContent =
-                municipalityName.toUpperCase();
-
-
-            // Give this municipality selection a unique number
-            const requestNumber = ++municipalityRequestNumber;
-
-
-            // TEMPERATUR.NU
-
-            const response =
-                await fetch(`/Home/GetStations?municipality=${municipality}`);
-
-            if (!response.ok)
+        document.getElementById("weatherMunicipality").addEventListener(
+            "change",
+            async function()
             {
-                return;
-            }
+                const municipality = this.value;
 
-            const result = await response.json();
+                const municipalityName =
+                    this.options[this.selectedIndex].text;
 
-
-            // Ignore an older request if the user has already
-            // selected another municipality
-            if (requestNumber !== municipalityRequestNumber)
-            {
-                return;
-            }
+                document.getElementById("weatherCity").textContent =
+                    municipalityName.toUpperCase();
 
 
-            // Check if Temperatur.nu has temporarily blocked requests
+                // Give this municipality selection a unique number
 
-            // if (true) // Swap "if (result.isBlocked)" for checking time limit error message
-            if (result.isBlocked)
-            {
-                document.getElementById("weatherMessage").querySelector(".weather-message-title").textContent =
-                    "LIVE TEMPERATURE TEMPORARILY UNAVAILABLE";
-
-                document.getElementById("weatherMessage").querySelector(".weather-message-text").textContent =
-                    "The external weather service has reached its request limit. Please try again later.";
-
-                document.getElementById("weatherTemperature").textContent =
-                    "";
-
-                document.getElementById("weatherStation").innerHTML =
-                    "";
-            }
-            else
-            {
-                document.getElementById("weatherMessage").querySelector(".weather-message-title").textContent = "";
-
-                document.getElementById("weatherMessage").querySelector(".weather-message-text").textContent = "";
-            }
+                const requestNumber =
+                    ++municipalityRequestNumber;
 
 
-            const stations = result.stations;
+                // TEMPERATUR.NU
 
-            const stationSelect =
-                document.getElementById("weatherStation");
-
-            stationSelect.innerHTML = "";
-
-
-            stations.forEach(function(station)
-            {
-                const option =
-                    document.createElement("option");
-
-                option.value = station.id;
-                option.textContent = station.title;
-
-                stationSelect.appendChild(option);
-            });
-
-
-            // Select the first station and get its temperature
-            if (stations.length > 0)
-            {
-                stationSelect.value = stations[0].id;
-
-                const weatherResponse =
+                const response =
                     await fetch(
-                        `/Home/GetWeather?stationId=${stations[0].id}`
+                        `/Home/GetStations?municipality=${municipality}`
                     );
 
-                if (weatherResponse.ok)
+                if (!response.ok)
                 {
-                    const weather =
-                        await weatherResponse.json();
+                    return;
+                }
+
+                const result =
+                    await response.json();
+
+
+                // Ignore an older request if the user has already
+                // selected another municipality
+
+                if (requestNumber !== municipalityRequestNumber)
+                {
+                    return;
+                }
+
+
+                // Check if Temperatur.nu has temporarily blocked requests
+
+                // if (true) // Swap "if (result.isBlocked)" for checking time limit error message
+
+                if (result.isBlocked)
+                {
+                    document
+                        .getElementById("weatherMessage")
+                        .querySelector(".weather-message-title")
+                        .textContent =
+                        "LIVE TEMPERATURE TEMPORARILY UNAVAILABLE";
+
+                    document
+                        .getElementById("weatherMessage")
+                        .querySelector(".weather-message-text")
+                        .textContent =
+                        "The external weather service has reached its request limit. Please try again later.";
 
                     document.getElementById("weatherTemperature").textContent =
-                        weather.temp + "°";
+                        "";
+
+                    document.getElementById("weatherStation").innerHTML =
+                        "";
                 }
+                else
+                {
+                    document
+                        .getElementById("weatherMessage")
+                        .querySelector(".weather-message-title")
+                        .textContent =
+                        "";
+
+                    document
+                        .getElementById("weatherMessage")
+                        .querySelector(".weather-message-text")
+                        .textContent =
+                        "";
+                }
+
+
+                const stations =
+                    result.stations;
+
+                const stationSelect =
+                    document.getElementById("weatherStation");
+
+                stationSelect.innerHTML =
+                    "";
+
+
+                stations.forEach(function(station)
+                {
+                    const option =
+                        document.createElement("option");
+
+                    option.value =
+                        station.id;
+
+                    option.textContent =
+                        station.title;
+
+                    stationSelect.appendChild(option);
+                });
+
+
+                // Select the first station and get its temperature
+
+                if (stations.length > 0)
+                {
+                    stationSelect.value =
+                        stations[0].id;
+
+                    const weatherResponse =
+                        await fetch(
+                            `/Home/GetWeather?stationId=${stations[0].id}`
+                        );
+
+                    if (weatherResponse.ok)
+                    {
+                        const weather =
+                            await weatherResponse.json();
+
+                        document.getElementById("weatherTemperature").textContent =
+                            weather.temp + "°";
+                    }
+                }
+
+
+                // SMHI
+
+                const smhiResponse =
+                    await fetch(
+                        `/Home/GetSmhiWeather?municipality=${municipality}`
+                    );
+
+                if (!smhiResponse.ok)
+                {
+                    return;
+                }
+
+                const smhiWeather =
+                    await smhiResponse.json();
+
+
+                // Ignore an older municipality request
+
+                if (requestNumber !== municipalityRequestNumber)
+                {
+                    return;
+                }
+
+                document.getElementById("weatherCondition").textContent =
+                    smhiWeather.symbolDescription.toUpperCase();
+
             }
+        );
 
 
-            // SMHI
-
-            const smhiResponse =
-                await fetch(
-                    `/Home/GetSmhiWeather?municipality=${municipality}`
+        function applyFocalPoints()
+        {
+            const images =
+                document.querySelectorAll(
+                    ".article-image[data-focal-x]"
                 );
 
-            if (!smhiResponse.ok)
+            images.forEach(function(image)
+            {
+                const focalX =
+                    parseFloat(
+                        image.dataset.focalX
+                    );
+
+                const focalY =
+                    parseFloat(
+                        image.dataset.focalY
+                    );
+
+                const zoom =
+                    parseFloat(
+                        image.dataset.secondaryZoom
+                    ) || 100;
+
+
+                if (isNaN(focalX) || isNaN(focalY))
+                {
+                    return;
+                }
+
+
+                if (!image.complete)
+                {
+                    image.addEventListener(
+                        "load",
+                        function()
+                        {
+                            calculateObjectPosition(
+                                image,
+                                focalX,
+                                focalY,
+                                zoom
+                            );
+                        },
+                        { once: true }
+                    );
+
+                    return;
+                }
+
+
+                calculateObjectPosition(
+                    image,
+                    focalX,
+                    focalY,
+                    zoom
+                );
+            });
+        }
+
+
+        function applyMainImagePosition()
+        {
+            const image =
+                document.querySelector(
+                    ".main-image-container .article-image"
+                );
+
+            if (!image)
             {
                 return;
             }
 
-            const smhiWeather =
-                await smhiResponse.json();
+            const container =
+                image.parentElement;
+
+            const zoom =
+                parseFloat(
+                    image.dataset.mainZoom
+                ) || 100;
+
+            const positionX =
+                parseFloat(
+                    image.dataset.mainPositionX
+                ) || 50;
+
+            const positionY =
+                parseFloat(
+                    image.dataset.mainPositionY
+                ) || 50;
 
 
-            // Ignore an older municipality request
-            if (requestNumber !== municipalityRequestNumber)
+            if (!image.complete)
+            {
+                image.addEventListener(
+                    "load",
+                    applyMainImagePosition,
+                    { once: true }
+                );
+
+                return;
+            }
+
+
+            const naturalWidth =
+                image.naturalWidth;
+
+            const naturalHeight =
+                image.naturalHeight;
+
+            const containerWidth =
+                container.clientWidth;
+
+            const containerHeight =
+                container.clientHeight;
+
+
+            if (!naturalWidth ||
+                !naturalHeight ||
+                !containerWidth ||
+                !containerHeight)
             {
                 return;
             }
 
-            document.getElementById("weatherCondition").textContent =
-                smhiWeather.symbolDescription.toUpperCase();
 
-        });
-        function applyFocalPoints() {
+            const baseScale =
+                Math.max(
+                    containerWidth / naturalWidth,
+                    containerHeight / naturalHeight
+                );
 
-        const images =
-            document.querySelectorAll(".article-image[data-focal-x]");
+            const baseWidth =
+                naturalWidth * baseScale;
 
-        images.forEach(function (image) {
+            const baseHeight =
+                naturalHeight * baseScale;
 
-            const focalX =
-                parseFloat(image.dataset.focalX);
+            const scale =
+                zoom / 100;
 
-            const focalY =
-                parseFloat(image.dataset.focalY);
+            const imageWidth =
+                baseWidth * scale;
 
-            if (isNaN(focalX) || isNaN(focalY)) {
+            const imageHeight =
+                baseHeight * scale;
+
+
+            image.style.width =
+                imageWidth + "px";
+
+            image.style.height =
+                imageHeight + "px";
+
+
+            const minLeft =
+                containerWidth - imageWidth;
+
+            const minTop =
+                containerHeight - imageHeight;
+
+            const left =
+                minLeft * positionX / 100;
+
+            const top =
+                minTop * positionY / 100;
+
+
+            image.style.left =
+                left + "px";
+
+            image.style.top =
+                top + "px";
+        }
+
+
+        applyMainImagePosition();
+
+
+        function calculateObjectPosition(
+            image,
+            focalX,
+            focalY,
+            zoom
+        )
+        {
+            const imageWidth =
+                image.naturalWidth;
+
+            const imageHeight =
+                image.naturalHeight;
+
+            const containerWidth =
+                image.clientWidth;
+
+            const containerHeight =
+                image.clientHeight;
+
+
+            if (!imageWidth ||
+                !imageHeight ||
+                !containerWidth ||
+                !containerHeight)
+            {
                 return;
             }
 
-            if (!image.complete) {
-                image.addEventListener("load", function () {
-                    calculateObjectPosition(image, focalX, focalY);
-                }, { once: true });
 
-                return;
+            const imageRatio =
+                imageWidth / imageHeight;
+
+            const containerRatio =
+                containerWidth / containerHeight;
+
+
+            // How much of the original image is visible
+            // in the crop area.
+
+            const zoomFactor =
+                zoom / 100;
+
+            const visibleWidth =
+                Math.min(
+                    1,
+                    (containerRatio / imageRatio) /
+                    zoomFactor
+                );
+
+            const visibleHeight =
+                Math.min(
+                    1,
+                    (imageRatio / containerRatio) /
+                    zoomFactor
+                );
+
+
+            // Calculate the object-position needed to put
+            // the selected focal point as close as possible
+            // to the centre of the crop.
+
+            let positionX =
+                ((focalX / 100) - (visibleWidth / 2)) /
+                (1 - visibleWidth);
+
+            let positionY =
+                ((focalY / 100) - (visibleHeight / 2)) /
+                (1 - visibleHeight);
+
+
+            // If the whole dimension is visible, position
+            // does not matter in that direction.
+
+            if (visibleWidth >= 1)
+            {
+                positionX = 0.5;
             }
 
-            calculateObjectPosition(image, focalX, focalY);
-        });
-    }
+            if (visibleHeight >= 1)
+            {
+                positionY = 0.5;
+            }
 
 
-    function applyFocalPoints() {
+            // Keep the values between 0 and 1.
 
-    const images =
-        document.querySelectorAll(".article-image[data-focal-x]");
+            positionX =
+                Math.max(
+                    0,
+                    Math.min(1, positionX)
+                );
 
-    images.forEach(function (image) {
+            positionY =
+                Math.max(
+                    0,
+                    Math.min(1, positionY)
+                );
 
-        const focalX =
-            parseFloat(image.dataset.focalX);
 
-        const focalY =
-            parseFloat(image.dataset.focalY);
-
-        if (isNaN(focalX) || isNaN(focalY)) {
-            return;
+            image.style.objectPosition =
+                `${positionX * 100}% ${positionY * 100}%`;
         }
 
-        if (!image.complete) {
-            image.addEventListener("load", function () {
-                calculateObjectPosition(image, focalX, focalY);
-            }, { once: true });
 
-            return;
-        }
+        window.addEventListener(
+            "load",
+            applyFocalPoints
+        );
 
-        calculateObjectPosition(image, focalX, focalY);
-    });
-}
-
-
-function calculateObjectPosition(image, focalX, focalY) {
-
-    const imageWidth = image.naturalWidth;
-    const imageHeight = image.naturalHeight;
-
-    const containerWidth = image.clientWidth;
-    const containerHeight = image.clientHeight;
-
-    if (!imageWidth || !imageHeight ||
-        !containerWidth || !containerHeight) {
-        return;
-    }
-
-    const imageRatio =
-        imageWidth / imageHeight;
-
-    const containerRatio =
-        containerWidth / containerHeight;
+        window.addEventListener(
+            "resize",
+            applyFocalPoints
+        );
 
 
-    // How much of the original image is visible
-    // in the crop area.
+        function applyCompactImageFocalPoints()
+        {
+            const images =
+                document.querySelectorAll(
+                    ".compact-image .article-image[data-focal-x]"
+                );
 
-    const visibleWidth =
-        Math.min(1, containerRatio / imageRatio);
+            const secondaryImage =
+                document.querySelector(
+                    ".story .article-image.secondary"
+                );
 
-    const visibleHeight =
-        Math.min(1, imageRatio / containerRatio);
-
-
-    // Calculate the object-position needed to put
-    // the selected focal point as close as possible
-    // to the centre of the crop.
-
-    let positionX =
-        ((focalX / 100) - (visibleWidth / 2)) /
-        (1 - visibleWidth);
-
-    let positionY =
-        ((focalY / 100) - (visibleHeight / 2)) /
-        (1 - visibleHeight);
+            let secondaryWidth = 366;
+            let secondaryHeight = 100;
 
 
-    // If the whole dimension is visible, position
-    // does not matter in that direction.
+            if (secondaryImage)
+            {
+                secondaryWidth =
+                    secondaryImage.clientWidth;
 
-    if (visibleWidth >= 1) {
-        positionX = 0.5;
-    }
-
-    if (visibleHeight >= 1) {
-        positionY = 0.5;
-    }
+                secondaryHeight =
+                    secondaryImage.clientHeight;
+            }
 
 
-    // Keep the values between 0 and 1.
+            images.forEach(function(image)
+            {
+                const focalX =
+                    parseFloat(
+                        image.dataset.focalX
+                    );
 
-    positionX =
-        Math.max(0, Math.min(1, positionX));
+                const focalY =
+                    parseFloat(
+                        image.dataset.focalY
+                    );
 
-    positionY =
-        Math.max(0, Math.min(1, positionY));
+                const zoom =
+                    parseFloat(
+                        image.dataset.secondaryZoom
+                    ) || 100;
 
 
-    image.style.objectPosition =
-        `${positionX * 100}% ${positionY * 100}%`;
-}
+                if (isNaN(focalX) || isNaN(focalY))
+                {
+                    return;
+                }
 
 
-window.addEventListener("load", applyFocalPoints);
+                if (!image.complete)
+                {
+                    image.addEventListener(
+                        "load",
+                        function()
+                        {
+                            positionCompactImage(
+                                image,
+                                focalX,
+                                focalY,
+                                secondaryWidth,
+                                secondaryHeight
+                            );
+                        },
+                        { once: true }
+                    );
 
-window.addEventListener("resize", applyFocalPoints);
+                    return;
+                }
 
-function applyCompactImageFocalPoints() {
 
-    const images =
-        document.querySelectorAll(".compact-image .article-image[data-focal-x]");
-
-    const secondaryImage =
-        document.querySelector(".story .article-image.secondary");
-
-    let secondaryWidth = 366;
-    let secondaryHeight = 100;
-
-    if (secondaryImage) {
-        secondaryWidth = secondaryImage.clientWidth;
-        secondaryHeight = secondaryImage.clientHeight;
-    }
-
-    images.forEach(function (image) {
-
-        const focalX = parseFloat(image.dataset.focalX);
-        const focalY = parseFloat(image.dataset.focalY);
-
-        if (isNaN(focalX) || isNaN(focalY)) {
-            return;
-        }
-
-        if (!image.complete) {
-            image.addEventListener("load", function () {
                 positionCompactImage(
                     image,
                     focalX,
@@ -832,114 +1084,155 @@ function applyCompactImageFocalPoints() {
                     secondaryWidth,
                     secondaryHeight
                 );
-            }, { once: true });
-
-            return;
+            });
         }
 
-        positionCompactImage(
+
+        function positionCompactImage(
             image,
             focalX,
             focalY,
             secondaryWidth,
             secondaryHeight
+        )
+        {
+            const container =
+                image.parentElement;
+
+            const naturalWidth =
+                image.naturalWidth;
+
+            const naturalHeight =
+                image.naturalHeight;
+
+            const containerWidth =
+                container.clientWidth;
+
+            const containerHeight =
+                container.clientHeight;
+
+
+            if (!naturalWidth ||
+                !naturalHeight ||
+                !containerWidth ||
+                !containerHeight)
+            {
+                return;
+            }
+
+
+            /*
+             * Calculate the scale used by the secondary image
+             * with object-fit: cover.
+             */
+
+            const secondaryScale =
+                Math.max(
+                    secondaryWidth / naturalWidth,
+                    secondaryHeight / naturalHeight
+                );
+
+
+            /*
+             * Category image is approximately 20% less zoomed.
+             */
+
+            let categoryScale =
+                secondaryScale * 0.7;
+
+
+            /*
+             * Make sure the image still completely covers
+             * the 130 x 110 category window.
+             */
+
+            const minimumScale =
+                Math.max(
+                    containerWidth / naturalWidth,
+                    containerHeight / naturalHeight
+                );
+
+            categoryScale =
+                Math.max(
+                    categoryScale,
+                    minimumScale
+                );
+
+
+            const imageWidth =
+                naturalWidth * categoryScale;
+
+            const imageHeight =
+                naturalHeight * categoryScale;
+
+
+            image.style.width =
+                imageWidth + "px";
+
+            image.style.height =
+                imageHeight + "px";
+
+
+            /*
+             * Position the focal point in the centre of
+             * the category window.
+             */
+
+            let left =
+                (containerWidth / 2) -
+                (imageWidth * focalX / 100);
+
+            let top =
+                (containerHeight / 2) -
+                (imageHeight * focalY / 100);
+
+
+            /*
+             * Prevent empty space around the image.
+             */
+
+            const minLeft =
+                containerWidth - imageWidth;
+
+            const minTop =
+                containerHeight - imageHeight;
+
+
+            left =
+                Math.max(
+                    minLeft,
+                    Math.min(0, left)
+                );
+
+            top =
+                Math.max(
+                    minTop,
+                    Math.min(0, top)
+                );
+
+
+            image.style.position =
+                "absolute";
+
+            image.style.left =
+                left + "px";
+
+            image.style.top =
+                top + "px";
+        }
+
+
+        window.addEventListener(
+            "load",
+            applyCompactImageFocalPoints
         );
-    });
-}
 
-
-function positionCompactImage(
-    image,
-    focalX,
-    focalY,
-    secondaryWidth,
-    secondaryHeight
-) {
-
-    const container = image.parentElement;
-
-    const naturalWidth = image.naturalWidth;
-    const naturalHeight = image.naturalHeight;
-
-    const containerWidth = container.clientWidth;
-    const containerHeight = container.clientHeight;
-
-    if (!naturalWidth || !naturalHeight ||
-        !containerWidth || !containerHeight) {
-        return;
-    }
-
-    /*
-     * Calculate the scale used by the secondary image
-     * with object-fit: cover.
-     */
-    const secondaryScale = Math.max(
-        secondaryWidth / naturalWidth,
-        secondaryHeight / naturalHeight
-    );
-
-    /*
-     * Category image is approximately 20% less zoomed.
-     */
-    let categoryScale = secondaryScale * 0.7;
-
-    /*
-     * Make sure the image still completely covers
-     * the 130 x 110 category window.
-     */
-    const minimumScale = Math.max(
-        containerWidth / naturalWidth,
-        containerHeight / naturalHeight
-    );
-
-    categoryScale = Math.max(
-        categoryScale,
-        minimumScale
-    );
-
-    const imageWidth = naturalWidth * categoryScale;
-    const imageHeight = naturalHeight * categoryScale;
-
-    image.style.width = imageWidth + "px";
-    image.style.height = imageHeight + "px";
-
-    /*
-     * Position the focal point in the centre of
-     * the category window.
-     */
-    let left =
-        (containerWidth / 2) -
-        (imageWidth * focalX / 100);
-
-    let top =
-        (containerHeight / 2) -
-        (imageHeight * focalY / 100);
-
-    /*
-     * Prevent empty space around the image.
-     */
-    const minLeft = containerWidth - imageWidth;
-    const minTop = containerHeight - imageHeight;
-
-    left = Math.max(minLeft, Math.min(0, left));
-    top = Math.max(minTop, Math.min(0, top));
-
-    image.style.position = "absolute";
-    image.style.left = left + "px";
-    image.style.top = top + "px";
-}
-
-
-window.addEventListener("load", applyCompactImageFocalPoints);
-window.addEventListener("resize", applyCompactImageFocalPoints);
-
-
-
-
-
+        window.addEventListener(
+            "resize",
+            applyCompactImageFocalPoints
+        );
 
     </script>
 }
-
 
 

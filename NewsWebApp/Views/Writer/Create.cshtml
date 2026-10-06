@@ -18,6 +18,9 @@
 
 			<input type="hidden" asp-for="SecondaryImageZoom" id="secondaryImageZoomValue" />
 			<input type="hidden" asp-for="CategoryImageZoom" id="categoryImageZoomValue" />
+			<input type="hidden" asp-for="MainImageZoom" id="mainImageZoomValue" />
+			<input type="hidden" asp-for="MainImagePositionX" id="mainImagePositionXValue" />
+			<input type="hidden" asp-for="MainImagePositionY" id="mainImagePositionYValue" />
 
 			<div class="form-group">
 				<label asp-for="Slug" class="control-label"></label>
@@ -230,878 +233,859 @@
 </div>
 
 
-@section Scripts {
+@section Scripts
+{
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
 
-	@{
-		await Html.RenderPartialAsync("_ValidationScriptsPartial");
-	}
+    <script>
 
-	<script>
+        const imageFile =
+            document.getElementById("ImageFile");
 
-		const imageFile =
-			document.getElementById("ImageFile");
+        const previewMessage =
+            document.getElementById("previewMessage");
 
-		const previewMessage =
-			document.getElementById("previewMessage");
+        const mainImagePreview =
+            document.getElementById("mainImagePreview");
 
-		const mainImagePreview =
-			document.getElementById("mainImagePreview");
+        const mainFocalPointMarker =
+            document.getElementById("mainFocalPointMarker");
 
-		const mainFocalPointMarker =
-			document.getElementById("mainFocalPointMarker");
+        const secondaryImagePreview =
+            document.getElementById("secondaryImagePreview");
 
-		const secondaryImagePreview =
-			document.getElementById("secondaryImagePreview");
+        const categoryImagePreview =
+            document.getElementById("categoryImagePreview");
 
-		const categoryImagePreview =
-			document.getElementById("categoryImagePreview");
 
-		let secondaryBaseWidth = 0;
-		let secondaryBaseHeight = 0;
+        let mainImageBaseWidth = 0;
+        let mainImageBaseHeight = 0;
 
-		let categoryBaseWidth = 0;
-		let categoryBaseHeight = 0;
+        let secondaryBaseWidth = 0;
+        let secondaryBaseHeight = 0;
 
-		const focalPointX =
-			document.getElementById("ImageFocalPointX");
+        let categoryBaseWidth = 0;
+        let categoryBaseHeight = 0;
 
-		const focalPointY =
-			document.getElementById("ImageFocalPointY");
 
-		const focalXDisplay =
-			document.getElementById("focalXDisplay");
+        const focalPointX =
+            document.getElementById("ImageFocalPointX");
 
-		const focalYDisplay =
-			document.getElementById("focalYDisplay");
+        const focalPointY =
+            document.getElementById("ImageFocalPointY");
 
+        const focalXDisplay =
+            document.getElementById("focalXDisplay");
 
-		const previews = [
-			{
-				image: mainImagePreview,
-				width: 622,
-				height: 310
-			},
-			{
-				image: secondaryImagePreview,
-				width: 366,
-				height: 100
-			},
-			{
-				image: categoryImagePreview,
-				width: 130,
-				height: 110
-			}
-		];
+        const focalYDisplay =
+            document.getElementById("focalYDisplay");
 
 
-		/*
-		 * IMAGE SELECTION
-		 */
+        const previews = [
+            {
+                image: mainImagePreview,
+                width: 622,
+                height: 310
+            },
+            {
+                image: secondaryImagePreview,
+                width: 366,
+                height: 100
+            },
+            {
+                image: categoryImagePreview,
+                width: 130,
+                height: 110
+            }
+        ];
 
-		imageFile.addEventListener("change", async function () {
 
-			const file = this.files[0];
+        /*
+         * IMAGE SELECTION
+         */
 
-			if (!file) {
+        imageFile.addEventListener(
+            "change",
+            async function()
+            {
+                const file =
+                    this.files[0];
 
-				previews.forEach(function (preview) {
+                if (!file)
+                {
+                    previews.forEach(function(preview)
+                    {
+                        preview.image.style.display =
+                            "none";
+                    });
 
-					preview.image.style.display = "none";
+                    previewMessage.style.display =
+                        "block";
 
-				});
+                    return;
+                }
 
-				previewMessage.style.display = "block";
 
-				return;
-			}
+                try
+                {
+                    const bitmap =
+                        await createImageBitmap(
+                            file,
+                            {
+                                imageOrientation: "from-image"
+                            }
+                        );
 
 
-			try {
+                    const naturalWidth =
+                        bitmap.width;
 
-				const bitmap =
-					await createImageBitmap(file, {
-						imageOrientation: "from-image"
-					});
+                    const naturalHeight =
+                        bitmap.height;
 
 
-				const naturalWidth =
-					bitmap.width;
+                    bitmap.close();
 
-				const naturalHeight =
-					bitmap.height;
 
+                    const imageUrl =
+                        URL.createObjectURL(file);
 
-				bitmap.close();
 
+                    previews.forEach(function(preview)
+                    {
+                        const image =
+                            preview.image;
 
-				const imageUrl =
-					URL.createObjectURL(file);
+                        const containerWidth =
+                            preview.width;
 
+                        const containerHeight =
+                            preview.height;
 
-				previews.forEach(function (preview) {
 
-					const image =
-						preview.image;
+                        /*
+                         * Scale the image so that it
+                         * completely covers the preview.
+                         */
 
-					const containerWidth =
-						preview.width;
+                        const scale =
+                            Math.max(
+                                containerWidth / naturalWidth,
+                                containerHeight / naturalHeight
+                            );
 
-					const containerHeight =
-						preview.height;
 
+                        const displayWidth =
+                            naturalWidth * scale;
 
-					/*
-					 * Scale the image so that it
-					 * completely covers the preview.
-					 */
+                        const displayHeight =
+                            naturalHeight * scale;
 
-					const scale =
-						Math.max(
-							containerWidth / naturalWidth,
-							containerHeight / naturalHeight
-						);
 
+                        if (image === mainImagePreview)
+                        {
+                            mainImageBaseWidth =
+                                displayWidth;
 
-					const displayWidth =
-						naturalWidth * scale;
+                            mainImageBaseHeight =
+                                displayHeight;
+                        }
 
-					const displayHeight =
-						naturalHeight * scale;
 
-					if (image === secondaryImagePreview) {
+                        if (image === secondaryImagePreview)
+                        {
+                            secondaryBaseWidth =
+                                displayWidth;
 
-						secondaryBaseWidth =
-							displayWidth;
+                            secondaryBaseHeight =
+                                displayHeight;
+                        }
 
-						secondaryBaseHeight =
-							displayHeight;
 
+                        if (image === categoryImagePreview)
+                        {
+                            categoryBaseWidth =
+                                displayWidth;
 
-					
+                            categoryBaseHeight =
+                                displayHeight;
+                        }
 
-					
-		}
 
-					if (image === categoryImagePreview) {
+                        image.style.width =
+                            displayWidth + "px";
 
-						categoryBaseWidth =
-							displayWidth;
+                        image.style.height =
+                            displayHeight + "px";
 
-						categoryBaseHeight =
-							displayHeight;
-		}
 
-					if (image === mainImagePreview) {
+                        image.style.left =
+                            (
+                                (containerWidth - displayWidth) / 2
+                            ) + "px";
 
-						mainImageBaseWidth =
-							displayWidth;
+                        image.style.top =
+                            (
+                                (containerHeight - displayHeight) / 2
+                            ) + "px";
 
-						mainImageBaseHeight =
-							displayHeight;
-		}
 
-					image.style.width =
-						displayWidth + "px";
+                        image.src =
+                            imageUrl;
 
-					image.style.height =
-						displayHeight + "px";
+                        image.style.display =
+                            "block";
+                    });
 
 
-					image.style.left =
-						((containerWidth - displayWidth) / 2) + "px";
+                    previewMessage.style.display =
+                        "none";
 
-					image.style.top =
-						((containerHeight - displayHeight) / 2) + "px";
 
+                    /*
+                     * Start the focal point at the
+                     * current saved value, or 50 / 50.
+                     */
 
-					image.src =
-						imageUrl;
+                    const x =
+                        parseFloat(
+                            focalPointX.value.replace(",", ".")
+                        ) || 50;
 
-					image.style.display =
-						"block";
+                    const y =
+                        parseFloat(
+                            focalPointY.value.replace(",", ".")
+                        ) || 50;
 
-				});
+                    focalPointX.value =
+                        x.toFixed(2).replace(".", ",");
 
+                    focalPointY.value =
+                        y.toFixed(2).replace(".", ",");
 
-				previewMessage.style.display =
-					"none";
 
+                    focalXDisplay.textContent =
+                        x.toFixed(2);
 
-				/*
-				 * Start the focal point at the
-				 * current saved value, or 50 / 50.
-				 */
+                    focalYDisplay.textContent =
+                        y.toFixed(2);
 
-				const x =
-					parseFloat(
-						focalPointX.value.replace(",", ".")
-					) || 50;
 
-				const y =
-					parseFloat(
-						focalPointY.value.replace(",", ".")
-					) || 50;
+                    mainFocalPointMarker.style.left =
+                        x + "%";
 
+                    mainFocalPointMarker.style.top =
+                        y + "%";
 
-				focalXDisplay.textContent =
-					x.toFixed(2);
+                    mainFocalPointMarker.style.display =
+                        "block";
 
-				focalYDisplay.textContent =
-					y.toFixed(2);
 
-						mainFocalPointMarker.style.left =
-				x + "%";
+                    /*
+                     * Apply the focal point to the
+                     * secondary and category previews.
+                     */
 
-				mainFocalPointMarker.style.top =
-					y + "%";
+                    updateSmallPreviews(x, y);
+                }
+                catch (error)
+                {
+                    console.error(
+                        "Could not read image:",
+                        error
+                    );
+                }
+            }
+        );
 
-				mainFocalPointMarker.style.display =
-					"block";
 
-				/*
-				 * Apply the focal point to the
-				 * secondary and category previews.
-				 */
+        /*
+         * SECONDARY + CATEGORY FOCAL POINT
+         */
 
-				updateSmallPreviews(x, y);
+        function updateSmallPreviews(x, y)
+        {
+            applyFocalPoint(
+                secondaryImagePreview,
+                366,
+                100,
+                x,
+                y
+            );
 
-			}
-			catch (error) {
 
-				console.error(
-					"Could not read image:",
-					error
-				);
+            applyFocalPoint(
+                categoryImagePreview,
+                130,
+                110,
+                x,
+                y
+            );
+        }
 
-			}
 
-		});
+        function applyFocalPoint(
+            image,
+            containerWidth,
+            containerHeight,
+            x,
+            y
+        )
+        {
+            const imageWidth =
+                image.offsetWidth;
 
+            const imageHeight =
+                image.offsetHeight;
 
-		/*
-		 * SECONDARY + CATEGORY FOCAL POINT
-		 */
 
-		function updateSmallPreviews(x, y) {
+            let left =
+                containerWidth / 2 -
+                imageWidth * x / 100;
 
-			applyFocalPoint(
-				secondaryImagePreview,
-				366,
-				100,
-				x,
-				y
-			);
+            let top =
+                containerHeight / 2 -
+                imageHeight * y / 100;
 
 
-			applyFocalPoint(
-				categoryImagePreview,
-				130,
-				110,
-				x,
-				y
-			);
+            const minLeft =
+                containerWidth - imageWidth;
 
-		}
+            const minTop =
+                containerHeight - imageHeight;
 
 
-		function applyFocalPoint(
-			image,
-			containerWidth,
-			containerHeight,
-			x,
-			y
-		) {
+            left =
+                Math.max(
+                    minLeft,
+                    Math.min(0, left)
+                );
 
-			const imageWidth =
-				image.offsetWidth;
+            top =
+                Math.max(
+                    minTop,
+                    Math.min(0, top)
+                );
 
-			const imageHeight =
-				image.offsetHeight;
 
+            image.style.left =
+                left + "px";
 
-			let left =
-				containerWidth / 2 -
-				imageWidth * x / 100;
+            image.style.top =
+                top + "px";
+        }
 
 
-			let top =
-				containerHeight / 2 -
-				imageHeight * y / 100;
+        mainImagePreview.addEventListener(
+            "click",
+            setFocalPoint
+        );
 
 
-			const minLeft =
-				containerWidth - imageWidth;
+        function setFocalPoint(event)
+        {
+            const imageRect =
+                mainImagePreview.getBoundingClientRect();
 
-			const minTop =
-				containerHeight - imageHeight;
 
+            let x =
+                (
+                    (event.clientX - imageRect.left) /
+                    imageRect.width
+                ) * 100;
 
-			left =
-				Math.max(
-					minLeft,
-					Math.min(0, left)
-				);
+            let y =
+                (
+                    (event.clientY - imageRect.top) /
+                    imageRect.height
+                ) * 100;
 
 
-			top =
-				Math.max(
-					minTop,
-					Math.min(0, top)
-				);
+            x =
+                Math.max(
+                    0,
+                    Math.min(100, x)
+                );
 
+            y =
+                Math.max(
+                    0,
+                    Math.min(100, y)
+                );
 
-			image.style.left =
-				left + "px";
 
-			image.style.top =
-				top + "px";
+            focalPointX.value =
+                x.toFixed(2).replace(".", ",");
 
-		}
+            focalPointY.value =
+                y.toFixed(2).replace(".", ",");
 
-				mainImagePreview.addEventListener(
-			"click",
-			setFocalPoint
-		);
 
+            focalXDisplay.textContent =
+                x.toFixed(2);
 
-		
-		
+            focalYDisplay.textContent =
+                y.toFixed(2);
 
 
-		function setFocalPoint(event) {
+            mainFocalPointMarker.style.left =
+                (
+                    mainImagePreview.offsetLeft +
+                    mainImagePreview.offsetWidth * x / 100
+                ) + "px";
 
-			const imageRect =
-				mainImagePreview.getBoundingClientRect();
+            mainFocalPointMarker.style.top =
+                (
+                    mainImagePreview.offsetTop +
+                    mainImagePreview.offsetHeight * y / 100
+                ) + "px";
 
+            mainFocalPointMarker.style.display =
+                "block";
 
-			let x =
-				((event.clientX - imageRect.left) /
-					imageRect.width) * 100;
 
-			let y =
-				((event.clientY - imageRect.top) /
-					imageRect.height) * 100;
+            updateSmallPreviews(x, y);
+        }
 
 
-			x =
-				Math.max(
-					0,
-					Math.min(100, x)
-				);
+        /*
+         * IMAGE POSITION AND ZOOM CONTROLS
+         */
 
-			y =
-				Math.max(
-					0,
-					Math.min(100, y)
-				);
+        const mainPreviewContainer =
+            document.getElementById(
+                "mainPreviewContainer"
+            );
 
+        const mainPositionX =
+            document.getElementById(
+                "mainPositionX"
+            );
 
-			focalPointX.value =
-				x.toFixed(2).replace(".", ",");
+        const mainPositionY =
+            document.getElementById(
+                "mainPositionY"
+            );
 
-			focalPointY.value =
-				y.toFixed(2).replace(".", ",");
 
+        const mainZoom =
+            document.getElementById(
+                "mainZoom"
+            );
 
-			focalXDisplay.textContent =
-				x.toFixed(2);
+        const mainZoomDisplay =
+            document.getElementById(
+                "mainZoomDisplay"
+            );
 
-			focalYDisplay.textContent =
-				y.toFixed(2);
+        const mainPositionXDisplay =
+            document.getElementById(
+                "mainPositionXDisplay"
+            );
 
+        const mainPositionYDisplay =
+            document.getElementById(
+                "mainPositionYDisplay"
+            );
 
-			mainFocalPointMarker.style.left =
-				(mainImagePreview.offsetLeft +
-				mainImagePreview.offsetWidth * x / 100) + "px";
 
-			mainFocalPointMarker.style.top =
-				(mainImagePreview.offsetTop +
-				mainImagePreview.offsetHeight * y / 100) + "px";
+        const secondaryZoom =
+            document.getElementById(
+                "secondaryZoom"
+            );
 
-			mainFocalPointMarker.style.display =
-				"block";
+        const secondaryZoomDisplay =
+            document.getElementById(
+                "secondaryZoomDisplay"
+            );
 
 
-			updateSmallPreviews(x, y);
+        const categoryZoom =
+            document.getElementById(
+                "categoryZoom"
+            );
 
-		}
+        const categoryZoomDisplay =
+            document.getElementById(
+                "categoryZoomDisplay"
+            );
 
-		 /* MAIN NEWS DRAGGING
-		 */
 
-		let dragging =
-			false;
+        /*
+         * SECONDARY IMAGE ZOOM
+         */
 
-		let dragStartX =
-			0;
+        secondaryZoom.addEventListener(
+            "input",
+            function()
+            {
+                const zoom =
+                    parseFloat(this.value) / 100;
 
-		let dragStartY =
-			0;
+                const x =
+                    parseFloat(
+                        focalPointX.value.replace(",", ".")
+                    ) || 50;
 
-		let imageStartLeft =
-			0;
+                const y =
+                    parseFloat(
+                        focalPointY.value.replace(",", ".")
+                    ) || 50;
 
-		let imageStartTop =
-			0;
 
+                secondaryImagePreview.style.width =
+                    (
+                        secondaryBaseWidth * zoom
+                    ) + "px";
 
-		const mainPreviewContainer =
-			document.getElementById(
-				"mainPreviewContainer"
-			);
+                secondaryImagePreview.style.height =
+                    (
+                        secondaryBaseHeight * zoom
+                    ) + "px";
 
-		const mainPositionX =
-			document.getElementById("mainPositionX");
 
-		const mainPositionY =
-			document.getElementById("mainPositionY");
+                secondaryZoomDisplay.textContent =
+                    this.value + "%";
 
-		/* ZOOM */
-		const mainZoom =
-			document.getElementById("mainZoom");
 
-		const mainZoomDisplay =
-			document.getElementById("mainZoomDisplay");
+                document.getElementById(
+                    "secondaryImageZoomValue"
+                ).value =
+                    this.value;
 
-		const mainPositionXDisplay =
-			document.getElementById("mainPositionXDisplay");
 
-		const mainPositionYDisplay =
-			document.getElementById("mainPositionYDisplay");
+                applyFocalPoint(
+                    secondaryImagePreview,
+                    366,
+                    100,
+                    x,
+                    y
+                );
+            }
+        );
 
-		const secondaryZoom =
-			document.getElementById("secondaryZoom");
 
-		const secondaryZoomDisplay =
-			document.getElementById("secondaryZoomDisplay");
+        /*
+         * CATEGORY IMAGE ZOOM
+         */
 
-		const categoryZoom =
-			document.getElementById("categoryZoom");
+        categoryZoom.addEventListener(
+            "input",
+            function()
+            {
+                const zoom =
+                    parseFloat(this.value) / 100;
 
-		const categoryZoomDisplay =
-			document.getElementById("categoryZoomDisplay");
+                const x =
+                    parseFloat(
+                        focalPointX.value.replace(",", ".")
+                    ) || 50;
 
-		secondaryZoom.addEventListener("input", function () {
+                const y =
+                    parseFloat(
+                        focalPointY.value.replace(",", ".")
+                    ) || 50;
 
-			const zoom =
-				parseFloat(this.value) / 100;
 
-			const x =
-				parseFloat(
-					focalPointX.value.replace(",", ".")
-				) || 50;
+                categoryImagePreview.style.width =
+                    (
+                        categoryBaseWidth * zoom
+                    ) + "px";
 
-			const y =
-				parseFloat(
-					focalPointY.value.replace(",", ".")
-				) || 50;
+                categoryImagePreview.style.height =
+                    (
+                        categoryBaseHeight * zoom
+                    ) + "px";
 
 
-			secondaryImagePreview.style.width =
-				(secondaryBaseWidth * zoom) + "px";
+                categoryZoomDisplay.textContent =
+                    this.value + "%";
 
-			secondaryImagePreview.style.height =
-				(secondaryBaseHeight * zoom) + "px";
 
+                document.getElementById(
+                    "categoryImageZoomValue"
+                ).value =
+                    this.value;
 
-			secondaryZoomDisplay.textContent =
-				this.value + "%";
 
-			document.getElementById("secondaryImageZoomValue").value = this.value;
+                applyFocalPoint(
+                    categoryImagePreview,
+                    130,
+                    110,
+                    x,
+                    y
+                );
+            }
+        );
 
 
-			applyFocalPoint(
-				secondaryImagePreview,
-				366,
-				100,
-				x,
-				y
-			);
+        /*
+         * MAIN IMAGE POSITION X
+         */
 
-		});
+        mainPositionX.addEventListener(
+            "input",
+            function()
+            {
+                const positionX =
+                    parseFloat(this.value);
 
-				categoryZoom.addEventListener("input", function () {
+                mainPositionXDisplay.textContent =
+                    positionX + "%";
 
-			const zoom =
-				parseFloat(this.value) / 100;
 
-			const x =
-				parseFloat(
-					focalPointX.value.replace(",", ".")
-				) || 50;
+                document.getElementById(
+                    "mainImagePositionXValue"
+                ).value =
+                    this.value;
 
-			const y =
-				parseFloat(
-					focalPointY.value.replace(",", ".")
-				) || 50;
 
+                const imageWidth =
+                    mainImagePreview.offsetWidth;
 
-			categoryImagePreview.style.width =
-				(categoryBaseWidth * zoom) + "px";
+                const minLeft =
+                    622 - imageWidth;
 
-			categoryImagePreview.style.height =
-				(categoryBaseHeight * zoom) + "px";
+                const left =
+                    minLeft * positionX / 100;
 
 
-			categoryZoomDisplay.textContent =
-				this.value + "%";
+                mainImagePreview.style.left =
+                    left + "px";
 
-			document.getElementById("categoryImageZoomValue").value = this.value;
 
-			applyFocalPoint(
-				categoryImagePreview,
-				130,
-				110,
-				x,
-				y
-			);
+                const focalX =
+                    parseFloat(
+                        focalPointX.value.replace(",", ".")
+                    ) || 50;
 
-		});
+                const focalY =
+                    parseFloat(
+                        focalPointY.value.replace(",", ".")
+                    ) || 50;
 
-		mainPositionX.addEventListener(
-			"input",
-			function () {
 
-				const positionX =
-					parseFloat(this.value);
+                requestAnimationFrame(function()
+                {
+                    mainFocalPointMarker.style.left =
+                        (
+                            left +
+                            mainImagePreview.offsetWidth *
+                            focalX / 100
+                        ) + "px";
 
-				mainPositionXDisplay.textContent =
-					positionX + "%";
 
-				const imageWidth =
-					mainImagePreview.offsetWidth;
+                    mainFocalPointMarker.style.top =
+                        (
+                            parseFloat(
+                                mainImagePreview.style.top
+                            ) +
+                            mainImagePreview.offsetHeight *
+                            focalY / 100
+                        ) + "px";
+                });
+            }
+        );
 
-				const minLeft =
-					622 - imageWidth;
 
-				const left =
-					minLeft * positionX / 100;
+        /*
+         * MAIN IMAGE POSITION Y
+         */
 
-				mainImagePreview.style.left =
-					left + "px";
+        mainPositionY.addEventListener(
+            "input",
+            function()
+            {
+                const positionY =
+                    parseFloat(this.value);
 
-				const focalX =
-					parseFloat(
-						focalPointX.value.replace(",", ".")
-					) || 50;
+                mainPositionYDisplay.textContent =
+                    positionY + "%";
 
-				const focalY =
-					parseFloat(
-						focalPointY.value.replace(",", ".")
-					) || 50;
 
-				requestAnimationFrame(function () {
+                document.getElementById(
+                    "mainImagePositionYValue"
+                ).value =
+                    this.value;
 
-					mainFocalPointMarker.style.left =
-						(
-							left +
-							mainImagePreview.offsetWidth * focalX / 100
-						) + "px";
 
-					mainFocalPointMarker.style.top =
-						(
-							parseFloat(mainImagePreview.style.top) +
-							mainImagePreview.offsetHeight * focalY / 100
-						) + "px";
-					 });
-				}
-				
-			);
+                const imageHeight =
+                    mainImagePreview.offsetHeight;
 
-			mainPositionY.addEventListener(
-				"input",
-				function () {
+                const minTop =
+                    310 - imageHeight;
 
-					const positionY =
-						parseFloat(this.value);
+                const top =
+                    minTop * positionY / 100;
 
-					mainPositionYDisplay.textContent =
-						positionY + "%";
 
-					const imageHeight =
-						mainImagePreview.offsetHeight;
+                mainImagePreview.style.top =
+                    top + "px";
 
-					const minTop =
-						310 - imageHeight;
 
-					const top =
-						minTop * positionY / 100;
+                const focalX =
+                    parseFloat(
+                        focalPointX.value.replace(",", ".")
+                    ) || 50;
 
-					mainImagePreview.style.top =
-						top + "px";
+                const focalY =
+                    parseFloat(
+                        focalPointY.value.replace(",", ".")
+                    ) || 50;
 
-					const focalX =
-						parseFloat(
-							focalPointX.value.replace(",", ".")
-						) || 50;
 
-					const focalY =
-						parseFloat(
-							focalPointY.value.replace(",", ".")
-						) || 50;
+                requestAnimationFrame(function()
+                {
+                    mainFocalPointMarker.style.left =
+                        (
+                            parseFloat(
+                                mainImagePreview.style.left
+                            ) +
+                            mainImagePreview.offsetWidth *
+                            focalX / 100
+                        ) + "px";
 
-					requestAnimationFrame(function () {
 
-						mainFocalPointMarker.style.left =
-							(
-								parseFloat(mainImagePreview.style.left) +
-								mainImagePreview.offsetWidth * focalX / 100
-							) + "px";
+                    mainFocalPointMarker.style.top =
+                        (
+                            top +
+                            mainImagePreview.offsetHeight *
+                            focalY / 100
+                        ) + "px";
+                });
+            }
+        );
 
-						mainFocalPointMarker.style.top =
-							(
-								top +
-								mainImagePreview.offsetHeight * focalY / 100
-							) + "px";
-				});
-			}
-		);
 
+        /*
+         * MAIN IMAGE ZOOM
+         */
 
-		
+        mainZoom.addEventListener(
+            "input",
+            function()
+            {
+                const zoom =
+                    parseFloat(this.value);
 
-			mainZoom.addEventListener(
-			"input",
-			function () {
+                mainZoomDisplay.textContent =
+                    zoom + "%";
 
-				const zoom =
-					parseFloat(this.value);
 
-				mainZoomDisplay.textContent =
-					zoom + "%";
+                document.getElementById(
+                    "mainImageZoomValue"
+                ).value =
+                    zoom;
 
-				const scale =
-					zoom / 100;
 
-				const newWidth =
-					mainImageBaseWidth * scale;
+                const scale =
+                    zoom / 100;
 
-				const newHeight =
-					mainImageBaseHeight * scale;
+                const newWidth =
+                    mainImageBaseWidth * scale;
 
-				mainImagePreview.style.width =
-					newWidth + "px";
+                const newHeight =
+                    mainImageBaseHeight * scale;
 
-				mainImagePreview.style.height =
-					newHeight + "px";
 
+                mainImagePreview.style.width =
+                    newWidth + "px";
 
-				const positionX =
-					parseFloat(mainPositionX.value);
+                mainImagePreview.style.height =
+                    newHeight + "px";
 
-				const positionY =
-					parseFloat(mainPositionY.value);
 
-				const minLeft =
-					622 - newWidth;
+                const positionX =
+                    parseFloat(
+                        mainPositionX.value
+                    );
 
-				const minTop =
-					310 - newHeight;
+                const positionY =
+                    parseFloat(
+                        mainPositionY.value
+                    );
 
-				const left =
-					minLeft * positionX / 100;
 
-				const top =
-					minTop * positionY / 100;
+                const minLeft =
+                    622 - newWidth;
 
-				mainImagePreview.style.left =
-					left + "px";
+                const minTop =
+                    310 - newHeight;
 
-				mainImagePreview.style.top =
-					top + "px";
 
+                const left =
+                    minLeft * positionX / 100;
 
-				const focalX =
-					parseFloat(
-						focalPointX.value.replace(",", ".")
-					) || 50;
+                const top =
+                    minTop * positionY / 100;
 
-				const focalY =
-					parseFloat(
-						focalPointY.value.replace(",", ".")
-					) || 50;
 
-						mainFocalPointMarker.style.left =
-					(
-						left +
-						newWidth * focalX / 100
-					) + "px";
+                mainImagePreview.style.left =
+                    left + "px";
 
-				mainFocalPointMarker.style.top =
-					(
-						top +
-						newHeight * focalY / 100
-					) + "px";
+                mainImagePreview.style.top =
+                    top + "px";
 
-				requestAnimationFrame(function () {
 
-					mainFocalPointMarker.style.left =
-						(
-							left +
-							mainImagePreview.offsetWidth * focalX / 100
-						) + "px";
+                const focalX =
+                    parseFloat(
+                        focalPointX.value.replace(",", ".")
+                    ) || 50;
 
-					mainFocalPointMarker.style.top =
-						(
-							top +
-							mainImagePreview.offsetHeight * focalY / 100
-						) + "px";
+                const focalY =
+                    parseFloat(
+                        focalPointY.value.replace(",", ".")
+                    ) || 50;
 
-					
-				});
-			}
-		);
 
-		
+                mainFocalPointMarker.style.left =
+                    (
+                        left +
+                        newWidth * focalX / 100
+                    ) + "px";
 
+                mainFocalPointMarker.style.top =
+                    (
+                        top +
+                        newHeight * focalY / 100
+                    ) + "px";
 
-		mainPreviewContainer.addEventListener(
-			"pointerdown",
-			function (event) {
 
-				if (
-					event.target !==
-					mainImagePreview
-				) {
-					return;
-				}
+                requestAnimationFrame(function()
+                {
+                    mainFocalPointMarker.style.left =
+                        (
+                            left +
+                            mainImagePreview.offsetWidth *
+                            focalX / 100
+                        ) + "px";
 
 
-				return;
+                    mainFocalPointMarker.style.top =
+                        (
+                            top +
+                            mainImagePreview.offsetHeight *
+                            focalY / 100
+                        ) + "px";
+                });
+            }
+        );
+        document.getElementById("mainImageZoomValue").value =
+        document.getElementById("mainZoom").value;
 
+        document.getElementById("mainImagePositionXValue").value =
+        document.getElementById("mainPositionX").value;
 
-				mainPreviewContainer.setPointerCapture(
-					event.pointerId
-				);
+        document.getElementById("mainImagePositionYValue").value =
+        document.getElementById("mainPositionY").value;
 
+        document.getElementById("secondaryImageZoomValue").value =
+        document.getElementById("secondaryZoom").value;
 
-				dragStartX =
-					event.clientX;
+        document.getElementById("categoryImageZoomValue").value =
+        document.getElementById("categoryZoom").value;
 
-				dragStartY =
-					event.clientY;
-
-
-				imageStartLeft =
-					parseFloat(
-						mainImagePreview.style.left
-					) || 0;
-
-
-				imageStartTop =
-					parseFloat(
-						mainImagePreview.style.top
-					) || 0;
-
-
-				mainImagePreview.style.cursor =
-					"grabbing";
-
-			}
-		);
-
-
-		mainPreviewContainer.addEventListener(
-			"pointermove",
-			function (event) {
-
-				if (!dragging) {
-					return;
-				}
-
-
-				const dx =
-					event.clientX -
-					dragStartX;
-
-
-				const dy =
-					event.clientY -
-					dragStartY;
-
-
-				const imageWidth =
-					mainImagePreview.offsetWidth;
-
-
-				const imageHeight =
-					mainImagePreview.offsetHeight;
-
-
-				const minLeft =
-					622 -
-					imageWidth;
-
-
-				const minTop =
-					310 -
-					imageHeight;
-
-
-				let newLeft =
-					imageStartLeft + dx;
-
-
-				let newTop =
-					imageStartTop + dy;
-
-
-				/*
-				 * Only allow movement where the
-				 * image extends beyond the crop.
-				 */
-
-				newLeft =
-					Math.max(
-						minLeft,
-						Math.min(0, newLeft)
-					);
-
-
-				newTop =
-					Math.max(
-						minTop,
-						Math.min(0, newTop)
-					);
-
-
-				mainImagePreview.style.left =
-					newLeft + "px";
-
-
-				mainImagePreview.style.top =
-					newTop + "px";
-
-			}
-		);
-
-
-		mainPreviewContainer.addEventListener(
-			"pointerup",
-			function () {
-
-				dragging =
-					false;
-
-				mainImagePreview.style.cursor =
-					"grab";
-
-			}
-		);
-
-
-		mainPreviewContainer.addEventListener(
-			"pointercancel",
-			function () {
-
-				dragging =
-					false;
-
-				mainImagePreview.style.cursor =
-					"grab";
-
-			}
-		);
-
-	</script>
+    </script>
 }

@@ -50,8 +50,14 @@ namespace NewsWebApp.Services
 
             using (var stream = file.OpenReadStream())
             {
+                Console.WriteLine("===== STARTING BLOB UPLOAD =====");
+
                 await blobClient.UploadAsync(stream, blobHttpHeaders);
+
+                Console.WriteLine("===== BLOB UPLOAD FINISHED =====");
             }
+
+            Console.WriteLine("===== RETURNING BLOB URL =====");
 
             return blobClient.Uri.ToString();
         }

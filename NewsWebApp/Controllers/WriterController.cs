@@ -72,7 +72,11 @@ namespace NewsWebApp.Controllers
 
             if (ImageFile != null && ImageFile.Length > 0)
             {
+                Console.WriteLine("===== CALLING UPLOAD IMAGE =====");
+
                 imageUrl = await _fileService.UploadImageAsync(ImageFile);
+
+                Console.WriteLine("===== UPLOAD IMAGE RETURNED =====");
             }
 
             article = new Articles
@@ -86,6 +90,10 @@ namespace NewsWebApp.Controllers
 
                 ImageFocalPointX = article.ImageFocalPointX,
                 ImageFocalPointY = article.ImageFocalPointY,
+
+                MainImageZoom = article.MainImageZoom,
+                MainImagePositionX = article.MainImagePositionX,
+                MainImagePositionY = article.MainImagePositionY,
 
                 SecondaryImageZoom = article.SecondaryImageZoom,
                 CategoryImageZoom = article.CategoryImageZoom,

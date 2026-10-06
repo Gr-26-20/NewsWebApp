@@ -1,3 +1,4 @@
+extern alias IdentitySdk;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.EntityFrameworkCore;
@@ -43,7 +44,6 @@ namespace NewsWebApp
 
             // Add services
             builder.Services.AddScoped<IUserAndRoleService, UserAndRoleService>();
-
             builder.Services.AddScoped<IFileService, FileService>();
             builder.Services.AddScoped<RoleSeeder>();
 
@@ -56,6 +56,16 @@ namespace NewsWebApp
             // Email service registration
             builder.Services.AddScoped<IEmailSender, EmailSender>();
             builder.Services.AddMemoryCache();
+
+            // Analytics service registration
+            builder.Services.AddScoped<AnalyticsService>();
+
+
+            builder.Services.AddSingleton<Azure.Core.TokenCredential>(services =>
+                services.GetRequiredService<IHostEnvironment>().IsDevelopment()
+                    ? new IdentitySdk::Azure.Identity.DefaultAzureCredential()
+                    : new IdentitySdk::Azure.Identity.ManagedIdentityCredential());
+            builder.Services.AddHttpClient("AnalyticsLogs");
             builder.Services.AddHttpClient<WeatherService>(); // for making HTTP requests
             builder.Services.AddHttpClient<SmhiWeatherService>();
             builder.Services.AddScoped<TableStorageService>();

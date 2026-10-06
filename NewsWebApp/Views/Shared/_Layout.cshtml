@@ -27,6 +27,10 @@
                             <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
                         </li>
                     </ul>
+                    @if (User.IsInRole("Admin"))
+                    {
+                        <a class="nav-link text-dark" asp-area="" asp-controller="Analytics" asp-action="Index">Analytics</a>
+                    }
                     <form asp-controller="Writer" asp-action="Search" method="get">
                         <p>
                             <label>Search: <input type="text" name="SearchString" /></label>

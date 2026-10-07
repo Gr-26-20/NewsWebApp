@@ -75,30 +75,18 @@ public class Function1
                         stockholmTimeZone);
 
                 var localHour = stockholmNow.Hour;
-
-                var spotPriceUrl =
-                    $"https://spotprices.lexlink.se/espot/{stockholmNow:yyyy-MM-dd}";
-
-                var spotPriceResponse =
-                    await _httpClient.GetStringAsync(spotPriceUrl);
-
-                var spotPrices =
-                    JsonSerializer.Deserialize<SpotPriceApiResponse>(
-                        spotPriceResponse,
-                        new JsonSerializerOptions
-                        {
-                            PropertyNameCaseInsensitive = true
-                        });
-
+             
                 var currentSpotPrice =
-                    spotPrices?.SE3.FirstOrDefault(p => p.Hour == localHour);
+                    await _tableStorageService.GetDayAheadPriceAsync(
+                        stockholmNow.Date,
+                        localHour);
 
                 if (currentSpotPrice != null)
                 {
                     _logger.LogInformation(
-                        "SE3 electricity price for hour {hour}: {price} SEK/MWh",
-                        currentSpotPrice.Hour,
-                        currentSpotPrice.PriceSek);
+                        "SE3 Day-Ahead electricity price for hour {hour}: {price} öre/kWh",
+                        localHour,
+                        currentSpotPrice);
 
                     var measurementTime = DateTime.UtcNow;
 
@@ -108,18 +96,82 @@ public class Function1
                         RowKey = measurementTime.ToString("yyyy-MM-ddTHH"),
                         MeasurementTime = measurementTime,
                         TemperatureC = temperature,
-                        ElectricityPrice = currentSpotPrice.PriceSek
+                        ElectricityPrice = currentSpotPrice.Value
                     };
 
                     await _tableStorageService.SaveAsync(entity);
 
                     _logger.LogInformation(
-                        "Saved temperature {temperature} °C and electricity price {price} SEK/MWh to Azure Table at {time}",
+                        "Saved temperature {temperature} °C and electricity price {price} öre/kWh to Azure Table at {time}",
                         temperature,
-                        currentSpotPrice.PriceSek,
+                        currentSpotPrice.Value,
                         measurementTime);
                 }
             }
         }
+    }
+
+    [Function("SaveDayAheadElectricity")]
+    public async Task SaveDayAheadElectricity(
+    [TimerTrigger("0 0 14 * * *")] TimerInfo timer)
+    {
+        var stockholmTimeZone =
+            TimeZoneInfo.FindSystemTimeZoneById("Europe/Stockholm");
+
+        var stockholmNow =
+            TimeZoneInfo.ConvertTimeFromUtc(
+                DateTime.UtcNow,
+                stockholmTimeZone);
+
+        var deliveryDate =
+            stockholmNow.Date.AddDays(1);
+
+        _logger.LogInformation(
+            "Fetching Day-Ahead electricity prices for {date}",
+            deliveryDate.ToString("yyyy-MM-dd"));
+
+        var url =
+            $"https://spotprices.lexlink.se/espot/{deliveryDate:yyyy-MM-dd}";
+
+        var response =
+            await _httpClient.GetStringAsync(url);
+
+        var spotPrices =
+            JsonSerializer.Deserialize<SpotPriceApiResponse>(
+                response,
+                new JsonSerializerOptions
+                {
+                    PropertyNameCaseInsensitive = true
+                });
+
+        if (spotPrices?.SE3 == null ||
+            spotPrices.SE3.Count == 0)
+        {
+            _logger.LogWarning(
+                "No SE3 Day-Ahead prices available for {date}",
+                deliveryDate.ToString("yyyy-MM-dd"));
+
+            return;
+        }
+
+        foreach (var price in spotPrices.SE3)
+        {
+            var entity = new DayAheadElectricityEntity
+            {
+                PartitionKey = "SE3",
+                RowKey =
+                    $"{deliveryDate:yyyy-MM-dd}T{price.Hour:00}",
+                DeliveryDate = deliveryDate,
+                Hour = price.Hour,
+                ElectricityPrice = price.PriceSek
+            };
+
+            await _tableStorageService.SaveDayAheadAsync(entity);
+        }
+
+        _logger.LogInformation(
+            "Saved {count} SE3 Day-Ahead prices for {date}",
+            spotPrices.SE3.Count,
+            deliveryDate.ToString("yyyy-MM-dd"));
     }
 }

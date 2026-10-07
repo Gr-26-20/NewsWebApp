@@ -9,6 +9,25 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Content Include="Pages\Admin\Users.cshtml">
+      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </Content>
+    <Content Include="Pages\Profile.cshtml">
+      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </Content>
+    <Content Include="Pages\_ViewImports.cshtml">
+      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </Content>
+    <Content Include="Pages\_ViewStart.cshtml">
+      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </Content>
+  </ItemGroup>
+
+  <ItemGroup>
     <FrameworkReference Include="Microsoft.AspNetCore.App" />
     <PackageReference Include="Azure.Data.Tables" Version="12.12.0" />
     <PackageReference Include="Microsoft.Azure.Functions.Worker" Version="2.52.0" />
@@ -21,8 +40,7 @@
   </ItemGroup>
 
   <ItemGroup>
-	  <ProjectReference Include="..\NewsWebApp\NewsWebApp.csproj"
-					GlobalPropertiesToRemove="RuntimeIdentifier" /> 
+	  <ProjectReference Include="..\NewsWebApp\NewsWebApp.csproj" GlobalPropertiesToRemove="RuntimeIdentifier" /> 
   </ItemGroup>
 
 </Project>

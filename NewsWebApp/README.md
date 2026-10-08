@@ -122,9 +122,7 @@ NewsWebApp/
 ├── appsettings.json                # Configuration (default, all environments)
 ├── appsettings.Development.json    # Development-specific config
 ├── NewsWebApp.csproj               # Project file & dependencies
-├── README.md                        # Original project README
-├── BLOB_UPLOAD_FIXES.md            # Blob storage upload bug fixes
-└── PROJECT_STRUCTURE.md            # This file
+└── README.md                        # Project README
 
 
  

@@ -27,14 +27,12 @@
 			<p><strong>Article status: </strong>@article.articleStatus</p>
 		</div>
 		<div class="card-body">
-			<h2>@article.Title</h2>
-			<p>@article.Summary</p>
+			<img src="@article.ImageUrl" alt="@article.Title" class="img-fluid" style="max-width: 50%; max-height: 50%; float: right; display: flex; align-items: center; justify-content:center;">
 			<p><strong>Author:</strong> @article.Author</p>
 			<p><strong>Slug:</strong> @article.Slug</p>
 			<p><strong>Category:</strong> @article.Category</p>
 			<p><strong>Views:</strong> @article.Views</p>
 			<p><strong>Likes:</strong> @article.Likes</p>
-			<img src="@article.ImageUrl" alt="@article.Title" class="img-fluid" style="max-width: 70%; max-height: 70%;"/>
 		</div>
 		<div class="card-footer">
 			<a class="btn btn-primary" asp-action="EditArticle" asp-controller="Writer" asp-route-id="@article.Id">Edit</a>

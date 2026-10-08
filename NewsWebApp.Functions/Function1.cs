@@ -123,15 +123,19 @@ public class Function1
                 DateTime.UtcNow,
                 stockholmTimeZone);
 
+        var publicationDate =
+            stockholmNow.Date;
+
         var deliveryDate =
-            stockholmNow.Date.AddDays(1);
+            publicationDate.AddDays(1);
 
         _logger.LogInformation(
-            "Fetching Day-Ahead electricity prices for {date}",
+            "Fetching Day-Ahead electricity prices published on {date} for delivery on {deliveryDate}",
+            publicationDate.ToString("yyyy-MM-dd"),
             deliveryDate.ToString("yyyy-MM-dd"));
 
         var url =
-            $"https://spotprices.lexlink.se/espot/{deliveryDate:yyyy-MM-dd}";
+            $"https://spotprices.lexlink.se/espot/{publicationDate:yyyy-MM-dd}";
 
         var response =
             await _httpClient.GetStringAsync(url);
@@ -161,7 +165,9 @@ public class Function1
                 PartitionKey = "SE3",
                 RowKey =
                     $"{deliveryDate:yyyy-MM-dd}T{price.Hour:00}",
-                DeliveryDate = deliveryDate,
+                DeliveryDate = new DateTimeOffset(
+                    deliveryDate,
+                    stockholmTimeZone.GetUtcOffset(deliveryDate)),
                 Hour = price.Hour,
                 ElectricityPrice = price.PriceSek
             };

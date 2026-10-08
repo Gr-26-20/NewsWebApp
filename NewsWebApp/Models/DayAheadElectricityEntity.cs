@@ -11,7 +11,7 @@ namespace NewsWebApp.Models
         public DateTimeOffset? Timestamp { get; set; }
         public ETag ETag { get; set; }
 
-        public DateTime DeliveryDate { get; set; }
+        public DateTimeOffset DeliveryDate { get; set; }
         public int Hour { get; set; }
         public double ElectricityPrice { get; set; }
     }

@@ -1,4 +1,5 @@
 <Solution>
   <Project Path="NewsWebApp.Functions/NewsWebApp.Functions.csproj" Id="031b4874-a1d4-41fd-b858-3c94f5a3dea1" />
   <Project Path="NewsWebApp/NewsWebApp.csproj" />
+  <Project Path="ResizeImage/ResizeImage.csproj" Id="9d1279dd-c0f5-4df8-a8ab-e773ed82b1cc" />
 </Solution>

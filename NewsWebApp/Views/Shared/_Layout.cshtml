@@ -14,30 +14,32 @@
         <div class="container">
             <partial name="_CookieConsentPartial" />
         </div>
-        <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
-            <div class="container-fluid">
-                <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index"></a>
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
+        <nav class="navbar navbar-expand-xl navbar-light shared-news-nav" aria-label="Main navigation">
+            <div class="container news-container">
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#sharedNavigation" aria-controls="sharedNavigation"
                         aria-expanded="false" aria-label="Toggle navigation">
                     <span class="navbar-toggler-icon"></span>
                 </button>
-                <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
-                    <ul class="navbar-nav flex-grow-1">
+                <div id="sharedNavigation" class="navbar-collapse collapse">
+                    <div class="shared-nav-links">
+                    <ul class="navbar-nav">
                         <li class="nav-item">
                             <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
                         </li>
-                    </ul>
                     @if (User.IsInRole("Admin"))
                     {
-                        <a class="nav-link text-dark" asp-area="" asp-controller="Analytics" asp-action="Index">Analytics</a>
+                        <li class="nav-item">
+                            <a class="nav-link text-dark" asp-area="" asp-controller="Analytics" asp-action="Index">Analytics</a>
+                        </li>
                     }
-                    <form asp-controller="Writer" asp-action="Search" method="get">
-                        <p>
-                            <label>Search: <input type="text" name="SearchString" /></label>
-                            <input type="submit" value="Filter" />
-                        </p>
-                    </form>
+                    </ul>
                     <partial name="_LoginPartial" />
+                    </div>
+                    <form class="shared-nav-search" asp-controller="Writer" asp-action="Search" method="get" role="search">
+                        <label class="visually-hidden" for="navArticleSearch">Search articles</label>
+                        <input id="navArticleSearch" type="search" name="SearchString" placeholder="Search articles…" />
+                        <button type="submit">Search</button>
+                    </form>
                 </div>
             </div>
         </nav>

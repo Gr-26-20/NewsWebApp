@@ -58,7 +58,9 @@
                 {
                     <img src="@article.ImageUrl"
                          alt="@article.Title"
-                         class="article-image category-image" />
+                         class="article-image category-image"
+                         data-focal-x="@article.ImageFocalPointX.ToString(System.Globalization.CultureInfo.InvariantCulture)"
+                         data-focal-y="@article.ImageFocalPointY.ToString(System.Globalization.CultureInfo.InvariantCulture)" />
                 }
                 else
                 {
@@ -93,4 +95,92 @@
     function toggleCategoryNavigation() {
         document.getElementById("categoryPageCategories").classList.toggle("open");
     }
+
+    
+
+
+    function applyFocalPoints() {
+
+        const images =
+            document.querySelectorAll(".category-image[data-focal-x]");
+
+        images.forEach(function (image) {
+
+            const focalX =
+                parseFloat(image.dataset.focalX);
+
+            const focalY =
+                parseFloat(image.dataset.focalY);
+
+            if (isNaN(focalX) || isNaN(focalY)) {
+                return;
+            }
+
+            if (!image.complete) {
+                image.addEventListener("load", function () {
+                    calculateObjectPosition(image, focalX, focalY);
+                }, { once: true });
+
+                return;
+            }
+
+            calculateObjectPosition(image, focalX, focalY);
+        });
+    }
+
+
+    function calculateObjectPosition(image, focalX, focalY) {
+
+        const imageWidth = image.naturalWidth;
+        const imageHeight = image.naturalHeight;
+
+        const containerWidth = image.clientWidth;
+        const containerHeight = image.clientHeight;
+
+        if (!imageWidth || !imageHeight ||
+            !containerWidth || !containerHeight) {
+            return;
+        }
+
+        const imageRatio =
+            imageWidth / imageHeight;
+
+        const containerRatio =
+            containerWidth / containerHeight;
+
+        const visibleWidth =
+            Math.min(1, containerRatio / imageRatio);
+
+        const visibleHeight =
+            Math.min(1, imageRatio / containerRatio);
+
+        let positionX =
+            ((focalX / 100) - (visibleWidth / 2)) /
+            (1 - visibleWidth);
+
+        let positionY =
+            ((focalY / 100) - (visibleHeight / 2)) /
+            (1 - visibleHeight);
+
+        if (visibleWidth >= 1) {
+            positionX = 0.5;
+        }
+
+        if (visibleHeight >= 1) {
+            positionY = 0.5;
+        }
+
+        positionX =
+            Math.max(0, Math.min(1, positionX));
+
+        positionY =
+            Math.max(0, Math.min(1, positionY));
+
+        image.style.objectPosition =
+            `${positionX * 100}% ${positionY * 100}%`;
+    }
+
+
+    window.addEventListener("load", applyFocalPoints);
+    window.addEventListener("resize", applyFocalPoints);
 </script>

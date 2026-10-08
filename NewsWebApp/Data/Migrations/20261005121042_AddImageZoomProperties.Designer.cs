@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using NewsWebApp.Data;
 
@@ -11,9 +12,11 @@ using NewsWebApp.Data;
 namespace NewsWebApp.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20261005121042_AddImageZoomProperties")]
+    partial class AddImageZoomProperties
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -285,15 +288,6 @@ namespace NewsWebApp.Data.Migrations
 
                     b.Property<int>("Likes")
                         .HasColumnType("int");
-
-                    b.Property<double>("MainImagePositionX")
-                        .HasColumnType("float");
-
-                    b.Property<double>("MainImagePositionY")
-                        .HasColumnType("float");
-
-                    b.Property<double>("MainImageZoom")
-                        .HasColumnType("float");
 
                     b.Property<double>("SecondaryImageZoom")
                         .HasColumnType("float");

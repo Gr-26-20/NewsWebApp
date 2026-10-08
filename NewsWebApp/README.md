@@ -116,7 +116,13 @@ NewsWebApp/
 │   └── _ViewStart.cshtml           # Razor page startup
 │
 ├── wwwroot/                        # Static Assets
-│   └── images/                     # Image storage directory (using Azure Blob)
+│   └── images/                     # Image storage directory
+│
+├── Program.cs                      # Application startup & dependency injection
+├── appsettings.json                # Configuration (default, all environments)
+├── appsettings.Development.json    # Development-specific config
+├── NewsWebApp.csproj               # Project file & dependencies
+└── README.md                        # Project README
 
 
  

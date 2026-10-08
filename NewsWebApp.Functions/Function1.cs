@@ -67,7 +67,7 @@ public class Function1
                     temperature);
 
                 var stockholmTimeZone =
-                TimeZoneInfo.FindSystemTimeZoneById("Europe/Stockholm");
+                    TimeZoneInfo.FindSystemTimeZoneById("Europe/Stockholm");
 
                 var stockholmNow =
                     TimeZoneInfo.ConvertTimeFromUtc(

@@ -15,7 +15,7 @@
 		<Select asp-for="status" class="form-control" asp-items="Model.Statuses">
 			<option value="">Please select an option</option>
 		</Select>
-		<button class="btn btn-dark" type="submit"">Sort</button>
+		<button class="btn btn-dark" type="submit">Sort</button>
 	</form>
 </div>
 
@@ -34,7 +34,7 @@
 			<p><strong>Category:</strong> @article.Category</p>
 			<p><strong>Views:</strong> @article.Views</p>
 			<p><strong>Likes:</strong> @article.Likes</p>
-			<img src="@article.ImageUrl" alt="@article.Title" style="max-width: 450px; max-height: 300px;" />
+			<img src="@article.ImageUrl" alt="@article.Title" class="img-fluid" style="max-width: 70%; max-height: 70%;"/>
 		</div>
 		<div class="card-footer">
 			<a class="btn btn-primary" asp-action="EditArticle" asp-controller="Writer" asp-route-id="@article.Id">Edit</a>

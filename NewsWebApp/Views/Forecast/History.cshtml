@@ -89,6 +89,21 @@
                 <span>GOTHENBURG</span>
             </div>
 
+            <div class="history-controls">
+
+                <div class="history-range-buttons">
+                    <button type="button" data-range="1day" class="active">1 DAY</button>
+                    <button type="button" data-range="7days">7 DAYS</button>
+                    <button type="button" data-range="total">TOTAL</button>
+                </div>
+
+                <div class="history-navigation">
+                    <button type="button" id="historyPrev" aria-label="Previous period">←</button>
+                    <button type="button" id="historyNext" aria-label="Next period">→</button>
+                </div>
+
+            </div>
+
             <div class="history-chart">
                 <canvas id="historyChart"></canvas>
             </div>
@@ -102,36 +117,276 @@
 @if (string.IsNullOrEmpty(historyError))
 {
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-date-fns"></script>
 
     <script>
         const ctx = document.getElementById('historyChart');
 
-        new Chart(ctx, {
+        const historyData = [
+    @foreach (var item in Model)
+    {
+        @: { time: '@item.MeasurementTime.ToString("o")', temperature: @item.TemperatureC.ToString(System.Globalization.CultureInfo.InvariantCulture), electricity: @item.ElectricityPrice.ToString(System.Globalization.CultureInfo.InvariantCulture) },
+    }
+    ];
+        function getChartData(data) {
+            return {
+                labels: data.map(item => new Date(item.time)),
+
+                temperatures: data.map(item => item.temperature),
+
+                electricityPrices: data.map(item => item.electricity)
+            };
+        }
+
+        historyData.sort((a, b) =>
+            new Date(a.time) - new Date(b.time)
+        );
+
+        const chartData = getChartData(historyData);
+
+        const HOUR_MS = 60 * 60 * 1000;
+        const DAY_MS = 24 * HOUR_MS;
+        const SEVEN_DAYS_MS = 7 * DAY_MS;
+
+        let currentView = '1day';
+        let windowOffset = 0;
+
+        function getVisibleData() {
+            if (historyData.length === 0) {
+                return [];
+            }
+
+            if (currentView === 'total') {
+                return historyData;
+            }
+
+            const windowSize =
+                currentView === '1day'
+                    ? DAY_MS
+                    : SEVEN_DAYS_MS;
+
+            const latestTime =
+                new Date(historyData[historyData.length - 1].time).getTime();
+
+            const endTime =
+                latestTime - (windowOffset * HOUR_MS);
+
+            const startTime =
+                endTime - windowSize;
+
+            return historyData.filter(item => {
+                const time = new Date(item.time).getTime();
+
+                return time >= startTime && time <= endTime;
+            });
+        }
+
+        function updateChart(animate = true) {
+            const visibleData = getVisibleData();
+            const visibleChartData = getChartData(visibleData);
+
+            console.log(
+                'View:', currentView,
+                'Offset:', windowOffset,
+                'First:', visibleData[0]?.time,
+                'Last:', visibleData[visibleData.length - 1]?.time
+            );
+
+            chart.data.labels = visibleChartData.labels;
+            chart.data.datasets[0].data = visibleChartData.temperatures;
+            chart.data.datasets[1].data = visibleChartData.electricityPrices;
+
+            chart.update(animate ? undefined : 'none');
+        }
+
+            
+        
+        const nightBackgroundPlugin = {
+            id: 'nightBackground',
+
+            beforeDraw(chart) {
+                const { ctx, chartArea, scales } = chart;
+
+                if (!chartArea || !scales.x) {
+                    return;
+                }
+
+                const xScale = scales.x;
+                const minTime = xScale.min;
+                const maxTime = xScale.max;
+
+                if (minTime == null || maxTime == null) {
+                    return;
+                }
+
+                function stockholmDateParts(timestamp) {
+                    const parts = new Intl.DateTimeFormat('en-GB', {
+                        timeZone: 'Europe/Stockholm',
+                        year: 'numeric',
+                        month: '2-digit',
+                        day: '2-digit'
+                    }).formatToParts(new Date(timestamp));
+
+                    const result = {};
+                    parts.forEach(part => {
+                        result[part.type] = Number(part.value);
+                    });
+
+                    return result;
+                }
+
+                // Find every local calendar date that overlaps the graph.
+                const start = stockholmDateParts(minTime);
+                const end = stockholmDateParts(maxTime);
+
+                const startDate = new Date(Date.UTC(
+                    start.year, start.month - 1, start.day
+                ));
+
+                const endDate = new Date(Date.UTC(
+                    end.year, end.month - 1, end.day
+                ));
+
+                ctx.save();
+                ctx.fillStyle = 'rgba(0, 0, 0, 0.04)';
+
+                for (
+                    let day = startDate.getTime();
+                    day <= endDate.getTime();
+                    day += 24 * 60 * 60 * 1000
+                ) {
+                    const date = new Date(day);
+
+                    const year = date.getUTCFullYear();
+                    const month = String(date.getUTCMonth() + 1).padStart(2, '0');
+                    const dayOfMonth = String(date.getUTCDate()).padStart(2, '0');
+
+                    // Use explicit Stockholm offsets for each boundary.
+                    // These are correct for Swedish standard and summer time.
+                    for (const [hour, offset] of [[22, '+02:00'], [6, '+02:00']]) {
+                        const boundary = new Date(
+                            `${year}-${month}-${dayOfMonth}T${String(hour).padStart(2, '0')}:00:00${offset}`
+                        ).getTime();
+
+                        if (boundary > minTime && boundary < maxTime) {
+                            const x = xScale.getPixelForValue(boundary);
+
+                            ctx.beginPath();
+
+                            if (hour === 22) {
+                                ctx.moveTo(x, chartArea.top);
+                                ctx.lineTo(chartArea.right, chartArea.top);
+                                ctx.lineTo(chartArea.right, chartArea.bottom);
+                                ctx.lineTo(x, chartArea.bottom);
+                            } else {
+                                ctx.moveTo(chartArea.left, chartArea.top);
+                                ctx.lineTo(x, chartArea.top);
+                                ctx.lineTo(x, chartArea.bottom);
+                                ctx.lineTo(chartArea.left, chartArea.bottom);
+                            }
+
+                            ctx.closePath();
+                            // Actual shading is drawn in the interval logic below.
+                        }
+                    }
+                }
+
+                // Shade the night intervals using real time coordinates.
+                const cursor = new Date(minTime);
+                cursor.setMinutes(0, 0, 0);
+
+                for (
+                    let time = cursor.getTime();
+                    time < maxTime;
+                    time += 30 * 60 * 1000
+                ) {
+                    const midpoint = time + 15 * 60 * 1000;
+
+                    const hour = Number(
+                        new Intl.DateTimeFormat('en-GB', {
+                            timeZone: 'Europe/Stockholm',
+                            hour: '2-digit',
+                            hour12: false
+                        }).format(new Date(midpoint))
+                    );
+
+                    if (hour >= 22 || hour < 6) {
+                        const x1 = Math.max(chartArea.left, xScale.getPixelForValue(time));
+                        const x2 = Math.min(
+                            chartArea.right,
+                            xScale.getPixelForValue(time + 30 * 60 * 1000)
+                        );
+
+                        if (x2 > x1) {
+                            ctx.fillRect(
+                                x1,
+                                chartArea.top,
+                                x2 - x1,
+                                chartArea.bottom - chartArea.top
+                            );
+                        }
+                    }
+                            }
+
+            // Draw a subtle vertical line at midnight.
+            const midnightCursor = new Date(minTime);
+            midnightCursor.setMinutes(0, 0, 0);
+
+            for (
+                let time = midnightCursor.getTime();
+                time <= maxTime;
+                time += 30 * 60 * 1000
+            ) {
+                const parts = new Intl.DateTimeFormat('en-GB', {
+                    timeZone: 'Europe/Stockholm',
+                    hour: '2-digit',
+                    minute: '2-digit',
+                    hour12: false
+                }).formatToParts(new Date(time));
+
+                const hour = Number(
+                    parts.find(p => p.type === 'hour').value
+                );
+
+                const minute = Number(
+                    parts.find(p => p.type === 'minute').value
+                );
+
+                if (hour === 0 && minute === 0) {
+                    const x = xScale.getPixelForValue(time);
+
+                    if (x >= chartArea.left && x <= chartArea.right) {
+                        ctx.beginPath();
+                        ctx.strokeStyle = 'rgba(0, 0, 0, 0.22)';
+                        ctx.lineWidth = 1;
+                        ctx.moveTo(x, chartArea.top);
+                        ctx.lineTo(x, chartArea.bottom);
+                        ctx.stroke();
+                    }
+                }
+            }
+
+
+                ctx.restore();
+            }
+        };
+
+
+
+        let chart;
+
+        chart = new Chart(ctx, {
             type: 'line',
 
-            data: {
-                labels: [
-                    @foreach (var item in Model)
-                    {
-                        var swedishTime =
-                            TimeZoneInfo.ConvertTimeFromUtc(
-                                item.MeasurementTime,
-                                swedishTimeZone);
+            plugins: [nightBackgroundPlugin],
 
-                        @: '@swedishTime.ToString("HH:mm")',
-                    }
-                ],
+            data: {
+                labels: chartData.labels,
 
                 datasets: [
                     {
                         label: 'Temperature (°C)',
-                        data: [
-                            @foreach (var item in Model)
-                            {
-                                @: @item.TemperatureC.ToString(
-                                    System.Globalization.CultureInfo.InvariantCulture),
-                            }
-                        ],
+                        data: chartData.temperatures,
                         borderWidth: 2,
                         tension: 0.25,
                         pointRadius: 2,
@@ -140,20 +395,7 @@
 
                     {
                         label: 'Electricity price (öre/kWh)',
-                        data: [
-                            @foreach (var item in Model)
-                            {
-                                if (item.ElectricityPrice > 0)
-                                {
-                                    @: @item.ElectricityPrice.ToString(
-                                        System.Globalization.CultureInfo.InvariantCulture),
-                                }
-                                else
-                                {
-                                    @: null,
-                                }
-                            }
-                        ],
+                        data: chartData.electricityPrices,
                         borderWidth: 2,
                         tension: 0.15,
                         pointRadius: 2,
@@ -162,43 +404,101 @@
                 ]
             },
 
-            options: {
-                responsive: true,
-                maintainAspectRatio: false,
+                options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
 
-                scales: {
-                    y: {
-                        type: 'linear',
-                        position: 'left',
+                        scales: {
+                            x: {
+                                type: 'time',
 
-                        title: {
-                            display: true,
-                            text: 'Temperature (°C)'
-                        },
+                                time: {
+                                    unit: 'hour',
+                                    displayFormats: {
+                                        hour: 'HH:mm'
+                                    },
+                                    tooltipFormat: 'dd MMM yyyy HH:mm'
+                                },
 
-                        ticks: {
-                            callback: function (value) {
-                                return Number(value)
-                                    .toFixed(1)
-                                    .replace(".", ",") + "°";
+                                ticks: {
+                                    stepSize: 3,
+                                    source: 'auto',
+                                    autoSkip: false,
+                                    maxRotation: 0,
+                                    minRotation: 0
+                                }
+                            },
+
+                            y: {
+                                type: 'linear',
+                                position: 'left',
+
+                                title: {
+                                    display: true,
+                                    text: 'Temperature (°C)'
+                                },
+
+                                ticks: {
+                                    callback: function (value) {
+                                        return Number(value)
+                                            .toFixed(1)
+                                            .replace(".", ",") + "°";
+                                    }
+                                }
+                            },
+
+                        y1: {
+                            type: 'linear',
+                            position: 'right',
+
+                            title: {
+                                display: true,
+                                text: 'Electricity price (öre/kWh)'
+                            },
+
+                            grid: {
+                                drawOnChartArea: false
                             }
-                        }
-                    },
-
-                    y1: {
-                        type: 'linear',
-                        position: 'right',
-
-                        title: {
-                            display: true,
-                            text: 'Electricity price (öre/kWh)'
-                        },
-
-                        grid: {
-                            drawOnChartArea: false
                         }
                     }
                 }
+        });
+
+        document.querySelectorAll('.history-controls button[data-range]').forEach(button => {
+            button.addEventListener('click', () => {
+
+                currentView = button.dataset.range;
+                windowOffset = 0;
+
+                document.querySelectorAll('.history-controls button[data-range]')
+                    .forEach(b => b.classList.remove('active'));
+
+                button.classList.add('active');
+
+                updateChart();
+            });
+        });
+
+        updateChart();
+        document.getElementById('historyPrev').addEventListener('click', () => {
+            if (currentView === 'total') {
+                return;
+            }
+
+            windowOffset += currentView === '7days' ? 24 : 1;
+            updateChart(false);
+        });
+
+        document.getElementById('historyNext').addEventListener('click', () => {
+            if (currentView === 'total') {
+                return;
+            }
+
+            const step = currentView === '7days' ? 24 : 1;
+
+            if (windowOffset >= step) {
+                windowOffset -= step;
+                updateChart(false);
             }
         });
     </script>

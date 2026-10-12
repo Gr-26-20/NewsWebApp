@@ -25,7 +25,7 @@
     {
         <div class="alert alert-info" role="status">@Model.TelemetryMessage</div>
     }
-    <div class="row row-cols-1 row-cols-sm-2 row-cols-xl-5 g-3 mb-4 retro-stats">
+    <div class="row row-cols-1 row-cols-sm-2 row-cols-xl-5 g-3 mb-4 retro-stats"> 
         <div class="col"><div class="card h-100"><div class="card-body"><h2 class="h6 text-muted">Page views</h2><p class="h3">@(Model.PageViews?.ToString("N0") ?? "Unavailable")</p><small>Browser page views</small></div></div></div>
         <div class="col"><div class="card h-100"><div class="card-body"><h2 class="h6 text-muted">Visitors</h2><p class="h3">@(Model.Visitors?.ToString("N0") ?? "Unavailable")</p><small>Estimated unique browsers</small></div></div></div>
         <div class="col"><div class="card h-100"><div class="card-body"><h2 class="h6 text-muted">Subscriptions</h2><p class="h3">@Model.SuccessfulSubscriptions.ToString("N0")</p><small>Saved subscription records</small></div></div></div>

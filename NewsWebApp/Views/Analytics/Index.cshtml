@@ -1,0 +1,88 @@
+@model NewsWebApp.Models.ViewModels.AnalyticsViewModel
+@using NewsWebApp.Models.ViewModels
+@{
+    ViewData["Title"] = "Analytics";
+
+}
+<div class="analytics-retro my-4">
+    <div class="retro-window-bar" aria-hidden="true"><span>DAILY NEWS / READER HQ</span><span>_ &nbsp; □ &nbsp; ×</span></div>
+    <div class="retro-content">
+    <div class="d-flex flex-wrap justify-content-between align-items-center gap-3 mb-4">
+        <div><span class="retro-sticker">★ Welcome to reader HQ ★</span><h1 class="mb-1">Analytics<span class="retro-spark" aria-hidden="true">✦</span></h1><p class="text-muted mb-0">Big news. Little numbers. Understand your readers and subscriptions.</p></div>
+        <form method="get" class="d-flex gap-2 align-items-center">
+            <label for="days">Period</label>
+            <select id="days" name="days" class="form-select">
+                @foreach (var days in new[] { 7, 30, 90 })
+                {
+                    <option value="@days" selected="@(Model.Days == days)">Last @days days</option>
+                }
+            </select>
+            <button class="btn retro-button" type="submit">Apply →</button>
+        </form>
+    </div>
+    <p class="small text-muted">@Model.FromUtc.ToString("dd MMM yyyy") to @Model.UpdatedUtc.ToString("dd MMM yyyy HH:mm") UTC. Includes today. Results refresh every five minutes.</p>
+    @if (!string.IsNullOrEmpty(Model.TelemetryMessage))
+    {
+        <div class="alert alert-info" role="status">@Model.TelemetryMessage</div>
+    }
+    <div class="row row-cols-1 row-cols-sm-2 row-cols-xl-5 g-3 mb-4 retro-stats">
+        <div class="col"><div class="card h-100"><div class="card-body"><h2 class="h6 text-muted">Page views</h2><p class="h3">@(Model.PageViews?.ToString("N0") ?? "Unavailable")</p><small>Browser page views</small></div></div></div>
+        <div class="col"><div class="card h-100"><div class="card-body"><h2 class="h6 text-muted">Visitors</h2><p class="h3">@(Model.Visitors?.ToString("N0") ?? "Unavailable")</p><small>Estimated unique browsers</small></div></div></div>
+        <div class="col"><div class="card h-100"><div class="card-body"><h2 class="h6 text-muted">Subscriptions</h2><p class="h3">@Model.SuccessfulSubscriptions.ToString("N0")</p><small>Saved subscription records</small></div></div></div>
+        <div class="col"><div class="card h-100"><div class="card-body"><h2 class="h6 text-muted">Subscription value</h2><p class="h3">@Model.SubscriptionValue.ToString("N2")</p><small>SEK, recorded value; excludes refunds</small></div></div></div>
+        <div class="col"><div class="card h-100"><div class="card-body"><h2 class="h6 text-muted">Failed requests</h2><p class="h3">@(Model.FailedRequests?.ToString("N0") ?? "Unavailable")</p><small>Unsuccessful server requests</small></div></div></div>
+    </div>
+    <p class="small text-muted">Visitor counts are estimates and may be affected by consent, browser blocking and telemetry sampling. Historical test subscriptions may be included in the database totals.</p>
+    <div class="row g-4 mb-4">
+        <section class="col-lg-6"><div class="card h-100"><div class="card-body">
+            <h2 class="h5">Daily subscriptions</h2>
+            <partial name="_Chart" model="@(new AnalyticsChartViewModel { Title = "Daily subscriptions", Color = "#7854c7", Points = Model.Daily.Select(d => new AnalyticsChartPoint(d.DateUtc, d.Subscriptions)).ToList() })" />
+        </div></div></section>
+        <section class="col-lg-6"><div class="card h-100"><div class="card-body">
+            <h2 class="h5">Daily page views</h2>
+            <partial name="_Chart" model="@(new AnalyticsChartViewModel { Title = "Daily page views", Color = "#157a91", Points = Model.Daily.Select(d => new AnalyticsChartPoint(d.DateUtc, d.PageViews)).ToList() })" />
+            <h2 class="h5 mt-3">Daily failed requests</h2>
+            <partial name="_Chart" model="@(new AnalyticsChartViewModel { Title = "Daily failed requests", Color = "#c44867", Points = Model.Daily.Select(d => new AnalyticsChartPoint(d.DateUtc, d.FailedRequests)).ToList() })" />
+        </div></div></section>
+    </div>
+    <section class="card mb-4"><div class="card-body">
+        <h2 class="h5">Most-read articles — all time</h2>
+        <p class="small text-muted">Top five approved, non-archived articles. Reads use your existing session-based counter and are not filtered by the selected period.</p>
+        @if (Model.PopularArticles.Count == 0)
+        { <p>No published articles are available yet.</p> }
+        else
+        {
+            <div class="table-responsive"><table class="table"><thead><tr><th scope="col">Article</th><th scope="col" class="text-end">Reads</th></tr></thead><tbody>
+            @foreach (var article in Model.PopularArticles)
+            { <tr><td><a asp-controller="Articles" asp-action="Details" asp-route-id="@article.Id">@article.Title</a></td><td class="text-end">@article.Reads.ToString("N0")</td></tr> }
+            </tbody></table></div>
+        }
+    </div></section>
+    <details>
+<summary>Daily totals</summary>
+<div class="table-responsive mt-3">
+<table class="table table-sm">
+        <thead>
+<tr>
+<th scope="col">Date (UTC)</th>
+<th scope="col">Subscriptions</th>
+<th scope="col">Page views</th>
+<th scope="col">Failed requests</th>
+</tr>
+</thead>
+<tbody>
+ @foreach (var day in Model.Daily)
+ { <tr>
+<td>@day.DateUtc.ToString("yyyy-MM-dd")</td>
+<td>@day.Subscriptions</td>
+<td>@(day.PageViews?.ToString("N0") ?? "Unavailable")</td>
+<td>@(day.FailedRequests?.ToString("N0") ?? "Unavailable")</td>
+</tr> 
+}
+</tbody>
+</table>
+</div>
+</details>
+</div>
+</div>
+

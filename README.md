@@ -193,3 +193,29 @@ Use these card details to test subscription payments:
 | --- | --- | --- | --- |
 | ✅ Successful payment | `4242 4242 4242 4242` | `12/26` | `123` |
 | ❌ Declined payment | `4000 0000 0000 0002` | `12/26` | `123` |
+
+## Admin analytics dashboard
+
+Open `/Analytics` while signed in as an Admin. The navigation link is visible to Admins only.
+
+The dashboard provides 7, 30 and 90-day periods, daily subscription totals, subscription value in SEK, estimated browser visitors, page views, failed server requests, and the five most-read approved/non-archived articles. Dates use UTC and include the current partial day. Results are cached for five minutes.
+
+Charts are rendered on the server by C# and Razor as SVG. No chart JavaScript or Chart.js is required. Daily totals are available in an expandable table.
+
+Subscription statistics use SQL records created by the existing successful-payment flow. Historical/sample/test records may be included. Recorded subscription value is not adjusted for refunds. Article rankings use the existing lifetime session counter and do not change with the period selector.
+
+### Application Insights access
+
+The non-secret `Analytics` section in `appsettings.json` identifies ClickbaitNewsInsights and its Log Analytics workspace. If telemetry cannot be queried, SQL statistics remain visible and telemetry is marked unavailable.
+
+For local development, sign in through Azure CLI (`az login`) or Visual Studio using an account with read/query access to the workspace. Development uses DefaultAzureCredential; production uses ManagedIdentityCredential.
+
+Before deploying this dashboard:
+
+1. Open ClickbaitNewsApp in Azure, select Identity, and enable System assigned identity.
+2. On the linked Log Analytics workspace, use Access control (IAM) to grant the web app identity Log Analytics Reader. This workspace is shared with the school: ask the school administrator to approve the access or provide an isolated workspace if needed.
+3. If App Service environment settings override these values, set `Analytics__WorkspaceId` and `Analytics__ApplicationInsightsResourceId` to the values in appsettings.json.
+4. Publish the updated web project to ClickbaitNewsApp.
+5. Browse the site and confirm page views/visitor identifiers arrive. Missing browser telemetry is shown as unavailable instead of zero visitors.
+
+Queries filter `_ResourceId` to ClickbaitNewsInsights so dashboard results do not include other applications in the workspace. Visitor totals are estimates; consent, browser blocking and sampling affect them. Database totals remain the source for subscription records.

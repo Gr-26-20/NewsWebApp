@@ -110,5 +110,58 @@ namespace NewsWebApp.Controllers
             ViewBag.PublishableKey = _configuration["Stripe:PublishableKey"];
             return View();
         }
+
+        [HttpPost, ValidateAntiForgeryToken]
+        public async Task<IActionResult> CreateCheckoutSession()
+        {
+            var user = await _userManager.GetUserAsync(User);
+            if (user == null)
+            {
+                return RedirectToAction("Index", "Home");
+            }
+            if (await _subscriptionService.HasActiveSubscriptionAsync(user.Email))
+            {
+                return RedirectToAction("AlreadySubscribed");
+            }
+
+            var options = new Stripe.Checkout.SessionCreateOptions
+            {
+                UiMode = "hosted_page",
+                Mode = "subscription",
+                BillingAddressCollection = "auto",
+                PhoneNumberCollection = new Stripe.Checkout.SessionPhoneNumberCollectionOptions
+                {
+                    Enabled = false,
+                },
+                AutomaticTax = new Stripe.Checkout.SessionAutomaticTaxOptions
+                {
+                    Enabled = false,
+                },
+                AllowPromotionCodes = false,
+                PaymentMethodCollection = "always",
+                SubmitType = "auto",
+                CustomerEmail = user.Email,
+                SuccessUrl = "https://example.com/success?session_id={CHECKOUT_SESSION_ID}",
+                CancelUrl = "https://example.com/cancel",
+                LineItems = new List<Stripe.Checkout.SessionLineItemOptions>
+                {
+                    new Stripe.Checkout.SessionLineItemOptions
+                    {
+                        Price = _configuration["Stripe:PriceId"],
+                        Quantity = 1,
+                    },
+                },
+                Metadata = new Dictionary<string, string>
+                {
+                    { "integration_identifier", "hosted_mobile_app_0002" },
+                    { "origin_context", "mobile_app" },
+                },
+            };
+
+            var service = new Stripe.Checkout.SessionService();
+            var session = await service.CreateAsync(options);
+
+            return Redirect(session.Url);
+        }
     }
 }

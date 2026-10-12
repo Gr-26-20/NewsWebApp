@@ -19,5 +19,6 @@ namespace NewsWebApp.Models
         public string Password { get; set; }
         public string Role { get; set; } 
 
+        public bool IsSubscribedToNewsletter { get; set; } = false;
     }
 }

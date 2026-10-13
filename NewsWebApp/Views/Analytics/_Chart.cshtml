@@ -1,29 +1,29 @@
 @model NewsWebApp.Models.ViewModels.AnalyticsChartViewModel
 @using System.Globalization
 @{
-    var known = Model.Points.Where(p => p.Value.HasValue).ToList();
-    var maximum = Math.Max(1L, known.Select(p => p.Value!.Value).DefaultIfEmpty(0).Max());
+    var known = Model.Points.Where(p => p.Value.HasValue).ToList(); //filter out points with no value
+    var maximum = Math.Max(1L, known.Select(p => p.Value!.Value).DefaultIfEmpty(0).Max()); //find the maximum value for scaling the chart
     const double left = 55, top = 20, plotWidth = 600, plotHeight = 220;
-    var slot = plotWidth / Math.Max(1, Model.Points.Count);
-    string Coordinate(double value) => value.ToString("0.##", CultureInfo.InvariantCulture);
+    var slot = plotWidth / Math.Max(1, Model.Points.Count); //calculate the width of each slot for the bars
+    string Coordinate(double value) => value.ToString("0.##", CultureInfo.InvariantCulture); 
 }
-@if (known.Count == 0)
+@if (known.Count == 0) 
 {
     <p class="text-muted">No telemetry is available for this chart.</p>
 }
-else
-{
+else 
+{ //build the chart
     <svg viewBox="0 0 680 290" role="img" aria-label="@Model.Title. Exact values are listed in daily totals." style="width:100%;height:auto">
         <title>@Model.Title</title>
         @for (var tick = 0; tick <= 4; tick++)
-        {
+        { //build the horizontal grid lines and labels
             var y = top + plotHeight - tick * plotHeight / 4;
             var label = maximum * tick / 4d;
             <line x1="@Coordinate(left)" y1="@Coordinate(y)" x2="@Coordinate(left + plotWidth)" y2="@Coordinate(y)" stroke="#e2e6ea" />
             <g><text x="@Coordinate(left - 8)" y="@Coordinate(y + 4)" text-anchor="end" fill="#606770" font-size="11">@label.ToString("0.#", CultureInfo.InvariantCulture)</text></g>
         }
         @for (var i = 0; i < Model.Points.Count; i++)
-        {
+        { //build the bars and x-axis labels
             var point = Model.Points[i];
             var x = left + i * slot + slot * .12;
             if (point.Value.HasValue)
@@ -34,7 +34,7 @@ else
                 </rect>
             }
             if (i == 0 || i == Model.Points.Count - 1 || (Model.Points.Count > 10 && i == Model.Points.Count / 2))
-            {
+            { 
                 <g><text x="@Coordinate(left + (i + .5) * slot)" y="265" text-anchor="middle" fill="#606770" font-size="11">@point.DateUtc.ToString("dd MMM", CultureInfo.InvariantCulture)</text></g>
             }
         }

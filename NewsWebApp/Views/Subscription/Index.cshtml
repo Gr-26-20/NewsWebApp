@@ -22,6 +22,11 @@
 
         <a asp-action="Pay" class="btn-sub">Get Full Access →</a>
 
+        <form asp-action="CreateCheckoutSession" method="post">
+            @Html.AntiForgeryToken()
+            <button type="submit" class="btn-sub">Pay with Stripe Checkout →</button>
+        </form>
+
         <p class="sub-note">Secure payment powered by Stripe. No hidden fees.</p>
     </div>
 </div>

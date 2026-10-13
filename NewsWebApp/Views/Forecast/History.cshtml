@@ -469,6 +469,9 @@
             // Show the selected initial view (1 DAY).
             updateChart();
 
+            document.querySelector('.history-chart').style.height = '330px';
+            chart.resize();
+
             // Range buttons: 1 DAY, 7 DAYS, TOTAL.
             document.querySelectorAll('.history-controls button[data-range]')
                 .forEach(button => {

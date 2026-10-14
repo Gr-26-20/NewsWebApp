@@ -6,6 +6,8 @@ namespace NewsWebApp.Data;
 // Add profile data for application users by adding properties to the ApplicationUser class
 public class ApplicationUser : IdentityUser
 {
+    public bool NewsletterOptIn { get; set; }
+    public DateTime? LastNewsletterAttemptUtc { get; set; }
     
     [Required]
     [StringLength(100)]

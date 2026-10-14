@@ -1,0 +1,21 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net10.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <UseAppHost>false</UseAppHost>
+    <OutputPath>bin/SimpleTests/</OutputPath>
+  </PropertyGroup>
+  <ItemGroup>
+    <FrameworkReference Include="Microsoft.AspNetCore.App" />
+    <Compile Include="../SendNewsletterFromQueue/FunctionDbContext.cs" Link="Production/FunctionDbContext.cs" />
+    <Compile Include="../SendNewsletterFromQueue/SendDailyTestNewsletter.cs" Link="Production/SendDailyTestNewsletter.cs" />
+    <Compile Include="../SendNewsletterFromQueue/TestNewsletterSender.cs" Link="Production/TestNewsletterSender.cs" />
+    <Compile Include="../NewsWebApp/Controllers/NewsletterPreferenceController.cs" Link="Production/NewsletterPreferenceController.cs" />
+    <Compile Include="../NewsWebApp/Data/ApplicationUser.cs" Link="Production/ApplicationUser.cs" />
+    <PackageReference Include="MailKit" Version="4.18.1" />
+    <PackageReference Include="Microsoft.Azure.Functions.Worker.Extensions.Timer" Version="4.3.1" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="10.0.12" />
+  </ItemGroup>
+</Project>

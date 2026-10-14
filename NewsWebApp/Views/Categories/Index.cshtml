@@ -38,6 +38,30 @@
     </div>
 
 
+    @if (ViewBag.Category == "NEWSLETTER")
+    {
+        <section class="newsletter-preference" aria-labelledby="newsletter-preference-title">
+            <h3 id="newsletter-preference-title">Want our daily newsletter?</h3>
+            <p>For now, we'll send you a test newsletter once a day.</p>
+            @if (User.Identity?.IsAuthenticated == true)
+            {
+                <p>Your choice: <strong>@(ViewBag.NewsletterOptIn == true ? "Yes" : "No")</strong></p>
+                <form asp-controller="NewsletterPreference" asp-action="Set" method="post" class="newsletter-preference-buttons">
+                    <button type="submit" name="enabled" value="true" class="newsletter-yes" aria-pressed="@(ViewBag.NewsletterOptIn == true ? "true" : "false")">Yes, send me newsletters</button>
+                    <button type="submit" name="enabled" value="false" class="newsletter-no" aria-pressed="@(ViewBag.NewsletterOptIn == true ? "false" : "true")">No newsletters</button>
+                </form>
+                @if (TempData["NewsletterPreferenceMessage"] is string message)
+                {
+                    <p role="status" class="mt-3">@message</p>
+                }
+            }
+            else
+            {
+                <p><a asp-area="Identity" asp-page="/Account/Login" asp-route-returnUrl="/Categories/Newsletter">Log in to choose Yes or No.</a></p>
+            }
+        </section>
+    }
+
     @if (ViewBag.Category == "WEATHER")
     {
         <div class="weather-category-link">

@@ -47,7 +47,7 @@ namespace SendNewsletterFromQueue
             List<string> emailAddresses = await dbContext.AspNetUsers
                 .AsNoTracking()
                 .Where(user =>
-                    //user.YearOfBirth <= latestBirthYearForAdults &&
+                    //user.IsSubscribedToNewsletter &&
                     user.Email != null &&
                     user.Email != string.Empty)
                 .Select(user => user.Email!)

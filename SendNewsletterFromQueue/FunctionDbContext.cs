@@ -25,6 +25,9 @@ namespace SendNewsletterFromQueue
                 entity.Property(user => user.Email)
                     .HasMaxLength(256);
 
+                //entity.Property(user => user.IsSubscribedToNewsletter)
+                //    .IsRequired();
+
                 //entity.Property(user => user.YearOfBirth)
                 //    .IsRequired();
             });
@@ -78,6 +81,8 @@ namespace SendNewsletterFromQueue
         public string Id { get; set; } = string.Empty;
 
         public string? Email { get; set; }
+
+        //public bool IsSubscribedToNewsletter { get; set; } = false;
 
         //public int YearOfBirth { get; set; }
     }

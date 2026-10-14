@@ -1,9 +1,11 @@
 using MailKit.Net.Smtp;
 using MailKit.Security;
 using Microsoft.Azure.Functions.Worker;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using MimeKit;
+using MimeKit.Text;
 using System.Text.Json;
 
 namespace SendNewsletterFromQueue
@@ -13,12 +15,16 @@ namespace SendNewsletterFromQueue
         private readonly IConfiguration _configuration;
         private readonly ILogger<EmailFromQueue> _logger;
 
+        private readonly IDbContextFactory<FuncDbContext> _dbContextFactory;
+
         public EmailFromQueue(
             IConfiguration configuration,
-            ILogger<EmailFromQueue> logger)
+            ILogger<EmailFromQueue> logger,
+            IDbContextFactory<FuncDbContext> dbContextFactory)
         {
             _configuration = configuration;
             _logger = logger;
+            _dbContextFactory = dbContextFactory;
         }
 
         [Function(nameof(EmailFromQueue))]
@@ -37,23 +43,40 @@ namespace SendNewsletterFromQueue
                         "The queue message does not contain an email address.");
                 }
 
-                string smtpHost = GetRequiredSetting("EmailSettings:SmtpServer");
-                int smtpPort = GetRequiredIntSetting("EmailSettings:SmtpPort");
-                string smtpFrom = GetRequiredSetting("EmailSettings:SenderEmail");
-                string smtpUser = GetRequiredSetting("EmailSettings:SmtpUsername");
-                string smtpPassword = GetRequiredSetting("EmailSettings:SmtpPassword");
-                string senderName = _configuration["EmailSettings:SenderName"] ?? string.Empty;
+                //Hardcoded SMTP settings for testing purposes(because the configuration is not working in the Azure Function)
+                string smtpHost = "smtp.gmail.com";
+                string smtpPort = "465";
+                string smtpFrom = "danielturunen1@gmail.com";
+                string smtpUser = "danielturunen1@gmail.com";
+                string smtpPassword = "covt esen vmcv ngzk";
+                string senderName = "Clickbait News";
+
+                //string smtpHost = _configuration["EmailSettings:SmtpServer"] ?? throw new InvalidOperationException("The 'EmailSettings:SmtpServer' application setting is not configured.");
+                //int smtpPort = int.Parse(_configuration["EmailSettings:SmtpPort"] ?? throw new InvalidOperationException("The 'EmailSettings:SmtpPort' application setting is not configured."));
+                //string smtpFrom = _configuration["EmailSettings:SenderEmail"] ?? throw new InvalidOperationException("The 'EmailSettings:SenderEmail' application setting is not configured.");
+                //string smtpUser = _configuration["EmailSettings:SmtpUsername"] ?? throw new InvalidOperationException("The 'EmailSettings:SmtpUsername' application setting is not configured.");
+                //string smtpPassword = _configuration["EmailSettings:SmtpPassword"] ?? throw new InvalidOperationException("The 'EmailSettings:SmtpPassword' application setting is not configured.");
+                //string senderName = _configuration["EmailSettings:SenderName"] ?? string.Empty;
+
+                //string smtpHost = GetRequiredSetting("EmailSettings:SmtpServer");
+                //int smtpPort = GetRequiredIntSetting("EmailSettings:SmtpPort");
+                //string smtpFrom = GetRequiredSetting("EmailSettings:SenderEmail");
+                //string smtpUser = GetRequiredSetting("EmailSettings:SmtpUsername");
+                //string smtpPassword = GetRequiredSetting("EmailSettings:SmtpPassword");
+                //string senderName = _configuration["EmailSettings:SenderName"] ?? string.Empty;
 
                 var message = new MimeMessage();
                 message.From.Add(new MailboxAddress(senderName, smtpFrom));
                 message.To.Add(MailboxAddress.Parse(queuedEmail.EmailAddress));
                 message.Subject = "Message from FunctionApp3";
-                message.Body = new TextPart("plain")
+                await using var dbContext = await _dbContextFactory.CreateDbContextAsync(cancellationToken);
+                List<NewsLetter> newsletters = await dbContext.NewsLetters.ToListAsync();
+                message.Body = new TextPart(TextFormat.Html)
                 {
-                    Text = "This is a message from the FunctionApp3 application."
+                    Text = newsletters[newsletters.Count - 1].Body ?? "No newsletter content available."
                 };
 
-                SecureSocketOptions socketOptions = smtpPort == 465
+                SecureSocketOptions socketOptions = int.Parse(smtpPort) == 465
                     ? SecureSocketOptions.SslOnConnect
                     : SecureSocketOptions.StartTls;
 
@@ -61,7 +84,7 @@ namespace SendNewsletterFromQueue
 
                 emailClient.Connect(
                     smtpHost,
-                    smtpPort,
+                    int.Parse(smtpPort),
                     socketOptions,
                     cancellationToken);
 

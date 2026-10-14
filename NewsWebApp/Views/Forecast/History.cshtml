@@ -107,6 +107,11 @@
             <div class="history-chart">
                 <canvas id="historyChart"></canvas>
             </div>
+
+            <p class="history-data-sources">
+                Temperature data provided by temperatur.nu ·
+                Electricity price data provided by Lexlink Spot Prices.
+            </p>
         }
 
     </article>
@@ -469,8 +474,7 @@
             // Show the selected initial view (1 DAY).
             updateChart();
 
-            document.querySelector('.history-chart').style.height = '330px';
-            chart.resize();
+            
 
             // Range buttons: 1 DAY, 7 DAYS, TOTAL.
             document.querySelectorAll('.history-controls button[data-range]')

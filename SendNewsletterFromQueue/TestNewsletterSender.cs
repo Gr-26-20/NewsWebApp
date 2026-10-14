@@ -18,6 +18,7 @@ public sealed class TestNewsletterSender(IConfiguration configuration) : ITestNe
         + "<p>To stop receiving emails, choose No newsletters in the Newsletter tab on our website.</p>";
     public async Task SendAsync(string email, Func<Task> beforeSubmit, CancellationToken ct)
     {
+        //check configuration values and throw if any are missing or invalid
         string Required(string key) => !string.IsNullOrWhiteSpace(configuration[key])
             ? configuration[key]! : throw new InvalidOperationException($"Missing setting: {key}");
         var host = Required("EmailSettings:SmtpServer");
@@ -26,11 +27,13 @@ public sealed class TestNewsletterSender(IConfiguration configuration) : ITestNe
         var from = Required("EmailSettings:SenderEmail");
         var username = Required("EmailSettings:SmtpUsername");
         var password = Required("EmailSettings:SmtpPassword");
+        // Send the email using MailKit
         var message = new MimeMessage();
         message.From.Add(new MailboxAddress(configuration["EmailSettings:SenderName"] ?? "CLICKBAIT News", from));
         message.To.Add(MailboxAddress.Parse(email));
         message.Subject = Subject;
         message.Body = new TextPart(TextFormat.Html) { Text = Body };
+        // Connect to the SMTP server and send the email
         using var client = new SmtpClient();
         await client.ConnectAsync(host, port, port == 465 ? SecureSocketOptions.SslOnConnect : SecureSocketOptions.StartTls, ct);
         client.AuthenticationMechanisms.Remove("XOAUTH2");

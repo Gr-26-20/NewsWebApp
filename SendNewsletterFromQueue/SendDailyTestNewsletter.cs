@@ -19,8 +19,10 @@ public sealed class DailyNewsletter(
 {
     public async Task SendAsync(CancellationToken ct)
     {
+        
         var now = clock.GetUtcNow().UtcDateTime;
         var today = now.Date;
+        // Get all users who have opted in for the newsletter, have a valid email, and haven't received a newsletter today.
         await using var db = await factory.CreateDbContextAsync(ct);
         var users = await db.Users.AsNoTracking()
             .Where(u => u.NewsletterOptIn && u.Email != null && u.Email != ""
@@ -37,6 +39,7 @@ public sealed class DailyNewsletter(
             var submitting = false;
             try
             {
+                
                 await sender.SendAsync(user.Email!, () =>
                 {
                     submitting = true;

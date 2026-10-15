@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Identity.UI.Services;
+﻿using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using NewsWebApp.Data;
@@ -17,11 +18,21 @@ namespace NewsWebApp.Controllers
         private readonly ApplicationDbContext _applicationDbContext;
 
         private readonly IEmailSender _emailSender;
-        public NewsletterController(INewsletterService newsletterService, ApplicationDbContext applicationDbContext, IEmailSender emailSender)
+
+        private readonly UserManager<ApplicationUser> _userManager;
+
+        private readonly IHttpContextAccessor _httpContextAccessor;
+
+        private readonly IUserAndRoleService _userAndRoleService;
+
+        public NewsletterController(INewsletterService newsletterService, ApplicationDbContext applicationDbContext, IEmailSender emailSender, UserManager<ApplicationUser> userManager, IHttpContextAccessor httpContextAccessor, IUserAndRoleService userAndRoleService)
         {
             _newsletterService = newsletterService;
             _applicationDbContext = applicationDbContext;
             _emailSender = emailSender;
+            _userManager = userManager;
+            _httpContextAccessor = httpContextAccessor;
+            _userAndRoleService = userAndRoleService;
         }
         public async Task<IActionResult> ManageNewsletters()
         {
@@ -135,6 +146,28 @@ namespace NewsWebApp.Controllers
         {
             var newsletter = await _newsletterService.GetNewsletterByIdAsync(id);
             await _emailSender.SendEmailAsync(newsletter.Email, newsletter.Subject, newsletter.Body);
+            return RedirectToAction(nameof(ManageNewsletters));
+        }
+
+        public async Task<IActionResult> Subscribe(string userId) 
+        {
+
+            //var currentUser = User;
+            //var user = await _userManager.GetUserAsync(currentUser);
+            var user = await _userAndRoleService.GetCurrentUser();
+            if (user == null)
+            {
+                return NotFound();
+            }
+            if(!user.IsSubscribedToNewsletter)
+            {
+                user.IsSubscribedToNewsletter = true;
+            }
+            else
+            {
+                user.IsSubscribedToNewsletter = false;
+            }
+            await _applicationDbContext.SaveChangesAsync();
             return RedirectToAction(nameof(ManageNewsletters));
         }
     }

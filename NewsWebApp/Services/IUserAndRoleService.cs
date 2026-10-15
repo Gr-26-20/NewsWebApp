@@ -9,5 +9,7 @@ namespace NewsWebApp.Services
         Task AddRoleToUser(string userId, string roleName);
         Task<List<ApplicationUser>> GetAllUsers();
         Task<List<IdentityRole>> GetAllRoles();
+
+        Task<ApplicationUser> GetCurrentUser();
     }
 }

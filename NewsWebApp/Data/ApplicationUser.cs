@@ -20,4 +20,6 @@ public class ApplicationUser : IdentityUser
     [Required]
     [StringLength(100)]
     public string PhoneNumber { get; set; } = string.Empty;
+
+    public bool IsSubscribedToNewsletter { get; set; } = false;
 }

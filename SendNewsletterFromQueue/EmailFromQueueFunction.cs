@@ -69,7 +69,7 @@ namespace SendNewsletterFromQueue
                 message.From.Add(new MailboxAddress(senderName, smtpFrom));
                 message.To.Add(MailboxAddress.Parse(queuedEmail.EmailAddress));
                 message.Subject = "Message from FunctionApp3";
-                await using var dbContext = await _dbContextFactory.CreateDbContextAsync(cancellationToken);
+                var dbContext = await _dbContextFactory.CreateDbContextAsync(cancellationToken);
                 List<NewsLetter> newsletters = await dbContext.NewsLetters.ToListAsync();
                 message.Body = new TextPart(TextFormat.Html)
                 {

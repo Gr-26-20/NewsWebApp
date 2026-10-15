@@ -9,11 +9,15 @@
         <li class="nav-item">
             <a class="nav-link text-dark" asp-area="Identity" asp-page="/Account/Manage/Index" title="Manage">Hello @User.Identity?.Name!</a>
         </li>
+        <li>
+             <a id="subscribeButton" class="btn"  onclick="CheckSubscriptionStatus('@User.Identity?.Name')">Subscribe to newsletter</a>             
+        </li>
+        
+        @if (User.IsInRole("Admin"))
+        {
             <li class="nav-item">
                 <a class="nav-link text-dark" asp-action="SendNewsLetter" asp-controller="Email">Send Newsletter</a>
             </li>
-        @if (User.IsInRole("Admin"))
-        {
             <li class="nav-item">
                 <a class="nav-link text-dark" asp-page="/Admin/Users">Manage Users</a>
             </li>

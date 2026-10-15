@@ -113,6 +113,8 @@ public class RegisterModel : PageModel
         [Display(Name = "Confirm password")]
         [Compare("Password", ErrorMessage = "The password and confirmation password do not match.")]
         public string? ConfirmPassword { get; set; }
+
+        public bool IsSubscribedToNewsletter { get; set; } = false;
     }
 
 
@@ -132,6 +134,7 @@ public class RegisterModel : PageModel
             user.FirstName = Input.FirstName;
             user.LastName = Input.LastName;
             user.PhoneNumber = Input.PhoneNumber;
+            user.IsSubscribedToNewsletter = Input.IsSubscribedToNewsletter;
 
             await _userStore.SetUserNameAsync(user, Input.Email, CancellationToken.None);
             await _emailStore.SetEmailAsync(user, Input.Email, CancellationToken.None);

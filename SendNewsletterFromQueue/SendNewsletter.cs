@@ -10,14 +10,14 @@ using System.Text.Json;
 
 namespace SendNewsletterFromQueue
 {
-    public class CheckAdults
+    public class SendNewsletter
     {
-        private readonly ILogger<CheckAdults> _logger;
+        private readonly ILogger<SendNewsletter> _logger;
         private readonly IDbContextFactory<FuncDbContext> _dbContextFactory;
         private readonly IConfiguration _configuration;
 
-        public CheckAdults(
-            ILogger<CheckAdults> logger,
+        public SendNewsletter(
+            ILogger<SendNewsletter> logger,
             IDbContextFactory<FuncDbContext> dbContextFactory,
             IConfiguration configuration)
         {
@@ -26,7 +26,7 @@ namespace SendNewsletterFromQueue
             _configuration = configuration;
         }
 
-        [Function("CheckAdults")]
+        [Function("SendNewsletter")]
         public async Task RunAsync(
             [TimerTrigger("0 */10 * * * *", RunOnStartup = true)] TimerInfo timer,
             CancellationToken cancellationToken)
@@ -47,7 +47,7 @@ namespace SendNewsletterFromQueue
             List<string> emailAddresses = await dbContext.AspNetUsers
                 .AsNoTracking()
                 .Where(user =>
-                    //user.IsSubscribedToNewsletter &&
+                    user.IsSubscribedToNewsletter &&
                     user.Email != null &&
                     user.Email != string.Empty)
                 .Select(user => user.Email!)
@@ -64,7 +64,7 @@ namespace SendNewsletterFromQueue
             }
 
             _logger.LogInformation(
-                "Queued {UserCount} adult user email addresses in {QueueName}.",
+                "Queued {UserCount} user email addresses in {QueueName}.",
                 emailAddresses.Count,
                 queueName);
 

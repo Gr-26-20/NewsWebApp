@@ -48,7 +48,7 @@ namespace NewsWebApp.Controllers
             {
                 var user = await _userManager.GetUserAsync(User);
                 bool hasAccess = user != null &&
-                    await _subscriptionService.HasActiveSubscriptionAsync(user.Email);
+                    await _subscriptionService.HasActiveSubscriptionAsync(user.Id);
 
                 if (!hasAccess)
                     return RedirectToAction("Index", "Subscription");

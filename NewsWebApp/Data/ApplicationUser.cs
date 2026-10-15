@@ -6,6 +6,8 @@ namespace NewsWebApp.Data;
 // Add profile data for application users by adding properties to the ApplicationUser class
 public class ApplicationUser : IdentityUser
 {
+    public string? StripeCustomerId { get; set; }
+    public string? StripeCheckoutSessionId { get; set; }
     
     [Required]
     [StringLength(100)]

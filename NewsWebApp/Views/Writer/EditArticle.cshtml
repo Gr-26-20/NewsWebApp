@@ -3,293 +3,308 @@
 @{
     ViewData["Title"] = "Edit";
 }
-
+<div class="writer-edit-page">
 <h1>Edit</h1>
 
-<h4>Articles</h4>
-<hr />
-<div class="row g-4">
-    <form asp-action="EditArticle" method="post" enctype="multipart/form-data">
-        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
 
-        <input type="hidden" asp-for="Id" />
-        <input type="hidden" asp-for="ImageUrl" />
 
-        <input asp-for="ImageFocalPointX" type="hidden" />
-        <input asp-for="ImageFocalPointY" type="hidden" />
+<form asp-action="EditArticle" method="post" enctype="multipart/form-data">
 
-        <input type="hidden" asp-for="SecondaryImageZoom" id="secondaryImageZoomValue" />
-        <input type="hidden" asp-for="CategoryImageZoom" id="categoryImageZoomValue" />
-        <input type="hidden" asp-for="MainImageZoom" id="mainImageZoomValue" />
-        <input type="hidden" asp-for="MainImagePositionX" id="mainImagePositionXValue" />
-        <input type="hidden" asp-for="MainImagePositionY" id="mainImagePositionYValue" />
+    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
 
-        <div class="row g-4">
-            <!-- LEFT COLUMN: Article fields -->
-            <div class="col-12 col-lg-7">
+    <input type="hidden" asp-for="Id" />
+    <input type="hidden" asp-for="ImageUrl" />
 
-                <div class="form-group mb-3">
-                    <label asp-for="Slug" class="control-label"></label>
-                    <input asp-for="Slug" class="form-control" />
-                    <span asp-validation-for="Slug" class="text-danger"></span>
+    <input asp-for="ImageFocalPointX" type="hidden" />
+    <input asp-for="ImageFocalPointY" type="hidden" />
+
+    <input type="hidden" asp-for="SecondaryImageZoom" id="secondaryImageZoomValue" />
+    <input type="hidden" asp-for="CategoryImageZoom" id="categoryImageZoomValue" />
+    <input type="hidden" asp-for="MainImageZoom" id="mainImageZoomValue" />
+    <input type="hidden" asp-for="MainImagePositionX" id="mainImagePositionXValue" />
+    <input type="hidden" asp-for="MainImagePositionY" id="mainImagePositionYValue" />
+
+    <div class="row g-4">
+        <!-- HEADINGS: DESKTOP ONLY -->
+        <div class="col-12 d-none d-lg-block">
+
+            <div class="row g-4 edit-article-column-headings">
+
+                <div class="col-lg-6">
+                    <h4>Articles</h4>
                 </div>
 
-                <div class="form-group mb-3">
-                    <label asp-for="Title" class="control-label"></label>
-                    <input asp-for="Title" class="form-control" />
-                    <span asp-validation-for="Title" class="text-danger"></span>
+                <div class="col-lg-5">
+                    <h4>Image Preview</h4>
                 </div>
-
-                <div class="form-group mb-3">
-                    <label asp-for="Author" class="control-label"></label>
-                    <input asp-for="Author" class="form-control" />
-                    <span asp-validation-for="Author" class="text-danger"></span>
-                </div>
-
-                <div class="form-group mb-3">
-                    <label asp-for="Summary" class="control-label"></label>
-                    <textarea asp-for="Summary"
-                              class="form-control"
-                              rows="5"
-                              placeholder="Enter article summary"></textarea>
-                    <span asp-validation-for="Summary" class="text-danger"></span>
-                </div>
-
-                <div class="form-group mb-3">
-                    <label asp-for="Content" class="control-label"></label>
-                    <textarea asp-for="Content"
-                              class="form-control"
-                              rows="12"
-                              placeholder="Enter the complete article"></textarea>
-                    <span asp-validation-for="Content" class="text-danger"></span>
-                </div>
-
-                <div class="form-group mb-3">
-                    <label for="ImageFile" class="control-label mb-2">Replace Image</label>
-                    <input type="file"
-                           name="ImageFile"
-                           id="ImageFile"
-                           class="form-control"
-                           accept="image/*" />
-                </div>
-
-                @* Views is managed by the application.
-                <div class="form-group">
-                    <label asp-for="Views" class="control-label"></label>
-                    <input asp-for="Views" class="form-control" />
-                    <span asp-validation-for="Views" class="text-danger"></span>
-                </div>
-                *@
-
-                @* Likes is managed by the application.
-                <div class="form-group">
-                    <label asp-for="Likes" class="control-label"></label>
-                    <input asp-for="Likes" class="form-control" />
-                    <span asp-validation-for="Likes" class="text-danger"></span>
-                </div>
-                *@
-
-                @* CreatedAt is set when the article is created.
-                <div class="form-group">
-                    <label asp-for="CreatedAt" class="control-label"></label>
-                    <input asp-for="CreatedAt" class="form-control" />
-                    <span asp-validation-for="CreatedAt" class="text-danger"></span>
-                </div>
-                *@
-
-                @* UpdatedAt is managed by the application.
-                <div class="form-group">
-                    <label asp-for="UpdatedAt" class="control-label"></label>
-                    <input asp-for="UpdatedAt" class="form-control" />
-                    <span asp-validation-for="UpdatedAt" class="text-danger"></span>
-                </div>
-                *@
-
-                <div class="form-group mb-3">
-                    <label asp-for="IsArchived" class="control-label"></label>
-                    <input asp-for="IsArchived" class="form-check-input" />
-                    <span asp-validation-for="IsArchived" class="text-danger"></span>
-                </div>
-
-                @*
-                @if (User.IsInRole("Editor") || User.IsInRole("Admin"))
-                {
-                    <div class="form-group mb-3">
-                        <label asp-for="articleStatus" class="control-label"></label>
-                        <input asp-for="articleStatus" class="form-check-input" />
-                        <span asp-validation-for="articleStatus" class="text-danger"></span>
-                    </div>
-                }
-                *@
-
-                <div class="form-group mb-3">
-                    <label asp-for="EditorChoice" class="control-label"></label>
-                    <input asp-for="EditorChoice" class="form-check-input" />
-                    <span asp-validation-for="EditorChoice" class="text-danger"></span>
-                </div>
-
-                <!-- Keep your existing Save button here -->
 
             </div>
 
-            <!-- RIGHT COLUMN: Image Preview and focal point editor -->
-            <div class="col-12 col-lg-5">
+            <hr class="edit-article-divider" />
 
-                @if (!string.IsNullOrEmpty(Model.ImageUrl))
-                {
-                    <div class="mb-3">
-                        <h5>Current Image</h5>
-                        <img src="@Model.ImageUrl"
-                             alt="Current image"
-                             class="img-fluid"
-                             style="max-height: 250px; object-fit: contain;" />
-                    </div>
-                }
-
-                <!-- Insert your existing Image Preview and focal point controls here -->
-
-            </div>
         </div>
-    </form>
+
+        <!-- LEFT COLUMN: Article fields -->
+        <div class="col-12 col-lg-6 article-fields-column">
+            <h4 class="d-lg-none mobile-column-heading">Articles</h4>
+
+            <div class="form-group mb-3">
+                <label asp-for="Slug" class="control-label"></label>
+                <input asp-for="Slug" class="form-control" />
+                <span asp-validation-for="Slug" class="text-danger"></span>
+            </div>
+
+            <div class="form-group mb-3">
+                <label asp-for="Title" class="control-label"></label>
+                <input asp-for="Title" class="form-control" />
+                <span asp-validation-for="Title" class="text-danger"></span>
+            </div>
+
+            <div class="form-group mb-3">
+                <label asp-for="Author" class="control-label"></label>
+                <input asp-for="Author" class="form-control" />
+                <span asp-validation-for="Author" class="text-danger"></span>
+            </div>
+
+            <div class="form-group mb-3">
+                <label asp-for="Summary" class="control-label"></label>
+                <textarea asp-for="Summary"
+                          class="form-control"
+                          rows="5"
+                          placeholder="Enter article summary"></textarea>
+                <span asp-validation-for="Summary" class="text-danger"></span>
+            </div>
+
+            <div class="form-group mb-3">
+                <label asp-for="Content" class="control-label"></label>
+                <textarea asp-for="Content"
+                          class="form-control"
+                          rows="12"
+                          placeholder="Enter the complete article"></textarea>
+                <span asp-validation-for="Content" class="text-danger"></span>
+            </div>
+
+            <div class="form-group mb-3">
+                <label for="ImageFile" class="control-label mb-2">Replace Image</label>
+                <input type="file"
+                       name="ImageFile"
+                       id="ImageFile"
+                       class="form-control"
+                       accept="image/*" />
+            </div>
+
+            @* Views is managed by the application.
+            <div class="form-group">
+                <label asp-for="Views" class="control-label"></label>
+                <input asp-for="Views" class="form-control" />
+                <span asp-validation-for="Views" class="text-danger"></span>
+            </div>
+            *@
+
+            @* Likes is managed by the application.
+            <div class="form-group">
+                <label asp-for="Likes" class="control-label"></label>
+                <input asp-for="Likes" class="form-control" />
+                <span asp-validation-for="Likes" class="text-danger"></span>
+            </div>
+            *@
+
+            @* CreatedAt is set when the article is created.
+            <div class="form-group">
+                <label asp-for="CreatedAt" class="control-label"></label>
+                <input asp-for="CreatedAt" class="form-control" />
+                <span asp-validation-for="CreatedAt" class="text-danger"></span>
+            </div>
+            *@
+
+            @* UpdatedAt is managed by the application.
+            <div class="form-group">
+                <label asp-for="UpdatedAt" class="control-label"></label>
+                <input asp-for="UpdatedAt" class="form-control" />
+                <span asp-validation-for="UpdatedAt" class="text-danger"></span>
+            </div>
+            *@
+
+            <div class="form-group mb-3">
+                <label asp-for="IsArchived" class="control-label"></label>
+                <input asp-for="IsArchived" class="form-check-input" />
+                <span asp-validation-for="IsArchived" class="text-danger"></span>
+            </div>
+
+            @*
+            @if (User.IsInRole("Editor") || User.IsInRole("Admin"))
+            {
+                <div class="form-group mb-3">
+                    <label asp-for="articleStatus" class="control-label"></label>
+                    <input asp-for="articleStatus" class="form-check-input" />
+                    <span asp-validation-for="articleStatus" class="text-danger"></span>
+                </div>
+            }
+            *@
+
+            <div class="form-group mb-3">
+                <label asp-for="EditorChoice" class="control-label"></label>
+                <input asp-for="EditorChoice" class="form-check-input" />
+                <span asp-validation-for="EditorChoice" class="text-danger"></span>
+            </div>
+
+            <div class="form-group mt-4">
+                <button type="submit" class="btn btn-primary">
+                    Save
+                </button>
+            </div>
+
+        </div>
+
+        <!-- RIGHT COLUMN: Image preview and focal-point editor -->
+        <div class="col-12 col-lg-5 image-preview-column">
+            <h4 class="d-lg-none mobile-column-heading">Image Preview</h4>
+
+            <!-- IMAGE PREVIEW HEADER -->
+            <div class="image-preview-header">
+                <div>
+                    <p id="previewMessage">
+                        Select an image to set the focal point.
+                    </p>
+                </div>
+
+                <div id="focalPointValues">
+                    Focal X: <span id="focalXDisplay">50</span>%<br />
+                    Focal Y: <span id="focalYDisplay">50</span>%
+                </div>
+            </div>
+
+            <!-- MAIN NEWS -->
+            <div class="image-preview-section">
+
+                <h5>Main News</h5>
+
+                <div id="mainPreviewContainer"
+                     class="crop-preview main-preview">
+
+                    <img id="mainImagePreview"
+                         src="@Model.ImageUrl"
+                         alt="Main news preview" />
+
+                    <div id="mainFocalPointMarker"></div>
+
+                </div>
+
+                <p class="preview-help">
+                    Click the image to set the focal point.
+                </p>
+
+                <label for="mainZoom">
+                    Zoom: <span id="mainZoomDisplay">100%</span>
+                </label>
+
+                <input type="range"
+                       id="mainZoom"
+                       class="zoom-control"
+                       min="100"
+                       max="300"
+                       value="100"
+                       step="1" />
+
+                <div id="mainPositionControls">
+
+                    <label for="mainPositionX">
+                        Position X: <span id="mainPositionXDisplay">50%</span>
+                    </label>
+
+                    <input type="range"
+                           id="mainPositionX"
+                           class="zoom-control"
+                           min="0"
+                           max="100"
+                           value="50"
+                           step="1" />
+
+                    <label for="mainPositionY">
+                        Position Y: <span id="mainPositionYDisplay">50%</span>
+                    </label>
+
+                    <input type="range"
+                           id="mainPositionY"
+                           class="zoom-control"
+                           min="0"
+                           max="100"
+                           value="50"
+                           step="1" />
+
+                </div>
+
+            </div>
+
+            <!-- SECONDARY AND CATEGORY PREVIEWS -->
+            <div class="small-preview-row">
+
+                <!-- SECONDARY PREVIEW -->
+                <div class="image-preview-section">
+
+                    <h5>Secondary</h5>
+
+                    <div id="secondaryPreviewContainer"
+                         class="crop-preview secondary-preview">
+
+                        <img id="secondaryImagePreview"
+                             src="@Model.ImageUrl"
+                             alt="Secondary news preview" />
+
+                    </div>
+
+                    <label for="secondaryZoom">
+                        Zoom: <span id="secondaryZoomDisplay">100%</span>
+                    </label>
+
+                    <input type="range"
+                           id="secondaryZoom"
+                           class="zoom-control"
+                           min="100"
+                           max="300"
+                           value="100"
+                           step="1" />
+
+                </div>
+
+                <!-- CATEGORY PREVIEW -->
+                <div class="image-preview-section">
+
+                    <h5>Category</h5>
+
+                    <div id="categoryPreviewContainer"
+                         class="crop-preview category-preview">
+
+                        <img id="categoryImagePreview"
+                             src="@Model.ImageUrl"
+                             alt="Category preview" />
+
+                    </div>
+
+                    <label for="categoryZoom">
+                        Zoom: <span id="categoryZoomDisplay">100%</span>
+                    </label>
+
+                    <input type="range"
+                           id="categoryZoom"
+                           class="zoom-control"
+                           min="100"
+                           max="300"
+                           value="100"
+                           step="1" />
+
+                </div>
+
+            </div>
+
+        </div>
+        <!-- END RIGHT COLUMN -->
+
     </div>
-</div>
+    <!-- END ROW -->
 
-
-<div class="col-md-6">
-
-		<!-- IMAGE PREVIEW HEADER -->
-
-		<div class="image-preview-header">
-
-			<div>
-				<h4>Image Preview</h4>
-
-				<p id="previewMessage">
-					Select an image to set the focal point.
-				</p>
-			</div>
-
-			<div id="focalPointValues">
-				Focal X: <span id="focalXDisplay">50</span>%<br />
-				Focal Y: <span id="focalYDisplay">50</span>%
-			</div>
-
-		</div>
-
-
-		<!-- MAIN NEWS -->
-
-		<div class="image-preview-section">
-
-			<h5>Main News</h5>
-
-			<div id="mainPreviewContainer"
-				 class="crop-preview main-preview">
-
-				<img id="mainImagePreview"
-					 src=""
-					 alt="Main news preview" />
-
-				<div id="mainFocalPointMarker"></div>
-
-			</div>
-
-			<p class="preview-help">
-				Click the image to set the focal point.
-			</p>
-			<label for="mainZoom">Zoom: <span id="mainZoomDisplay">100%</span></label>
-			<input type="range"
-				   id="mainZoom"
-				   class="zoom-control"
-				   min="100"
-				   max="300"
-				   value="100"
-				   step="1" />
-
-			<div id="mainPositionControls">
-
-				<label for="mainPositionX">
-					Position X: <span id="mainPositionXDisplay">50%</span>
-				</label>
-
-				<input type="range"
-					   id="mainPositionX"
-					   class="zoom-control"
-					   min="0"
-					   max="100"
-					   value="50"
-					   step="1" />
-
-
-
-				<label for="mainPositionY">
-					Position Y: <span id="mainPositionYDisplay">50%</span>
-				</label>
-
-				<input type="range"
-					   id="mainPositionY"
-					   class="zoom-control"
-					   min="0"
-					   max="100"
-					   value="50"
-					   step="1" />
-
-			</div>
-
-		</div>
-
-
-		<!-- SECONDARY + CATEGORY -->
-
-		<div class="small-preview-row">
-
-			<div class="image-preview-section">
-
-				<h5>Secondary</h5>
-
-				<div id="secondaryPreviewContainer"
-					 class="crop-preview secondary-preview">
-
-					<img id="secondaryImagePreview"
-						 src=""
-						 alt="Secondary news preview" />
-
-				</div>
-				<label for="secondaryZoom">Zoom: <span id="secondaryZoomDisplay">100%</span></label>
-				<input type="range"
-					   id="secondaryZoom"
-					   class="zoom-control"
-					   min="100"
-					   max="300"
-					   value="100"
-					   step="1" />
-			</div>
-
-
-			<div class="image-preview-section">
-
-				<h5>Category</h5>
-
-				<div id="categoryPreviewContainer"
-					 class="crop-preview category-preview">
-
-					<img id="categoryImagePreview"
-						 src=""
-						 alt="Category preview" />
-
-				</div>
-				<label for="categoryZoom">Zoom: <span id="categoryZoomDisplay">100%</span></label>
-				<input type="range"
-					   id="categoryZoom"
-					   class="zoom-control"
-					   min="100"
-					   max="300"
-					   value="100"
-					   step="1" />
-
-			</div>
-
-		</div>
+</form>
+</div> <!-- Closes writer-edit-page -->
 
 
 

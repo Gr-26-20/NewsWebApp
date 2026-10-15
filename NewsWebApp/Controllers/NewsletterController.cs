@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Identity.UI.Services;
+﻿using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using NewsWebApp.Data;
@@ -17,11 +18,21 @@ namespace NewsWebApp.Controllers
         private readonly ApplicationDbContext _applicationDbContext;
 
         private readonly IEmailSender _emailSender;
-        public NewsletterController(INewsletterService newsletterService, ApplicationDbContext applicationDbContext, IEmailSender emailSender)
+
+        private readonly UserManager<ApplicationUser> _userManager;
+
+        private readonly IHttpContextAccessor _httpContextAccessor;
+
+        private readonly IUserAndRoleService _userAndRoleService;
+
+        public NewsletterController(INewsletterService newsletterService, ApplicationDbContext applicationDbContext, IEmailSender emailSender, UserManager<ApplicationUser> userManager, IHttpContextAccessor httpContextAccessor, IUserAndRoleService userAndRoleService)
         {
             _newsletterService = newsletterService;
             _applicationDbContext = applicationDbContext;
             _emailSender = emailSender;
+            _userManager = userManager;
+            _httpContextAccessor = httpContextAccessor;
+            _userAndRoleService = userAndRoleService;
         }
         public async Task<IActionResult> ManageNewsletters()
         {
@@ -138,81 +149,26 @@ namespace NewsWebApp.Controllers
             return RedirectToAction(nameof(ManageNewsletters));
         }
 
-    //    public void UpdateNewsletterBody(NewsLetter newsLetter)
-    //    {
-    //        var category = new List<SelectListItem>
-    //        {
-    //        new SelectListItem { Value = "News", Text = "News" },
-    //        new SelectListItem { Value = "World", Text = "World" },
-    //        new SelectListItem { Value = "Sweden", Text = "Sweden" },
-    //        new SelectListItem { Value = "Sports", Text = "Sports" },
-    //        new SelectListItem { Value = "Weather", Text = "Weather" },
-    //        };
-    //        ViewBag.Categories = new SelectList(category, "Value", "Text");
-    //        if (ModelState.IsValid)
-    //        {
-    //            newsLetter.Body = $"<img style='height:100px; width:200px;' src='{newsLetter.Logo}' alt='logo'/></div></div><h1>{newsLetter.Subject}</h1><p>{newsLetter.Body}</p>";
-    //            if (ModelState.IsValid)
-    //            {
-    //                newsLetter.Body = "";
-    //                newsLetter.Body = $"<img style='height:100px; width:200px;' src='{newsLetter.Logo}' alt='logo'/></div></div><h1>{newsLetter.Subject}</h1><p>{newsLetter.Body}</p>";
-    //                if (!string.IsNullOrEmpty(newsLetter.imageUrl))
-    //                {
-    //                    newsLetter.Body += $"<img src='{newsLetter.imageUrl}' alt='Image' />";
-    //                }
-    //                if (!string.IsNullOrEmpty(newsLetter.Title))
-    //                {
-    //                    newsLetter.Body += $"<h2>{newsLetter.Title}</h2>";
-    //                }
-    //                if (!string.IsNullOrEmpty(newsLetter.Description))
-    //                {
-    //                    newsLetter.Body += $"<p>{newsLetter.Description}</p>";
-    //                }
-    //                if (!string.IsNullOrEmpty(newsLetter.link))
-    //                {
-    //                    newsLetter.Body += $"<p><a href='{newsLetter.link}' target='_blank'>Read more</a></p>";
-    //                }
-    //                if (!string.IsNullOrEmpty(newsLetter.imageUrl2))
-    //                {
-    //                    newsLetter.Body += $"<img src='{newsLetter.imageUrl}' alt='Image' />";
-    //                }
-    //                if (!string.IsNullOrEmpty(newsLetter.Title2))
-    //                {
-    //                    newsLetter.Body += $"<h2>{newsLetter.Title2}</h2>";
-    //                }
-    //                if (!string.IsNullOrEmpty(newsLetter.Description2))
-    //                {
-    //                    newsLetter.Body += $"<p>{newsLetter.Description2}</p>";
-    //                }
-    //                if (!string.IsNullOrEmpty(newsLetter.link2))
-    //                {
-    //                    newsLetter.Body += $"<p><a href='{newsLetter.link2}' target='_blank'>Read more</a></p>";
-    //                }
+        public async Task<IActionResult> Subscribe(string userId) 
+        {
 
-
-
-
-    //                if (!string.IsNullOrEmpty(newsLetter.imageUrl3))
-    //                {
-    //                    newsLetter.Body += $"<img src='{newsLetter.imageUrl3}' alt='Image' />";
-    //                }
-    //                if (!string.IsNullOrEmpty(newsLetter.Title3))
-    //                {
-    //                    newsLetter.Body += $"<h2>{newsLetter.Title3}</h2>";
-    //                }
-    //                if (!string.IsNullOrEmpty(newsLetter.Description3))
-    //                {
-    //                    newsLetter.Body += $"<p>{newsLetter.Description}</p>";
-    //                }
-    //                if (!string.IsNullOrEmpty(newsLetter.link3))
-    //                {
-    //                    newsLetter.Body += $"<p><a href='{newsLetter.link3}' target='_blank'>Read more</a></p>";
-    //                }
-    //                _applicationDbContext.Update(newsLetter);
-    //                _applicationDbContext.SaveChanges();
-                   
-    //            }
-    //        }
-    //    }
+            //var currentUser = User;
+            //var user = await _userManager.GetUserAsync(currentUser);
+            var user = await _userAndRoleService.GetCurrentUser();
+            if (user == null)
+            {
+                return NotFound();
+            }
+            if(!user.IsSubscribedToNewsletter)
+            {
+                user.IsSubscribedToNewsletter = true;
+            }
+            else
+            {
+                user.IsSubscribedToNewsletter = false;
+            }
+            await _applicationDbContext.SaveChangesAsync();
+            return RedirectToAction(nameof(ManageNewsletters));
+        }
     }
 }

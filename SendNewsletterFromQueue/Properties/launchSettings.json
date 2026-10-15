@@ -1,0 +1,9 @@
+{
+  "profiles": {
+    "SendNewsletterFromQueue": {
+      "commandName": "Project",
+      "commandLineArgs": "--port 7230",
+      "launchBrowser": false
+    }
+  }
+}

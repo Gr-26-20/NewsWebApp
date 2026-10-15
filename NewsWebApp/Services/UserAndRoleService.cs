@@ -11,11 +11,14 @@ namespace NewsWebApp.Services
         private readonly RoleManager<IdentityRole> _roleManager;
         private readonly ILogger<UserAndRoleService> _logger;
 
-        public UserAndRoleService(UserManager<ApplicationUser> userManager, RoleManager<IdentityRole> roleManager, ILogger<UserAndRoleService> logger)
+        private readonly IHttpContextAccessor _httpContextAccessor;
+
+        public UserAndRoleService(UserManager<ApplicationUser> userManager, RoleManager<IdentityRole> roleManager, ILogger<UserAndRoleService> logger, IHttpContextAccessor httpContext)
         {
             _userManager = userManager;
             _roleManager = roleManager;
             _logger = logger;
+            _httpContextAccessor = httpContext;
         }
 
         public async Task CreateRole(string roleName)
@@ -49,6 +52,16 @@ namespace NewsWebApp.Services
         public async Task<List<IdentityRole>> GetAllRoles()
         {
             return _roleManager.Roles.ToList();
+        }
+
+        public async Task<ApplicationUser>GetCurrentUser()
+        {
+            var userId = _userManager.GetUserId(_httpContextAccessor.HttpContext?.User);
+            if (userId != null)
+            {
+                return await _userManager.FindByIdAsync(userId);
+            }
+            return null;
         }
     }
 }

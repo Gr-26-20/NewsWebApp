@@ -28,7 +28,7 @@ namespace SendNewsletterFromQueue
 
         [Function("SendNewsletter")]
         public async Task RunAsync(
-            [TimerTrigger("0 */10 * * * *", RunOnStartup = true)] TimerInfo timer,
+            [TimerTrigger("0 0 7  * * 6", RunOnStartup = false)] TimerInfo timer,
             CancellationToken cancellationToken)
         {
             string storageConnectionString = GetRequiredSetting("AzureWebJobsStorage");

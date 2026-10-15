@@ -68,7 +68,7 @@ namespace SendNewsletterFromQueue
                 var message = new MimeMessage();
                 message.From.Add(new MailboxAddress(senderName, smtpFrom));
                 message.To.Add(MailboxAddress.Parse(queuedEmail.EmailAddress));
-                message.Subject = "Message from FunctionApp3";
+                message.Subject = "CLICKBAIT newsletter";
                 var dbContext = await _dbContextFactory.CreateDbContextAsync(cancellationToken);
                 List<NewsLetter> newsletters = await dbContext.NewsLetters.ToListAsync();
                 message.Body = new TextPart(TextFormat.Html)

@@ -330,7 +330,7 @@ public async Task<IActionResult> Articles()
                     case "New":
                         var newArticles = await _context.Articles
                             .Where(s => s.articleStatus == Models.Articles.Status.New)
-                            .AsNoTracking().ToListAsync();
+                            .AsNoTracking().OrderByDescending(a => a.CreatedAt).ToListAsync();
                         ArticlesVM newArticlesVM = new ArticlesVM
                         {
                             Articles = newArticles
@@ -341,7 +341,7 @@ public async Task<IActionResult> Articles()
                     case "Pending":
                             var pendingArticle = await _context.Articles
                                 .Where(s => s.articleStatus == Models.Articles.Status.Pending)
-                                .AsNoTracking().ToListAsync();
+                                .AsNoTracking().OrderByDescending(a => a.CreatedAt).ToListAsync();
                         ArticlesVM pendingArticlesVM = new ArticlesVM
                         {
                             Articles = pendingArticle
@@ -352,7 +352,7 @@ public async Task<IActionResult> Articles()
                     case "Approved":
                         var approvedArticle = await _context.Articles
                             .Where(s => s.articleStatus == Models.Articles.Status.Approved)
-                            .AsNoTracking().ToListAsync();
+                            .AsNoTracking().OrderByDescending(a => a.CreatedAt).ToListAsync();
                         ArticlesVM approvedArticlesVM = new ArticlesVM
                         {
                             Articles = approvedArticle
@@ -362,7 +362,7 @@ public async Task<IActionResult> Articles()
                     case "Rejected":
                         var rejectedArticle = await _context.Articles
                             .Where(s => s.articleStatus == Models.Articles.Status.Rejected)
-                            .AsNoTracking().ToListAsync();
+                            .AsNoTracking().OrderByDescending(a => a.CreatedAt).ToListAsync();
                         ArticlesVM rejectedArticlesVM = new ArticlesVM
                         {
                             Articles = rejectedArticle
@@ -371,7 +371,7 @@ public async Task<IActionResult> Articles()
                     case "Archived":
                         var archivedArticle = await _context.Articles
                             .Where(s => s.articleStatus == Models.Articles.Status.Archived)
-                            .AsNoTracking().ToListAsync();
+                            .AsNoTracking().OrderByDescending(a => a.CreatedAt).ToListAsync();
                         ArticlesVM archivedArticlesVM = new ArticlesVM
                         {
                             Articles = archivedArticle

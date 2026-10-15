@@ -1,167 +1,75 @@
-﻿using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.IdentityModel.Tokens;
-using NewsWebApp.Data;
-using NewsWebApp.Models;
-using NewsWebApp.Models.ViewModels;
-using NewsWebApp.Services;
-using System.Runtime.CompilerServices;
-using System.Security.Claims;
-using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc;
+using NewsWebApp.Data;
+using NewsWebApp.Services;
 
-namespace NewsWebApp.Controllers
+namespace NewsWebApp.Controllers;
+
+[Authorize]
+public class SubscriptionController(
+    ISubscriptionService subscriptions, StripeBillingService billing,
+    UserManager<ApplicationUser> users, ILogger<SubscriptionController> logger) : Controller
 {
-    [Authorize]
-    public class SubscriptionController : Controller
+    public async Task<IActionResult> Index()
     {
-        private readonly ISubscriptionService _subscriptionService;
-        private readonly UserManager<ApplicationUser> _userManager;
-        private readonly IConfiguration _configuration;
-
-        public SubscriptionController(ISubscriptionService subscriptionService, UserManager<ApplicationUser> userManager, IConfiguration configuration)
+        var userId = users.GetUserId(User);
+        if (userId is null) return Challenge();
+        if (await subscriptions.HasActiveSubscriptionAsync(userId)) return RedirectToAction(nameof(MySubscription));
+        return View();
+    }
+    public IActionResult Pay() => RedirectToAction(nameof(Index));
+    [HttpPost, ValidateAntiForgeryToken]
+    public async Task<IActionResult> CreateCheckoutSession(CancellationToken cancellationToken)
+    {
+        var userId = users.GetUserId(User);
+        if (userId is null) return Challenge();
+        if (await subscriptions.HasActiveSubscriptionAsync(userId)) return RedirectToAction(nameof(MySubscription));
+        try { return Redirect(await billing.StartCheckoutAsync(userId, cancellationToken)); }
+        catch (Exception ex) when (ex is Stripe.StripeException or InvalidOperationException or Microsoft.EntityFrameworkCore.DbUpdateException)
         {
-            _subscriptionService = subscriptionService;
-            _userManager = userManager;
-            _configuration = configuration;
+            logger.LogError(ex, "Could not start Stripe checkout for user {UserId}.", userId);
+            TempData["BillingError"] = "Checkout could not be started. Please try again shortly.";
+            return RedirectToAction(nameof(Index));
         }
-
-        public async Task<IActionResult> Index()
+    }
+    public async Task<IActionResult> Confirmation(string? session_id, CancellationToken cancellationToken)
+    {
+        var userId = users.GetUserId(User);
+        if (userId is null) return Challenge();
+        if (!string.IsNullOrEmpty(session_id))
         {
-            var user = await _userManager.GetUserAsync(User);
-            if (user == null)
+            try
             {
-                return RedirectToAction("Index", "Home");
+                if (!await billing.ConfirmCheckoutAsync(session_id, userId, cancellationToken)) return NotFound();
             }
-
-            if (await _subscriptionService.HasActiveSubscriptionAsync(user.Email))
-            {
-                return RedirectToAction("AlreadySubscribed");
-            }
-            ViewBag.PublishableKey = _configuration["Stripe:PublishableKey"];
-            return View(new SubscribeViewModel());
-
-
+            catch (Stripe.StripeException ex)
+            { logger.LogWarning(ex, "Could not verify checkout return for user {UserId}.", userId); }
         }
-
-        [HttpPost, ValidateAntiForgeryToken]
-        public async Task<IActionResult> Subscribe(SubscribeViewModel model)
+        ViewBag.SubscriptionActive = await subscriptions.HasActiveSubscriptionAsync(userId);
+        return View();
+    }
+    public IActionResult AlreadySubscribed() => RedirectToAction(nameof(MySubscription));
+    public IActionResult PaymentFailed() => View();
+    public async Task<IActionResult> MySubscription()
+    {
+        var userId = users.GetUserId(User);
+        if (userId is null) return Challenge();
+        var user = await users.GetUserAsync(User);
+        ViewBag.HasStripeCustomer = user?.StripeCustomerId is not null;
+        return View(await subscriptions.GetActiveSubscriptionAsync(userId));
+    }
+    [HttpPost, ValidateAntiForgeryToken]
+    public async Task<IActionResult> ManageBilling(CancellationToken cancellationToken)
+    {
+        var userId = users.GetUserId(User);
+        if (userId is null) return Challenge();
+        try { return Redirect(await billing.OpenPortalAsync(userId, cancellationToken)); }
+        catch (Exception ex) when (ex is Stripe.StripeException or InvalidOperationException)
         {
-            if (!ModelState.IsValid)
-            {
-                ViewBag.PublishableKey = _configuration["Stripe:PublishableKey"];
-                return View("Pay", model);
-            }
-            var user = await _userManager.GetUserAsync(User);
-            if (user == null)
-            {
-                return RedirectToAction("Index", "Home");
-            }
-
-            return await _subscriptionService.SubscriptionAsync(user.Email, model.StripeToken ?? "") switch
-            {
-
-                SubscribeResult.Success => RedirectToAction("Confirmation"),
-                SubscribeResult.AlreadySubscribed => RedirectToAction("AlreadySubscribed"),
-                SubscribeResult.PaymentFailed => RedirectToAction("PaymentFailed"),
-                _ => RedirectToAction("Index", "Home")
-            };
-
-        }
-
-        public IActionResult Confirmation()
-        {
-            return View();
-        }
-
-        public IActionResult AlreadySubscribed()
-        {
-            return View();
-        }
-        public IActionResult PaymentFailed()
-        {
-            return View();
-
-
-        }
-        public async Task<IActionResult> MySubscription()
-        {
-            var user = await _userManager.GetUserAsync(User);
-            if (user == null)
-            {
-                return RedirectToAction("Index", "Home");
-            }
-            var subscription = await _subscriptionService.GetActiveSubscriptionAsync(user.Email);
-            
-            return View(subscription);
-        }
-
-        public async Task<IActionResult> Pay()
-        { 
-            var user = await _userManager.GetUserAsync(User);
-            if(user == null)
-            {
-                return RedirectToAction("Index", "Home");
-            }
-            if(await _subscriptionService.HasActiveSubscriptionAsync(user.Email))
-            {
-                return RedirectToAction("AlreadySubscribed");
-            }
-            ViewBag.PublishableKey = _configuration["Stripe:PublishableKey"];
-            return View();
-        }
-
-        [HttpPost, ValidateAntiForgeryToken]
-        public async Task<IActionResult> CreateCheckoutSession()
-        {
-            var user = await _userManager.GetUserAsync(User);
-            if (user == null)
-            {
-                return RedirectToAction("Index", "Home");
-            }
-            if (await _subscriptionService.HasActiveSubscriptionAsync(user.Email))
-            {
-                return RedirectToAction("AlreadySubscribed");
-            }
-
-            var options = new Stripe.Checkout.SessionCreateOptions
-            {
-                UiMode = "hosted_page",
-                Mode = "subscription",
-                BillingAddressCollection = "auto",
-                PhoneNumberCollection = new Stripe.Checkout.SessionPhoneNumberCollectionOptions
-                {
-                    Enabled = false,
-                },
-                AutomaticTax = new Stripe.Checkout.SessionAutomaticTaxOptions
-                {
-                    Enabled = false,
-                },
-                AllowPromotionCodes = false,
-                PaymentMethodCollection = "always",
-                SubmitType = "auto",
-                CustomerEmail = user.Email,
-                SuccessUrl = "https://example.com/success?session_id={CHECKOUT_SESSION_ID}",
-                CancelUrl = "https://example.com/cancel",
-                LineItems = new List<Stripe.Checkout.SessionLineItemOptions>
-                {
-                    new Stripe.Checkout.SessionLineItemOptions
-                    {
-                        Price = _configuration["Stripe:PriceId"],
-                        Quantity = 1,
-                    },
-                },
-                Metadata = new Dictionary<string, string>
-                {
-                    { "integration_identifier", "hosted_mobile_app_0002" },
-                    { "origin_context", "mobile_app" },
-                },
-            };
-
-            var service = new Stripe.Checkout.SessionService();
-            var session = await service.CreateAsync(options);
-
-            return Redirect(session.Url);
+            logger.LogError(ex, "Could not open Stripe billing portal for user {UserId}.", userId);
+            TempData["BillingError"] = "Billing management is temporarily unavailable. Please try again shortly.";
+            return RedirectToAction(nameof(MySubscription));
         }
     }
 }

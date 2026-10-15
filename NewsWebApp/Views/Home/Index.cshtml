@@ -49,7 +49,7 @@
                 {
                     var currentUser = await UserManager.GetUserAsync(User);
                     bool isSubscribed = currentUser != null &&
-                        await SubscriptionService.HasActiveSubscriptionAsync(currentUser.Email);
+                        await SubscriptionService.HasActiveSubscriptionAsync(currentUser.Id);
 
                     if (!isSubscribed)
                     {

@@ -15,5 +15,12 @@ namespace NewsWebApp.Models
         public int BoundingTimeInDays { get; set; }
         public DateTime? CreatedAt { get; set; } = DateTime.UtcNow;
         public ApplicationUser User { get; set; }
+        public string? UserId { get; set; }
+        public string? StripeCustomerId { get; set; }
+        public string? StripeStatus { get; set; }
+        public string? StripePriceId { get; set; }
+        public DateTime? CurrentPeriodEndUtc { get; set; }
+        public bool StripeInvoicePaid { get; set; }
+        public bool CancelAtPeriodEnd { get; set; }
     }
 }

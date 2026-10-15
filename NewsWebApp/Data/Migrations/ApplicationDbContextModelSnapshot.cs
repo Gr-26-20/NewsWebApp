@@ -219,6 +219,12 @@ namespace NewsWebApp.Data.Migrations
                     b.Property<string>("SecurityStamp")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<string>("StripeCheckoutSessionId")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("StripeCustomerId")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<bool>("TwoFactorEnabled")
                         .HasColumnType("bit");
 
@@ -465,7 +471,13 @@ namespace NewsWebApp.Data.Migrations
                     b.Property<int>("BoundingTimeInDays")
                         .HasColumnType("int");
 
+                    b.Property<bool>("CancelAtPeriodEnd")
+                        .HasColumnType("bit");
+
                     b.Property<DateTime?>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime?>("CurrentPeriodEndUtc")
                         .HasColumnType("datetime2");
 
                     b.Property<int>("DurationInDays")
@@ -477,6 +489,18 @@ namespace NewsWebApp.Data.Migrations
 
                     b.Property<decimal>("Price")
                         .HasColumnType("decimal(18,2)");
+
+                    b.Property<string>("StripeCustomerId")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("StripeInvoicePaid")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("StripePriceId")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("StripeStatus")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("UserId")
                         .HasColumnType("nvarchar(450)");

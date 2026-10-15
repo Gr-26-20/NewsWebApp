@@ -1,35 +1,16 @@
-﻿@{
-    ViewData["Title"] = "Subscription Confirmed";
+@{
+    var active = ViewBag.SubscriptionActive == true;
+    ViewData["Title"] = active ? "Subscription Confirmed" : "Checking Payment";
 }
-
 <div class="sub-page">
     <div class="sub-card">
-        <div class="sub-badge active">CONFIRMED</div>
-
-        <div class="sub-icon">✅</div>
-
-        <h2 class="sub-title">You're In!</h2>
-        <p class="sub-subtitle">Welcome to CLICKBAIT News Premium.</p>
-
-        <div class="mysub-details">
-            <div class="mysub-detail-row">
-                <span class="mysub-detail-label">Status</span>
-                <span class="mysub-detail-value mysub-days-left">Active</span>
-            </div>
-            <div class="mysub-detail-row">
-                <span class="mysub-detail-label">Duration</span>
-                <span class="mysub-detail-value">30 days</span>
-            </div>
-        </div>
-
-        <div class="mysub-perks" style="margin-bottom: 1.5rem;">
-            <span>✓ Unlimited premium articles unlocked</span>
-            <span>✓ Ad-free reading experience</span>
-            <span>✓ Breaking news before everyone else</span>
-        </div>
-
-        <a asp-controller="Home" asp-action="Index" class="btn-sub">Start Reading →</a>
-
-        <p class="sub-note">A confirmation email has been sent to you.</p>
+        <span class="sub-badge">@(active ? "CONFIRMED" : "PROCESSING")</span>
+        <h1 class="sub-title">@(active ? "You're in!" : "We're checking your payment")</h1>
+        <p class="sub-subtitle">
+            @(active ? "Your premium access is active. Thank you for supporting CLICKBAIT News."
+                : "Access will appear once Stripe confirms payment. Check your subscription again shortly.")
+        </p>
+        <a asp-action="MySubscription" class="btn-sub">View my subscription →</a>
+        <a asp-controller="Home" asp-action="Index" class="sub-back">Back to news</a>
     </div>
 </div>

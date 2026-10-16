@@ -32,6 +32,6 @@ namespace NewsWebApp.Services
         //Task<List<Feedback>> DeleteAllFeedbackForArticle(int id);
 
         Task<List<Feedback>> GetAllFeedback();
-
+        Task<List<Articles>> GetFrontPageArticlesAsync(string category, int count);
     }
 }

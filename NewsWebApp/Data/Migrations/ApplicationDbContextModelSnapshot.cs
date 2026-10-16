@@ -274,6 +274,9 @@ namespace NewsWebApp.Data.Migrations
                     b.Property<bool>("EditorChoice")
                         .HasColumnType("bit");
 
+                    b.Property<int?>("FrontPagePosition")
+                        .HasColumnType("int");
+
                     b.Property<double>("ImageFocalPointX")
                         .HasColumnType("float");
 

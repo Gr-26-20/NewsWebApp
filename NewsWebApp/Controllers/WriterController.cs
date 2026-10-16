@@ -106,6 +106,7 @@ namespace NewsWebApp.Controllers
                 return NotFound();
             }
             //var feedbacklist = article.Feedback;
+
             return View(article);
         }
 

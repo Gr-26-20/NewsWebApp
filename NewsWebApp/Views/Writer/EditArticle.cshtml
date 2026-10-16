@@ -105,6 +105,19 @@
                 <span asp-validation-for="Category" class="text-danger"></span>
             </div>
             <div class="form-group">
+                <label asp-for="FrontPagePosition">Front-page position</label>
+
+                <select asp-for="FrontPagePosition" class="form-control">
+                    <option value="">Automatic — newest first</option>
+                    <option value="1">1 — Main story</option>
+                    <option value="2">2 — Second story</option>
+                    <option value="3">3 — Third story</option>
+                </select>
+
+                <span asp-validation-for="FrontPagePosition"
+                      class="text-danger"></span>
+            </div>
+            <div class="form-group">
                 <input type="submit" value="Save" class="btn btn-primary" />
                 <input asp-controller="Writer" asp-action="ApproveArticle" type="submit" value="Approve" class="btn btn-success" />
                 <a class="btn btn-lg" asp-action="Create" asp-controller="Editor">Submit feedback</a>

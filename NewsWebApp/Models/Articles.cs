@@ -41,7 +41,8 @@ namespace NewsWebApp.Models
         public bool EditorChoice { get; set; }
         public string Category { get; set; }
 
-       
+        [Range(1, 3)]
+        public int? FrontPagePosition { get; set; }
 
 
         public IList<Feedback> Feedback { get; set; } = new List<Feedback>();

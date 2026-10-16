@@ -106,6 +106,7 @@ namespace NewsWebApp.Controllers
                 return NotFound();
             }
             //var feedbacklist = article.Feedback;
+
             return View(article);
         }
 
@@ -124,6 +125,9 @@ namespace NewsWebApp.Controllers
                 {
                     article.ImageUrl = await _fileService.UploadImageAsync(ImageFile);
                 }
+
+                article.articleStatus = Models.Articles.Status.Pending;
+                article.UpdatedAt = DateTime.UtcNow;
 
                 _context.Update(article);
                 await _context.SaveChangesAsync();

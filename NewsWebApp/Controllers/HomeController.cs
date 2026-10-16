@@ -27,15 +27,14 @@ namespace NewsWebApp.Controllers
             var model = new HomeViewModel
             {
                 NewsArticles = (await _articleService
-                    .GetApprovedArticlesByCategoryAsync("News"))
-                    .Take(3)
+                    .GetFrontPageArticlesAsync("News", 3))
                     .ToList(),
 
                 WorldArticles = (await _articleService
                     .GetApprovedArticlesByCategoryAsync("World"))
                     .Take(1)
                     .ToList(),
-
+                    
                 SwedenArticles = (await _articleService
                     .GetArticlesByCategoryAsync("Sweden"))
                     .Take(1)

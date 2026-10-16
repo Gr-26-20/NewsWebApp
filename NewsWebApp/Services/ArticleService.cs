@@ -143,5 +143,20 @@ namespace NewsWebApp.Services
             return await _context.Feedback.AsNoTracking().ToListAsync();
         }
 
+        public async Task<List<Articles>> GetFrontPageArticlesAsync(
+    string category, int count)
+        {
+            return await _context.Articles
+                .Where(a =>
+                    a.Category == category &&
+                    !a.IsArchived &&
+                    a.articleStatus == Articles.Status.Approved)
+                .OrderBy(a => a.FrontPagePosition ?? int.MaxValue)
+                .ThenByDescending(a => a.CreatedAt)
+                .ThenBy(a => a.Id)
+                .Take(count)
+                .ToListAsync();
+        }
+
     }
 }

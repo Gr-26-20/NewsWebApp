@@ -149,6 +149,7 @@ namespace NewsWebApp.Controllers
             existingArticle.Category = article.Category;
             existingArticle.IsArchived = article.IsArchived;
             existingArticle.EditorChoice = article.EditorChoice;
+            existingArticle.FrontPagePosition = article.FrontPagePosition;
 
             // Save the image focal point and zoom settings.
             existingArticle.ImageFocalPointX = article.ImageFocalPointX;

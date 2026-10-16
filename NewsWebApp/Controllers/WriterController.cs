@@ -97,20 +97,84 @@ namespace NewsWebApp.Controllers
             return RedirectToAction("Articles");
         }
 
+        [HttpGet]
         [Authorize(Roles = "Writer, Editor")]
-        public async Task<IActionResult> EditArticle(int id)
+        public async Task<IActionResult> EditArticle(int? id)
         {
-            var article = await _context.Articles.FindAsync(id);
+            if (id == null)
+            {
+                return NotFound();
+            }
+
+            var article = await _context.Articles.FindAsync(id.Value);
+
             if (article == null)
             {
                 return NotFound();
             }
-            //var feedbacklist = article.Feedback;
 
             return View(article);
         }
 
         [HttpPost]
+        [Authorize(Roles = "Writer, Editor")]
+        public async Task<IActionResult> EditArticle(
+        int id,
+        Articles article,
+        IFormFile? ImageFile)
+        {
+            if (id != article.Id)
+            {
+                return NotFound();
+            }
+
+            if (!ModelState.IsValid)
+            {
+                return View(article);
+            }
+
+            var existingArticle = await _context.Articles.FindAsync(id);
+
+            if (existingArticle == null)
+            {
+                return NotFound();
+            }
+
+            // Update the fields editable in the form.
+            existingArticle.Slug = article.Slug;
+            existingArticle.Title = article.Title;
+            existingArticle.Author = article.Author;
+            existingArticle.Summary = article.Summary;
+            existingArticle.Content = article.Content;
+            existingArticle.Category = article.Category;
+            existingArticle.IsArchived = article.IsArchived;
+            existingArticle.EditorChoice = article.EditorChoice;
+
+            // Save the image focal point and zoom settings.
+            existingArticle.ImageFocalPointX = article.ImageFocalPointX;
+            existingArticle.ImageFocalPointY = article.ImageFocalPointY;
+            existingArticle.MainImageZoom = article.MainImageZoom;
+            existingArticle.MainImagePositionX = article.MainImagePositionX;
+            existingArticle.MainImagePositionY = article.MainImagePositionY;
+            existingArticle.SecondaryImageZoom = article.SecondaryImageZoom;
+            existingArticle.CategoryImageZoom = article.CategoryImageZoom;
+
+            // Replace the image only when a new one was selected.
+            if (ImageFile != null && ImageFile.Length > 0)
+            {
+                existingArticle.ImageUrl =
+                    await _fileService.UploadImageAsync(ImageFile);
+            }
+
+            // Make the recently edited article appear first in its category.
+            existingArticle.UpdatedAt = DateTime.UtcNow;
+
+            await _context.SaveChangesAsync();
+
+            return RedirectToAction("Articles");
+        }
+
+        /*[HttpPost]
         [Authorize(Roles = "Writer, Editor")]
         public async Task<IActionResult> EditArticle(int id, Articles article, IFormFile? ImageFile)
         {
@@ -134,7 +198,7 @@ namespace NewsWebApp.Controllers
                 return RedirectToAction("Articles");
             }
             return View(article);
-        }
+        }*/
 
         [Authorize(Roles = "Writer")]
         public async Task<IActionResult> DeleteArticle(int id)

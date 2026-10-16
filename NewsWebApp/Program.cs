@@ -27,7 +27,6 @@ namespace NewsWebApp
             // The command name and email are not ASP.NET configuration arguments.
             var builder = WebApplication.CreateBuilder(bootstrapAdmin ? Array.Empty<string>() : args);
 
-            Stripe.StripeConfiguration.ApiKey = builder.Configuration["Stripe:SecretKey"];
 
             // Add services to the container.
             var connectionString = builder.Configuration.GetConnectionString("DefaultConnection") ?? throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
@@ -41,6 +40,8 @@ namespace NewsWebApp
             builder.Services.AddControllersWithViews();
             builder.Services.AddRazorPages();
             builder.Services.AddScoped<ISubscriptionService, SubscriptionService>();
+            builder.Services.AddScoped<IStripeBillingGateway, StripeBillingGateway>();
+            builder.Services.AddScoped<StripeBillingService>();
 
             // Add services
             builder.Services.AddScoped<IUserAndRoleService, UserAndRoleService>();

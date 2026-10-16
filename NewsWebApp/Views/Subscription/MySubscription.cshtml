@@ -4,6 +4,8 @@
 }
 
 <div class="sub-page">
+    @if (TempData["BillingError"] is string error)
+    { <p class="pay-error" role="alert">@error</p> }
     @if (Model == null)
     {
         <div class="sub-card inactive">
@@ -15,7 +17,7 @@
     }
     else
     {
-        var expires = Model.CreatedAt?.AddDays(Model.DurationInDays);
+        var expires = Model.CurrentPeriodEndUtc ?? Model.CreatedAt?.AddDays(Model.DurationInDays);
         var daysLeft = expires.HasValue ? (int)(expires.Value - DateTime.UtcNow).TotalDays : 0;
 
         <div class="sub-card">
@@ -26,14 +28,14 @@
             <div class="mysub-details">
                 <div class="mysub-detail-row">
                     <span class="mysub-detail-label">Price</span>
-                    <span class="mysub-detail-value">SEK @Model.Price / 30 days</span>
+                    <span class="mysub-detail-value">SEK @Model.Price / @(Model.StripeStatus is null ? "30 days" : "month")</span>
                 </div>
                 <div class="mysub-detail-row">
                     <span class="mysub-detail-label">Started</span>
                     <span class="mysub-detail-value">@Model.CreatedAt?.ToString("dd MMM yyyy")</span>
                 </div>
                 <div class="mysub-detail-row">
-                    <span class="mysub-detail-label">Expires</span>
+                    <span class="mysub-detail-label">@(Model.CancelAtPeriodEnd || Model.StripeStatus is null ? "Access until" : "Renews on")</span>
                     <span class="mysub-detail-value">@expires?.ToString("dd MMM yyyy")</span>
                 </div>
                 <div class="mysub-detail-row">
@@ -48,5 +50,11 @@
                 <span>✓ Breaking news first</span>
             </div>
         </div>
+    }
+    @if (ViewBag.HasStripeCustomer == true)
+    {
+        <form asp-action="ManageBilling" method="post" class="mt-3">
+            <button type="submit" class="btn-sub">Manage billing / cancel subscription</button>
+        </form>
     }
 </div>

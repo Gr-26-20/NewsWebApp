@@ -114,6 +114,8 @@
                                     <img src="@mainArticle.ImageUrl"
                                          alt="@mainArticle.Title"
                                          class="article-image large"
+                                         data-focal-x="@mainArticle.ImageFocalPointX.ToString(System.Globalization.CultureInfo.InvariantCulture)"
+                                         data-focal-y="@mainArticle.ImageFocalPointY.ToString(System.Globalization.CultureInfo.InvariantCulture)"
                                          data-main-zoom="@mainArticle.MainImageZoom"
                                          data-main-position-x="@mainArticle.MainImagePositionX"
                                          data-main-position-y="@mainArticle.MainImagePositionY" />
@@ -796,7 +798,7 @@
             }
 
             const container =
-                image.parentElement;
+                image.closest(".main-image-container");
 
             const zoom =
                 parseFloat(
@@ -899,6 +901,11 @@
 
 
         applyMainImagePosition();
+
+        window.addEventListener(
+            "resize",
+            applyMainImagePosition
+        );
 
 
         function calculateObjectPosition(

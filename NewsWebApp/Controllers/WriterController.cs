@@ -126,6 +126,9 @@ namespace NewsWebApp.Controllers
                     article.ImageUrl = await _fileService.UploadImageAsync(ImageFile);
                 }
 
+                article.articleStatus = Models.Articles.Status.Pending;
+                article.UpdatedAt = DateTime.UtcNow;
+
                 _context.Update(article);
                 await _context.SaveChangesAsync();
                 return RedirectToAction("Articles");

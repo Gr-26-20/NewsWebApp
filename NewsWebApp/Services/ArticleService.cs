@@ -55,10 +55,13 @@ namespace NewsWebApp.Services
         public async Task<List<Articles>> GetApprovedArticlesByCategoryAsync(string category)
         {
             return await _context.Articles
-               .AsAsyncEnumerable()
-               .Where(a => a.Category == category && !a.IsArchived && a.articleStatus == Articles.Status.Approved)
-               .OrderByDescending(a => a.CreatedAt)
-               .ToListAsync();
+                .Where(a =>
+                    a.Category == category &&
+                    !a.IsArchived &&
+                    a.articleStatus == Articles.Status.Approved)
+                .OrderByDescending(a => a.UpdatedAt)
+                .ThenByDescending(a => a.CreatedAt)
+                .ToListAsync();
         }
 
         public async Task<List<Articles>> GetArticlesNewAsync()

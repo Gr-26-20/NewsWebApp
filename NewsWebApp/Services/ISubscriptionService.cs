@@ -6,7 +6,6 @@ namespace NewsWebApp.Services
     {
         Task<bool> HasActiveSubscriptionAsync(string userId);
         Task<Subscriptions?> GetActiveSubscriptionAsync(string userId);
-        Task<SubscribeResult> SubscriptionAsync(string userId, string stripeToken);
 
     }
 }

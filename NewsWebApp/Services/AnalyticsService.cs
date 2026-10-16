@@ -30,7 +30,7 @@ public class AnalyticsService(ApplicationDbContext db,
         // pass filtered data to the view model
         var model = new AnalyticsViewModel { Days = days, FromUtc = from, UpdatedUtc = now };
 
-        // SubscriptionAsync saves a record only after a successful payment.
+        // A subscription record is created only after its first successful payment.
         var subscriptions = await db.Subscriptions.AsNoTracking()
             .Where(s => s.CreatedAt >= from && s.CreatedAt <= now)
             .GroupBy(s => s.CreatedAt!.Value.Date)

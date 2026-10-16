@@ -1,5 +1,4 @@
 ﻿@using NewsWebApp.Models.ViewModels
-@model SubscribeViewModel
 
 <div class="sub-page">
     <div class="sub-card">
@@ -17,16 +16,19 @@
         <div class="subscribe-price">
             <span class="price-amount">99.99</span>
             <span class="price-currency">SEK</span>
-            <span class="price-period">/ 30 days</span>
+            <span class="price-period">/ month</span>
         </div>
 
-        <a asp-action="Pay" class="btn-sub">Get Full Access →</a>
+        @if (TempData["BillingError"] is string error)
+        { <p class="pay-error" role="alert">@error</p> }
+        @if (Context.Request.Query["cancelled"] == "true")
+        { <p role="status">Checkout was cancelled. No subscription was activated.</p> }
 
         <form asp-action="CreateCheckoutSession" method="post">
             @Html.AntiForgeryToken()
-            <button type="submit" class="btn-sub">Pay with Stripe Checkout →</button>
+            <button type="submit" class="btn-sub">Subscribe with Stripe →</button>
         </form>
 
-        <p class="sub-note">Secure payment powered by Stripe. No hidden fees.</p>
+        <p class="sub-note">Test mode. Renews monthly until cancelled. Manage your subscription through your billing account.</p>
     </div>
 </div>

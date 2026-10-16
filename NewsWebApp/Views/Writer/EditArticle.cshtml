@@ -168,6 +168,29 @@
                     Save
                 </button>
             </div>
+            <div class="form-group">
+                <label asp-for="FrontPagePosition">Front-page position</label>
+
+                <select asp-for="FrontPagePosition" class="form-control">
+                    <option value="">Automatic — newest first</option>
+                    <option value="1">1 — Main story</option>
+                    <option value="2">2 — Second story</option>
+                    <option value="3">3 — Third story</option>
+                </select>
+
+                <span asp-validation-for="FrontPagePosition"
+                      class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <input type="submit" value="Save" class="btn btn-primary" />
+                <a class="btn btn-secondary" asp-action="Articles" asp-controller="Writer">Back to List</a>
+            </div>
+        </form>
+    </div>
+</div>
+
+
+<div class="col-md-6">
 
         </div>
 

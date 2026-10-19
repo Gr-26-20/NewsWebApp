@@ -201,26 +201,24 @@ namespace NewsWebApp.Controllers
             return View(article);
         }*/
 
-        [Authorize(Roles = "Writer")]
+        [Authorize(Roles = "Writer, Editor, Admin")]
         public async Task<IActionResult> DeleteArticle(int id)
         {
 
-            var article = await _context.Articles.Include(f => f.Feedback).FirstOrDefaultAsync();
-            foreach (var item in article.Feedback)
-            {
-                if (item.ArticleId == id)
-                {
-                    _context.Feedback.Remove(item);
-                }
-            }
-            //var article = await _context.Articles.Include(f => f.Feedback).Where(_context.Feedbac)
+            var article = await _context.Articles
+             .Include(a => a.Feedback)
+             .FirstOrDefaultAsync(a => a.Id == id);
+
             if (article == null)
             {
                 return NotFound();
             }
-            //var allFeedback = _articleService.DeleteAllFeedbackForArticle(id);
+
+            _context.Feedback.RemoveRange(article.Feedback);
             _context.Articles.Remove(article);
+
             await _context.SaveChangesAsync();
+
             return RedirectToAction("Articles");
         }
 

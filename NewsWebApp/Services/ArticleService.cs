@@ -17,7 +17,10 @@ namespace NewsWebApp.Services
 
         public async Task<List<Articles>> GetAllArticlesAsync()
         {
-            return await _context.Articles.ToListAsync();
+            return await _context.Articles
+                .OrderByDescending(a => a.CreatedAt)
+                .ThenByDescending(a => a.Id)
+                .ToListAsync();
         }
 
         public async Task<List<Articles>> GetArticlesByCategoryAsync(string category)

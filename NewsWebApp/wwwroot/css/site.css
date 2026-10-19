@@ -34,6 +34,21 @@ without changing the rest of the CSS.
     --accent-text: #ffffff;
 }
 
+/* Simulated advert colour scheme */
+:root {
+    --advert-label-bar: rgb(180, 201, 220);
+    --advert-label-text-bg: #000000;
+    --advert-label-text: #ffffff;
+    --advert-background: #f0e8f5;
+    --advert-content-background: #d9c1e8;
+    --advert-text: #24152c;
+    --advert-heading: #54206f;
+    --advert-button: #713c91;
+    --advert-button-text: #ffffff;
+    --advert-disclaimer: #594565;
+    --advert-border: rgb(180, 201, 220);
+}
+
 /*-------------------------------------------------
     Analytics Retro Theme
 --------------------------------------------------*/
@@ -2308,6 +2323,320 @@ img {
     }
 }
 
-   
+
+/* Simulated advertising for the subscription demonstration */
+.simulated-advert {
+    position: relative;
+    margin: 24px 0;
+    padding: 14px;
+    border: 1px solid #171717;
+    background: #fff;
+    color: #171717;
+}
+
+.simulated-advert-label {
+    margin-bottom: 10px;
+    font-size: 0.7rem;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    color: #666;
+}
+
+.simulated-advert-content {
+    padding: 22px;
+    background: #f5f5f2;
+    border-left: 5px solid #d71920;
+}
+
+.simulated-advert-copy h3 {
+    margin: 0 0 10px;
+    font-family: Georgia, serif;
+    font-size: clamp(1.5rem, 3vw, 2.2rem);
+    font-weight: 700;
+}
+
+.simulated-advert-copy p {
+    margin-bottom: 16px;
+    max-width: 600px;
+}
+
+.simulated-advert-cta {
+    display: inline-block;
+    padding: 10px 16px;
+    background: #d71920;
+    color: #fff;
+    font-size: 0.8rem;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+}
+
+.simulated-advert-disclaimer {
+    margin-top: 10px;
+    font-size: 0.75rem;
+    color: #666;
+}
+
+
+/* ADVERT PLACEMENTS */
+
+.article-detail-layout {
+    display: grid;
+    grid-template-columns: minmax(0, 950px) minmax(220px, 300px);
+    gap: 24px;
+    align-items: start;
+}
+
+    .article-detail-layout .article-detail {
+        width: 100%;
+        min-width: 0;
+        margin: 0;
+    }
+
+.article-advert-column {
+    min-width: 0;
+}
+
+.category-content-layout {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 280px;
+    gap: 24px;
+    align-items: start;
+}
+
+    .category-content-layout .category-articles {
+        min-width: 0;
+    }
+
+.category-advert-column {
+    min-width: 0;
+}
+
+.sidebar-square-advert .simulated-advert {
+    box-sizing: border-box;
+    width: 100%;
+    margin: 20px 0 0;
+    padding: 10px;
+}
+
+.sidebar-square-advert .simulated-advert-content {
+    padding: 16px 12px;
+}
+
+.sidebar-square-advert .simulated-advert-copy h3 {
+    font-size: 1.5rem;
+}
+
+.sidebar-square-advert .simulated-advert-copy p {
+    font-size: 0.9rem;
+    overflow-wrap: anywhere;
+}
+
+.sidebar-square-advert .simulated-advert-cta {
+    padding: 9px 10px;
+    font-size: 0.72rem;
+}
+
+/* RESPONSIVE ADVERT LAYOUTS */
+
+@media (max-width: 900px) {
+    .article-detail-layout,
+    .category-content-layout {
+        grid-template-columns: minmax(0, 1fr);
+    }
+
+    .article-advert-column,
+    .category-advert-column {
+        width: 100%;
+    }
+
+        .article-advert-column .simulated-advert,
+        .category-advert-column .simulated-advert {
+            max-width: none;
+        }
+}
+
+@media (max-width: 650px) {
+    .article-detail-layout .article-detail {
+        padding: 20px 14px;
+    }
+
+    .sidebar-square-advert .simulated-advert-copy h3 {
+        font-size: 1.35rem;
+    }
+}
+
+/* Forecast page bottom advert bar */
+.forecast-advert-bar .simulated-advert {
+    margin: 20px 0 0;
+    padding: 8px 12px;
+}
+
+.forecast-advert-bar .simulated-advert-label {
+    margin-bottom: 5px;
+    font-size: 0.65rem;
+}
+
+.forecast-advert-bar .simulated-advert-content {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 10px 16px;
+}
+
+.forecast-advert-bar .simulated-advert-copy h3 {
+    margin: 0 0 4px;
+    font-size: 1.2rem;
+}
+
+.forecast-advert-bar .simulated-advert-copy p {
+    margin: 0;
+    max-width: none;
+    font-size: 0.9rem;
+}
+
+.forecast-advert-bar .simulated-advert-cta {
+    flex-shrink: 0;
+    padding: 8px 12px;
+    font-size: 0.75rem;
+}
+
+.forecast-advert-bar .simulated-advert-disclaimer {
+    margin-top: 5px;
+    font-size: 0.65rem;
+}
+
+@media (max-width: 600px) {
+    .forecast-advert-bar .simulated-advert-content {
+        align-items: flex-start;
+        flex-direction: column;
+        gap: 10px;
+    }
+}
+
+
+/* EXTERNAL ADVERT LOOK: deliberately different from CLICKBAIT */
+
+.simulated-advert {
+    border: 2px solid var(--advert-border);
+    background: var(--advert-background);
+    color: var(--advert-text);
+}
+
+.simulated-advert-label {
+    display: flex;
+    align-items: stretch;
+    margin: -14px -14px 12px;
+    min-height: 32px;
+    background: var(--advert-label-bar);
+    border: none;
+    letter-spacing: 0.1em;
+}
+
+.simulated-advert-tag {
+    display: flex;
+    align-items: center;
+    padding: 7px 12px;
+    background: var(--advert-label-text-bg);
+    color: var(--advert-label-text);
+    font-size: 0.7rem;
+    font-weight: 700;
+}
+
+.simulated-advert-label-bar {
+    flex: 1;
+    background: var(--advert-label-bar);
+}
+
+.simulated-advert-content {
+    background: var(--advert-content-background);
+    border-left: 5px solid var(--advert-button);
+}
+
+.simulated-advert-copy h3 {
+    color: var(--advert-heading);
+}
+
+.simulated-advert-copy p {
+    color: var(--advert-text);
+}
+
+.simulated-advert-cta {
+    background: var(--advert-button);
+    color: var(--advert-button-text);
+}
+
+.simulated-advert-disclaimer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 4px 16px;
+    margin-top: 10px;
+    color: var(--advert-disclaimer);
+    font-size: 0.7rem;
+}
+
+.simulated-advert-company {
+    font-weight: 700;
+    letter-spacing: 0.02em;
+}
+
+.simulated-advert-notice {
+    margin-left: auto;
+    text-align: right;
+}
+
+/* Narrow adverts: align both lines to the left */
+@media (max-width: 600px) {
+    .simulated-advert-disclaimer {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .simulated-advert-notice {
+        margin-left: 0;
+        text-align: left;
+    }
+}
+
+/* Square homepage advert: align both lines to the left */
+.sidebar-square-advert .simulated-advert-disclaimer {
+    flex-direction: column;
+    align-items: flex-start;
+}
+
+.sidebar-square-advert .simulated-advert-notice {
+    margin-left: 0;
+    text-align: left;
+}
+
+/* Narrow category adverts: align footer text to the left */
+.category-advert-column .simulated-advert-disclaimer {
+    flex-direction: column;
+    align-items: flex-start;
+}
+
+.category-advert-column .simulated-advert-notice {
+    margin-left: 0;
+    text-align: left;
+}
+
+/* Square homepage advert sizing and outer frame */
+.sidebar-square-advert .simulated-advert {
+    box-sizing: border-box;
+    overflow: hidden;
+    border: 2px solid var(--advert-border);
+}
+
+/* Keep the label bar aligned within the square advert frame */
+.sidebar-square-advert .simulated-advert-label {
+    margin: -10px -10px 12px;
+}
+
+/* Category advert outer frame */
+.category-advert-column .simulated-advert {
+    border: 2px solid var(--advert-border);
+}
+
 
 

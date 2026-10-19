@@ -11,58 +11,66 @@
         <a href="/">BACK TO NEWS →</a>
     </div>
 
-    <article class="article-detail">
+    <div class="article-detail-layout">
 
-        <div class="story-category">
-            @Model.Category
-        </div>
+        <article class="article-detail">
 
-        <h1>@Model.Title</h1>
-
-        <p class="article-summary">
-            @Model.Summary
-        </p>
-
-        <div class="article-meta">
-            @Model.CreatedAt?.ToString("dd MMMM yyyy").ToUpper()
-            &nbsp; | &nbsp;
-            @Model.Category.ToUpper()
-            &nbsp; | &nbsp;
-            @Model.Author
-        </div>
-
-        @if (!string.IsNullOrWhiteSpace(Model.ImageUrl))
-        {
-            <img src="@Model.ImageUrl"
-                 alt="@Model.Title"
-                 class="article-image" />
-        }
-        else
-        {
-            <div class="image-placeholder article-image">
-                IMAGE
+            <div class="story-category">
+                @Model.Category
             </div>
-        }
 
-        <div class="article-content">
+            <h1>@Model.Title</h1>
 
-        @foreach (var paragraph in Model.Content.Split(
-            new[] { "\r\n\r\n", "\n\n" },
-            StringSplitOptions.RemoveEmptyEntries))
-        {
-            <p style="white-space: pre-line;">@paragraph</p>
-        }
+            <p class="article-summary">
+                @Model.Summary
+            </p>
 
-        </div>
+            <div class="article-meta">
+                @Model.CreatedAt?.ToString("dd MMMM yyyy").ToUpper()
+                &nbsp; | &nbsp;
+                @Model.Category.ToUpper()
+                &nbsp; | &nbsp;
+                @Model.Author
+            </div>
 
-        <div class="article-stats">
-            <button id="likeBtn" class="btn-like" onclick="likeArticle(@Model.Id)">
-                ♥ <span id="likeCount">@Model.Likes</span> LIKES
-            </button>
-            <span>👁 @Model.Views VIEWS</span>
-        </div>
+            @if (!string.IsNullOrWhiteSpace(Model.ImageUrl))
+            {
+                <img src="@Model.ImageUrl"
+                     alt="@Model.Title"
+                     class="article-image" />
+            }
+            else
+            {
+                <div class="image-placeholder article-image">
+                    IMAGE
+                </div>
+            }
 
-    </article>
+            <div class="article-content">
+
+                @foreach (var paragraph in Model.Content.Split(
+                    new[] { "\r\n\r\n", "\n\n" },
+                    StringSplitOptions.RemoveEmptyEntries))
+                {
+                    <p style="white-space: pre-line;">@paragraph</p>
+                }
+
+            </div>
+
+            <div class="article-stats">
+                <button id="likeBtn" class="btn-like" onclick="likeArticle(@Model.Id)">
+                    ♥ <span id="likeCount">@Model.Likes</span> LIKES
+                </button>
+                <span>👁 @Model.Views VIEWS</span>
+            </div>
+
+        </article>
+
+        <aside class="article-advert-column">
+            @await Component.InvokeAsync("Advertisement")
+        </aside>
+
+    </div>
 
 </div>
 

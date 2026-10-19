@@ -83,6 +83,9 @@
         <span>Breaking news headline goes here</span>
     </section>
 
+    
+    @await Component.InvokeAsync("Advertisement")
+
 
     <!-- MAIN CONTENT -->
     <main>
@@ -220,6 +223,10 @@
                         {
                             <p>No editor's choice articles yet.</p>
                         }
+
+                        <div class="sidebar-square-advert">
+                                @await Component.InvokeAsync("Advertisement")
+                        </div>
 
                     </aside>
 

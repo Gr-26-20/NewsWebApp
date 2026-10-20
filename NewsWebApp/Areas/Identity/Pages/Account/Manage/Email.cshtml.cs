@@ -144,12 +144,7 @@ public class EmailModel : PageModel
             return NotFound($"Unable to load user with ID '{_userManager.GetUserId(User)}'.");
         }
 
-        if (!ModelState.IsValid)
-        {
-            await LoadAsync(user);
-            return Page();
-        }
-
+        // This action uses the signed-in account's email
         var userId = await _userManager.GetUserIdAsync(user);
         var email = await _userManager.GetEmailAsync(user);
         var code = await _userManager.GenerateEmailConfirmationTokenAsync(user);

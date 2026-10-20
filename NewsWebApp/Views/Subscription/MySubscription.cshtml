@@ -1,60 +1,57 @@
-﻿@model NewsWebApp.Models.Subscriptions
+@model NewsWebApp.Models.Subscriptions?
 @{
     ViewData["Title"] = "My Subscription";
+    var expires = Model?.CurrentPeriodEndUtc ?? Model?.CreatedAt?.AddDays(Model.DurationInDays);
+    var daysLeft = expires.HasValue ? Math.Max(0, (int)Math.Ceiling((expires.Value - DateTime.UtcNow).TotalDays)) : 0;
 }
-
-<div class="sub-page">
-    @if (TempData["BillingError"] is string error)
-    { <p class="pay-error" role="alert">@error</p> }
-    @if (Model == null)
-    {
-        <div class="sub-card inactive">
-            <div class="sub-icon">📰</div>
-            <h2 class="sub-title">No Active Subscription</h2>
-            <p class="sub-subtitle">You're missing out on premium content.</p>
-            <a asp-action="Index" class="btn-sub">Subscribe Now →</a>
-        </div>
-    }
-    else
-    {
-        var expires = Model.CurrentPeriodEndUtc ?? Model.CreatedAt?.AddDays(Model.DurationInDays);
-        var daysLeft = expires.HasValue ? (int)(expires.Value - DateTime.UtcNow).TotalDays : 0;
-
-        <div class="sub-card">
-            <span class="sub-badge active">ACTIVE</span>
-            <h2 class="sub-title">@Model.Name</h2>
-            <p class="sub-subtitle">Thank you for supporting CLICKBAIT News.</p>
-
-            <div class="mysub-details">
-                <div class="mysub-detail-row">
-                    <span class="mysub-detail-label">Price</span>
-                    <span class="mysub-detail-value">SEK @Model.Price / @(Model.StripeStatus is null ? "30 days" : "month")</span>
+<div class="account-page">
+    <partial name="/Views/Shared/_AccountHeader.cshtml" />
+    <div class="account-grid">
+        <aside><partial name="/Views/Shared/_AccountNav.cshtml" /></aside>
+        <section class="account-panel">
+            <p class="account-kicker">YOUR READING, UPGRADED</p>
+            <h1>My subscription</h1>
+            
+            @if (TempData["BillingError"] is string error)
+            { 
+                <div class="account-notice account-notice-error" role="alert">@error</div> 
+            }
+            @if (Model is null)
+            {
+                <span class="account-badge">NO ACTIVE PREMIUM PLAN</span>
+               
+                <p class="account-intro">Explore premium</p>
+                <a asp-action="Index" class="account-button">Explore premium →</a>
+            }
+            else
+            {
+                <div class="account-plan-heading">
+                    <span class="account-badge">@(Model.CancelAtPeriodEnd ? "CANCELLATION SCHEDULED" : "PREMIUM ACTIVE")</span>
+                    <h2>@Model.Name</h2>
+                    <p class="account-plan-price">@Model.Price.ToString("N2") <span>SEK / @(Model.StripeStatus is null ? "30 days" : "month")</span></p>
                 </div>
-                <div class="mysub-detail-row">
-                    <span class="mysub-detail-label">Started</span>
-                    <span class="mysub-detail-value">@Model.CreatedAt?.ToString("dd MMM yyyy")</span>
+                <dl class="account-plan-details">
+                    <div><dt>Started</dt><dd>@Model.CreatedAt?.ToString("dd MMM yyyy")</dd></div>
+                    <div><dt>@(Model.CancelAtPeriodEnd || Model.StripeStatus is null ? "Access until" : "Renews on")</dt><dd>@expires?.ToString("dd MMM yyyy")</dd></div>
+                    <div><dt>Days remaining in this period</dt><dd>@daysLeft</dd></div>
+                </dl>
+                @if (Model.CancelAtPeriodEnd)
+                {
+                    <p class="account-notice">Your subscription is set to end. You can keep reading premium articles until @expires?.ToString("dd MMM yyyy").</p>
+                }
+                <p class="account-intro">Thank you for supporting CLICKBAIT News</p>
+            }
+            @if (ViewBag.HasStripeCustomer == true)
+            {
+                <div class="account-secondary-action">
+                    <h2>You're in control.</h2>
+                    <p class="account-intro">Update your payment method or cancel through Stripe.</p>
+                    <form asp-action="ManageBilling" method="post">
+                        <button type="submit" class="account-button">Manage billing / cancel →</button>
+                    </form>
                 </div>
-                <div class="mysub-detail-row">
-                    <span class="mysub-detail-label">@(Model.CancelAtPeriodEnd || Model.StripeStatus is null ? "Access until" : "Renews on")</span>
-                    <span class="mysub-detail-value">@expires?.ToString("dd MMM yyyy")</span>
-                </div>
-                <div class="mysub-detail-row">
-                    <span class="mysub-detail-label">Days Left</span>
-                    <span class="mysub-detail-value mysub-days-left">@daysLeft days</span>
-                </div>
-            </div>
-
-            <div class="mysub-perks">
-                <span>✓ Unlimited premium articles</span>
-                <span>✓ Ad-free reading</span>
-                <span>✓ Breaking news first</span>
-            </div>
-        </div>
-    }
-    @if (ViewBag.HasStripeCustomer == true)
-    {
-        <form asp-action="ManageBilling" method="post" class="mt-3">
-            <button type="submit" class="btn-sub">Manage billing / cancel subscription</button>
-        </form>
-    }
+            }
+            <a class="account-back-link" asp-area="" asp-page="/Profile">← Back to my profile</a>
+        </section>
+    </div>
 </div>

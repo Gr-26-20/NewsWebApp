@@ -1,0 +1,75 @@
+﻿@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@{
+}
+
+@using Microsoft.AspNetCore.Identity
+@inject SignInManager<NewsWebApp.Data.ApplicationUser> SignInManager
+@inject UserManager<NewsWebApp.Data.ApplicationUser> UserManager
+@inject NewsWebApp.Services.ISubscriptionService SubscriptionService
+
+
+<!-- HEADER -->
+<header class="site-header">
+    <div class="header-top">
+        <span>@DateTime.Today.ToString("dddd / dd MMMM yyyy").ToUpper()</span>
+        <span>LINKÖPING</span>
+    </div>
+
+    <div class="brand-row">
+        <h1 class="site-logo">CLICKBAIT News</h1>
+        <div class="brand-tagline">YOUR NEWS / YOUR CITY / YOUR WORLD</div>
+    </div>
+
+    <!-- MAIN CATEGORY NAVIGATION -->
+    <nav class="main-nav">
+
+        <button class="navbar-toggler"
+                type="button"
+                onclick="toggleNavigation()"
+                aria-label="Toggle navigation">
+            ☰
+        </button>
+
+        <div class="nav-categories" id="navCategories">
+
+            <a href="/Categories/News">NEWS</a>
+            <a href="/Categories/World">WORLD</a>
+            <a href="/Categories/Sweden">SWEDEN</a>
+            <a href="/Categories/Weather">WEATHER</a>
+            <a href="/Categories/Sports">SPORTS</a>
+            <a asp-controller="Articles" asp-action="EditorsChoice">EDITOR'S CHOICE</a>
+            <a asp-controller="Articles" asp-action="Archived">ARCHIVE</a>
+
+            <a href="/Categories/Newsletter">NEWSLETTER</a>
+            @if (SignInManager.IsSignedIn(User))
+            {
+                var currentUser = await UserManager.GetUserAsync(User);
+                bool isSubscribed = currentUser != null &&
+                    await SubscriptionService.HasActiveSubscriptionAsync(currentUser.Id);
+
+                if (!isSubscribed)
+                {
+                    <a asp-controller="Subscription" asp-action="Index" class="btn-subscribe-nav">
+                        SUBSCRIBE
+                    </a>
+                }
+                else
+                {
+                    <a asp-controller="Subscription" asp-action="MySubscription" class="btn-subscribe-nav subscribed">
+                        ✓ SUBSCRIBED
+                    </a>
+                }
+            }
+            else
+            {
+                <a asp-area="Identity" asp-page="/Account/Register"
+                   asp-route-returnUrl="/Subscription" class="btn-subscribe-nav">
+                    SUBSCRIBE
+                </a>
+            }
+
+        </div>
+    </nav>
+</header>

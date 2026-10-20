@@ -1194,6 +1194,7 @@ a {
 .category-column,
 .weather-placeholder {
     background: var(--surface);
+    padding: 12px;
 }
 
 .featured-story {

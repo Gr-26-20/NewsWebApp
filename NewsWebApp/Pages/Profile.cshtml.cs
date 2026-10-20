@@ -1,68 +1,59 @@
+using System.ComponentModel.DataAnnotations;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using NewsWebApp.Data;
+using NewsWebApp.Models;
+using NewsWebApp.Services;
 
+namespace NewsWebApp.Pages;
 
-namespace NewsWebApp.Pages
+[Authorize]
+public class ProfileModel(UserManager<ApplicationUser> users, ISubscriptionService subscriptions) : PageModel
 {
-    [Authorize]
-    public class ProfileModel : PageModel
+    public ApplicationUser CurrentUser { get; private set; } = null!;
+    public Subscriptions? Subscription { get; private set; }
+    [BindProperty]
+    public InputModel Input { get; set; } = new();
+    public class InputModel
     {
-        private readonly UserManager<ApplicationUser> _userManager;
-        private readonly ApplicationDbContext _context;
-        private readonly SignInManager<ApplicationUser> _signInManager;
-
-        public ProfileModel(UserManager<ApplicationUser> userManager, ApplicationDbContext context, SignInManager<ApplicationUser> signInManager)
+        [Required, StringLength(100), Display(Name = "First name")]
+        public string FirstName { get; set; } = "";
+        [Required, StringLength(100), Display(Name = "Last name")]
+        public string LastName { get; set; } = "";
+        [Required, Phone, StringLength(100), Display(Name = "Phone number")]
+        public string PhoneNumber { get; set; } = "";
+    }
+    public async Task<IActionResult> OnGetAsync()
+    {
+        var user = await users.GetUserAsync(User);
+        if (user is null) return Challenge();
+        await LoadAsync(user);
+        Input = new() { FirstName = user.FirstName, LastName = user.LastName, PhoneNumber = user.PhoneNumber };
+        return Page();
+    }
+    public async Task<IActionResult> OnPostUpdateProfileAsync()
+    {
+        var user = await users.GetUserAsync(User);
+        if (user is null) return Challenge();
+        await LoadAsync(user);
+        if (!ModelState.IsValid) return Page();
+        user.FirstName = Input.FirstName;
+        user.LastName = Input.LastName;
+        user.PhoneNumber = Input.PhoneNumber;
+        var result = await users.UpdateAsync(user);
+        if (!result.Succeeded)
         {
-            _userManager = userManager;
-            _context = context;
-            _signInManager = signInManager;
-        }
-
-        public ApplicationUser CurrentUser { get; set; } = null!;
-        public List<string> UserRoles { get; set; } = new();
-
-        public async Task<IActionResult> OnGetAsync()
-        {
-            var user = await _userManager.GetUserAsync(User);
-            if (user == null)
-            {
-                return NotFound($"Unable to load user with ID '{_userManager.GetUserId(User)}'.");
-            }
-
-            CurrentUser = user;
-            UserRoles = (await _userManager.GetRolesAsync(user)).ToList();
-
+            foreach (var error in result.Errors) ModelState.AddModelError(string.Empty, error.Description);
             return Page();
         }
-
-        public async Task<IActionResult> OnPostUpdateProfileAsync(string firstName, string lastName, string phoneNumber)
-        {
-            var user = await _userManager.GetUserAsync(User);
-            if (user == null)
-            {
-                return NotFound($"Unable to load user with ID '{_userManager.GetUserId(User)}'.");
-            }
-
-            user.FirstName = firstName;
-            user.LastName = lastName;
-            user.PhoneNumber = phoneNumber;
-
-            var result = await _userManager.UpdateAsync(user);
-
-            if (!result.Succeeded)
-            {
-                foreach (var error in result.Errors)
-                {
-                    ModelState.AddModelError(string.Empty, error.Description);
-                }
-                return Page();
-            }
-
-            TempData["Message"] = "Profile updated successfully!";
-            return RedirectToPage();
-        }
+        TempData["Message"] = "Your profile details have been saved.";
+        return RedirectToPage();
+    }
+    private async Task LoadAsync(ApplicationUser user)
+    {
+        CurrentUser = user;
+        Subscription = await subscriptions.GetActiveSubscriptionAsync(user.Id);
     }
 }

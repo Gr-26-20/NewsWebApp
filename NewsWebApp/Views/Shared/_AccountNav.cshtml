@@ -1,0 +1,29 @@
+@using Microsoft.AspNetCore.Identity
+@using NewsWebApp.Data
+@inject SignInManager<ApplicationUser> SignInManager
+@{
+    var page = ViewContext.RouteData.Values["page"]?.ToString() ?? "";
+    var controller = ViewContext.RouteData.Values["controller"]?.ToString() ?? "";
+    var profileActive = page == "/Profile" || page == "/Account/Manage/Index";
+    var emailActive = page == "/Account/Manage/Email";
+    var passwordActive = page is "/Account/Manage/ChangePassword" or "/Account/Manage/SetPassword";
+    var subscriptionActive = controller == "Subscription";
+    var securityActive = page is "/Account/Manage/TwoFactorAuthentication" or "/Account/Manage/ExternalLogins"
+        or "/Account/Manage/PersonalData" or "/Account/Manage/DownloadPersonalData" or "/Account/Manage/DeletePersonalData";
+}
+<nav class="account-navigation" aria-label="Account settings">
+    <p class="account-kicker">MY ACCOUNT</p>
+    <a class="@(profileActive ? "is-active" : "")" aria-current="@(profileActive ? "page" : null)" asp-area="" asp-page="/Profile">Profile <span aria-hidden="true">→</span></a>
+    <a class="@(emailActive ? "is-active" : "")" aria-current="@(emailActive ? "page" : null)" asp-area="Identity" asp-page="/Account/Manage/Email">Email address <span aria-hidden="true">→</span></a>
+    <a class="@(passwordActive ? "is-active" : "")" aria-current="@(passwordActive ? "page" : null)" asp-area="Identity" asp-page="/Account/Manage/ChangePassword">Password <span aria-hidden="true">→</span></a>
+    <a class="@(subscriptionActive ? "is-active" : "")" aria-current="@(subscriptionActive ? "page" : null)" asp-area="" asp-controller="Subscription" asp-action="MySubscription">Subscription <span aria-hidden="true">→</span></a>
+    <details class="account-security" open="@(securityActive ? "open" : null)">
+        <summary>Security &amp; personal data</summary>
+        <a asp-area="Identity" asp-page="/Account/Manage/TwoFactorAuthentication">Two-factor authentication</a>
+        @if ((await SignInManager.GetExternalAuthenticationSchemesAsync()).Any())
+        {
+            <a asp-area="Identity" asp-page="/Account/Manage/ExternalLogins">Connected accounts</a>
+        }
+        <a asp-area="Identity" asp-page="/Account/Manage/PersonalData">Personal data</a>
+    </details>
+</nav>

@@ -3,4 +3,5 @@
   <Project Path="NewsWebApp/NewsWebApp.csproj" />
   <Project Path="ResizeImage/ResizeImage.csproj" Id="9d1279dd-c0f5-4df8-a8ab-e773ed82b1cc" />
   <Project Path="SendNewsletterFromQueue/SendNewsletterFromQueue.csproj" Id="7fc7a31b-b153-4e4d-95ab-f091dc9c6bb5" />
+  <Project Path="SendSubscriptionReminder/SendSubscriptionReminder.csproj" Id="8161c747-ddf9-45e0-833e-393487c29b0d" />
 </Solution>

@@ -1,0 +1,75 @@
+﻿
+<div class="simulated-advert" aria-label="Advertisement">
+    <div class="simulated-advert-label">
+        <span class="simulated-advert-tag">ADVERTISEMENT</span>
+        <span class="simulated-advert-label-bar"></span>
+    </div>
+
+    <div class="simulated-advert-content">
+        <div class="simulated-advert-copy">
+            <h3 class="simulated-advert-heading">STOP SCROLLING!</h3>
+            <p class="simulated-advert-message">
+                Tired of missing out on amazing offers?
+                Click now and discover what everyone's talking about!
+            </p>
+            <span class="simulated-advert-cta">DISCOVER MORE &raquo;</span>
+        </div>
+    </div>
+
+    <div class="simulated-advert-disclaimer">
+        <span class="simulated-advert-company">
+            External Advertising Network Ltd.
+        </span>
+        <span class="simulated-advert-notice">
+            Demonstration advertisement for CLICKBAIT News.
+        </span>
+    </div>
+</div>
+
+
+<script>
+    document.querySelectorAll(".simulated-advert").forEach(function (advert) {
+        if (advert.dataset.rotatingInitialized === "true") {
+            return;
+        }
+
+        advert.dataset.rotatingInitialized = "true";
+
+        const adverts = [
+            {
+                heading: "STOP SCROLLING!",
+                message: "Tired of missing out on amazing offers? Discover what everyone's talking about!",
+                cta: "DISCOVER MORE »"
+            },
+            {
+                heading: "SUPER SALE!",
+                message: "Prices are dropping fast! Get the deals you absolutely cannot live without!",
+                cta: "SHOP NOW »"
+            },
+            {
+                heading: "YOU WON'T BELIEVE THIS!",
+                message: "Thousands are talking about this incredible offer. What are you waiting for?",
+                cta: "SEE THE SECRET »"
+            },
+            {
+                heading: "YOU'VE BEEN SELECTED!",
+                message: "A once in a lifetime opportunity may be waiting for you. Act before it's gone!",
+                cta: "CLAIM YOUR PRIZE »"
+            }
+        ];
+
+        // Pick one advert when the page loads.
+        const index = Math.floor(Math.random() * adverts.length);
+        const current = adverts[index];
+
+        advert.querySelector(".simulated-advert-heading").textContent =
+            current.heading;
+
+        advert.querySelector(".simulated-advert-message").textContent =
+            current.message;
+
+        advert.querySelector(".simulated-advert-cta").textContent =
+            current.cta;
+    });
+</script>
+

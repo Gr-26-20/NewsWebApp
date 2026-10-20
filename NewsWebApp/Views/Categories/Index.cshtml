@@ -48,47 +48,53 @@
     }
 
 
-    <section class="category-articles">
+    <div class="category-content-layout">
 
-        @foreach (var article in Model)
-        {
-            <article class="category-article">
+        <section class="category-articles">
 
-                @if (!string.IsNullOrWhiteSpace(article.ImageUrl))
-                {
-                    <img src="@article.ImageUrl"
-                         alt="@article.Title"
-                         class="article-image category-image"
-                         data-focal-x="@article.ImageFocalPointX.ToString(System.Globalization.CultureInfo.InvariantCulture)"
-                         data-focal-y="@article.ImageFocalPointY.ToString(System.Globalization.CultureInfo.InvariantCulture)" />
-                }
-                else
-                {
-                    <div class="image-placeholder category-image">
-                        IMAGE
+            @foreach (var article in Model)
+            {
+                <article class="category-article">
+
+                    @if (!string.IsNullOrWhiteSpace(article.ImageUrl))
+                    {
+                        <img src="@article.ImageUrl"
+                             alt="@article.Title"
+                             class="article-image category-image"
+                             data-focal-x="@article.ImageFocalPointX.ToString(System.Globalization.CultureInfo.InvariantCulture)"
+                             data-focal-y="@article.ImageFocalPointY.ToString(System.Globalization.CultureInfo.InvariantCulture)" />
+                    }
+                    else
+                    {
+                        <div class="image-placeholder category-image">
+                            IMAGE
+                        </div>
+                    }
+
+                    <div class="story-category">
+                        @article.Category
                     </div>
-                }
 
-                <div class="story-category">
-                    @article.Category
-                </div>
+                    <h2>
+                        <a href="/Articles/Details/@article.Id">
+                            @article.Title
+                        </a>
+                    </h2>
 
-                <h2>
-                    <a href="/Articles/Details/@article.Id">
-                        @article.Title
-                    </a>
-                </h2>
+                    <p>
+                        @article.Summary
+                    </p>
 
-                <p>
-                    @article.Summary
-                </p>
+                </article>
+            }
 
-            </article>
-        }
+        </section>
 
-    </section>
+        <aside class="category-advert-column">
+            @await Component.InvokeAsync("Advertisement")
+        </aside>
 
-</div>
+    </div>
 
 
 <script>

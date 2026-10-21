@@ -9,9 +9,7 @@
         <li class="nav-item">
             <a class="nav-link text-dark" asp-area="" asp-page="/Profile" title="Manage your account">My account</a>
         </li>
-        <li>
-             <a id="subscribeButton" class="btn"  onclick="CheckSubscriptionStatus('@User.Identity?.Name')">Subscribe to newsletter</a>             
-        </li>
+        
         
         @if (User.IsInRole("Admin"))
         {

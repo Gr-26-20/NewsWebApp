@@ -13,21 +13,43 @@
             console.error('Error updating feedback', error);
         })
 
-    const button = document.getElementById(`subscribeButton`);
-    localStorage.setItem('subscribed', 'true');
+
+        const subscriptionStatus =
+           localStorage.getItem("subscribed") === "true";
+
+       const newStatus = !subscriptionStatus;
+
+       localStorage.setItem("subscribed", String(newStatus));
+
+       const button = document.getElementById("subscribeButton");
+
+       // Red if subscribed, green if unsubscribed
+       button.style.backgroundColor = newStatus ? "red" : "green";
+       
+       button.textContent = subscriptionStatus ? "Subscribed!" : "Unsubscribed";
+
 }
 
+
+
 function CheckSubscriptionStatus(id) {
-    if (checkSubscription()) {
-    document.getElementById('subscribeButton').style.backgroundColor = 'green';
-    Subscribe(id)
-} else {
-    document.getElementById('subscribeButton').style.backgroundColor = 'red';
     Subscribe(id)
 }
-    }
 
 function checkSubscription() {
     return localStorage.getItem('subscribed') === 'true';
 }
+
+
+document.addEventListener("DOMContentLoaded", function () {
+    const subscriptionStatus =
+        localStorage.getItem("subscribed") === "true";
+
+    const button = document.getElementById("subscribeButton");
+
+    button.style.backgroundColor = subscriptionStatus ? "red" : "green";
+
+    button.textContent =
+            subscriptionStatus ? "Unsubscribed" : "Subscribed!";
+});
 

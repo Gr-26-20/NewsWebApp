@@ -6,6 +6,8 @@
     ViewData["Title"] = "Archived Articles";
 }
 
+<partial name="_NavbarPartial" />
+
 <h1 class="mb-4">Archived Articles</h1>
 
 @if (Model.Any(a => a.IsArchived))

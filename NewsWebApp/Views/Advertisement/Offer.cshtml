@@ -1,0 +1,80 @@
+﻿@{
+    ViewData["Title"] = "Your Exclusive Offer";
+}
+
+<div class="fake-advert-page">
+
+    <div class="fake-advert-top">
+        <span class="fake-advert-company">
+            External Advertising Network Ltd.
+        </span>
+
+        <a href="/">← BACK TO NEWS</a>
+    </div>
+
+    <div class="fake-advert-banner">
+        <p class="fake-advert-eyebrow">YOU HAVE BEEN SELECTED</p>
+
+        <h1>AN INCREDIBLE OPPORTUNITY AWAITS YOU!</h1>
+
+        <p class="fake-advert-intro">
+            Our advanced advertising technology has identified you
+            as someone who deserves something truly extraordinary.
+        </p>
+
+        <div class="fake-advert-offer">
+            <h2>YOUR EXCLUSIVE PRIZE</h2>
+
+            <p>
+                One amazing opportunity. Absolutely no idea what it is.
+                But act now, because this message looks very urgent.
+            </p>
+
+            <button type="button"
+                    class="fake-advert-claim"
+                    id="claimPrizeButton">
+                CLAIM MY PRIZE!
+            </button>
+
+            <div id="fakeAdvertReveal" class="fake-advert-reveal" hidden>
+                <h2>🎉 CONGRATULATIONS!</h2>
+
+                <p>
+                    Your prize is a completely interrupted news-reading experience!
+                </p>
+
+                <p>
+                    Subscribe to CLICKBAIT News to remove these annoying
+                    adverts. Yes, you clicked an advert to discover how
+                    to get rid of adverts.
+                </p>
+
+                <p class="fake-advert-smallprint">
+                    External Advertising Network Ltd. accepts no
+                    responsibility for excessive excitement, lost time,
+                    or disappointment regarding imaginary prizes.
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <div class="fake-advert-footer">
+        <span>External Advertising Network Ltd.</span>
+        <span>Demonstration promotion. No real prize is offered.</span>
+    </div>
+
+    <div class="fake-advert-back-bottom">
+        <a href="/">BACK TO NEWS →</a>
+    </div>
+
+</div>
+
+@section Scripts {
+    <script>
+        document.getElementById("claimPrizeButton")
+            .addEventListener("click", function () {
+                document.getElementById("fakeAdvertReveal").hidden = false;
+                this.hidden = true;
+            });
+    </script>
+}

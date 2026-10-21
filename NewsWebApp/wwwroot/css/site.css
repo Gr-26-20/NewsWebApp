@@ -1203,7 +1203,7 @@ without changing the rest of the CSS.
     }
 
     .featured-story {
-        border-bottom: 3px solid var(--border);
+        border-bottom: 1px solid var(--border);
     }
 
     .image-placeholder {
@@ -1225,6 +1225,9 @@ without changing the rest of the CSS.
         font-family: Georgia, "Times New Roman", serif;
         font-size: clamp(2rem, 4vw, 3.5rem);
         line-height: .95;
+        /*Remove this property if you want to restore the old look of the font on the main article
+        */
+        font-weight: 900;
     }
 
     .featured-story p,

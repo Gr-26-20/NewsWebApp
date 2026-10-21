@@ -4,6 +4,9 @@
     var expires = Model?.CurrentPeriodEndUtc ?? Model?.CreatedAt?.AddDays(Model.DurationInDays);
     var daysLeft = expires.HasValue ? Math.Max(0, (int)Math.Ceiling((expires.Value - DateTime.UtcNow).TotalDays)) : 0;
 }
+
+<partial name="_NavbarPartial" />
+
 <div class="account-page">
     <partial name="/Views/Shared/_AccountHeader.cshtml" />
     <div class="account-grid">

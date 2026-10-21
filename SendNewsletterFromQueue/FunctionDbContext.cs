@@ -83,7 +83,6 @@ namespace SendNewsletterFromQueue
 
         public bool IsSubscribedToNewsletter { get; set; } 
 
-        //public int YearOfBirth { get; set; }
     }
 
 

@@ -244,13 +244,13 @@
 
 
         <!-- CATEGORY ROWS -->
-        <section class="category-section">
+        <section class="row justify-content-center align-content-center category-section">
 
 
             <!-- WORLD -->
-            <div class="category-column">
+            <div class="col-sm category-column">
 
-                <div class="section-title">
+                <div class="col-sm section-title">
                     <h2>
                         <a href="/Categories/World">WORLD</a>
                     </h2>
@@ -263,15 +263,15 @@
                 {
                     var article = Model.WorldArticles.First();
 
-                    <article class="compact-story">
+                    <article class="container-sm align-items-start compact-story">
 
                         @if (!string.IsNullOrWhiteSpace(article.ImageUrl))
                         {
-                            <div class="compact-image">
+                            <div class="row compact-image">
                                 <a href="/Articles/Details/@article.Id" class="article-image-link">
                                     <img src="@article.ImageUrl"
                                          alt="@article.Title"
-                                         class="article-image"
+                                         class="col sm article-image"
                                          data-focal-x="@article.ImageFocalPointX.ToString(System.Globalization.CultureInfo.InvariantCulture)"
                                          data-focal-y="@article.ImageFocalPointY.ToString(System.Globalization.CultureInfo.InvariantCulture)" />
                                 </a>
@@ -284,9 +284,9 @@
                             </div>
                         }
 
-                        <div>
+                        <div class="row-cols-1">
 
-                            <div class="story-category">
+                            <div class="col-sm story-category">
                                 @article.Category
                             </div>
 
@@ -313,9 +313,9 @@
 
 
             <!-- SWEDEN -->
-            <div class="category-column">
+            <div class="col-sm category-column">
 
-                <div class="section-title">
+                <div class="col-sm section-title">
                     <h2>
                         <a href="/Categories/Sweden">SWEDEN</a>
                     </h2>
@@ -328,15 +328,15 @@
                 {
                     var article = Model.SwedenArticles.First();
 
-                    <article class="compact-story">
+                    <article class="container-sm align-items-start compact-story">
 
                         @if (!string.IsNullOrWhiteSpace(article.ImageUrl))
                         {
-                            <div class="compact-image">
+                            <div class="row compact-image">
                                 <a href="/Articles/Details/@article.Id" class="article-image-link">
                                     <img src="@article.ImageUrl"
                                          alt="@article.Title"
-                                         class="article-image"
+                                         class="col-sm article-image"
                                          data-focal-x="@article.ImageFocalPointX.ToString(System.Globalization.CultureInfo.InvariantCulture)"
                                          data-focal-y="@article.ImageFocalPointY.ToString(System.Globalization.CultureInfo.InvariantCulture)" />
                                 </a>
@@ -378,9 +378,9 @@
 
 
             <!-- SPORTS -->
-            <div class="category-column">
+            <div class="col-sm category-column">
 
-                <div class="section-title">
+                <div class="col-sm section-title">
                     <h2>
                         <a href="/Categories/Sports">SPORTS</a>
                     </h2>
@@ -393,15 +393,15 @@
                 {
                     var article = Model.SportsArticles.First();
 
-                    <article class="compact-story">
+                    <article class="container-sm align-items-start compact-story">
 
                         @if (!string.IsNullOrWhiteSpace(article.ImageUrl))
                         { 
-                            <div class="compact-image">
+                            <div class="row compact-image">
                                 <a href="/Articles/Details/@article.Id" class="article-image-link">
                                     <img src="@article.ImageUrl"
                                          alt="@article.Title"
-                                         class="article-image"
+                                         class="col-sm article-image"
                                          data-focal-x="@article.ImageFocalPointX.ToString(System.Globalization.CultureInfo.InvariantCulture)"
                                          data-focal-y="@article.ImageFocalPointY.ToString(System.Globalization.CultureInfo.InvariantCulture)" />
                                 </a>

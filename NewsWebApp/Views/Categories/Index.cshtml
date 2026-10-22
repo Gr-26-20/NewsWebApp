@@ -58,7 +58,7 @@
         <div class="newsletter-category-link">
             @if (SignInManager.IsSignedIn(User))
             {  
-                <a id="subscribeButton" class="btn"  onclick="CheckSubscriptionStatus('@User.Identity?.Name')">Subscribe to newsletter</a>             
+                <a id="subscribeButton" class="btn btn-primary"  onclick="CheckSubscriptionStatus('@User.Identity?.Name')">Subscribe to newsletter</a>             
             }
             </div>
     }

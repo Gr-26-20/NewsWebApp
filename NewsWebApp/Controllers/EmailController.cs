@@ -26,15 +26,15 @@ namespace NewsWebApp.Controllers
         [HttpPost]
         public async Task<IActionResult> SendNewsLetter(NewsLetter newsLetter)
         {
-            var category = new List<SelectListItem>
-            {
-            new SelectListItem { Value = "News", Text = "News" },
-            new SelectListItem { Value = "World", Text = "World" },
-            new SelectListItem { Value = "Sweden", Text = "Sweden" },
-            new SelectListItem { Value = "Sports", Text = "Sports" },
-            new SelectListItem { Value = "Weather", Text = "Weather" },
-            };
-            ViewBag.Categories = new SelectList(category, "Value", "Text");
+            //var category = new List<SelectListItem>
+            //{
+            //new SelectListItem { Value = "News", Text = "News" },
+            //new SelectListItem { Value = "World", Text = "World" },
+            //new SelectListItem { Value = "Sweden", Text = "Sweden" },
+            //new SelectListItem { Value = "Sports", Text = "Sports" },
+            //new SelectListItem { Value = "Weather", Text = "Weather" },
+            //};
+            //ViewBag.Categories = new SelectList(category, "Value", "Text");
             if (ModelState.IsValid)
             {
                 
@@ -107,19 +107,20 @@ namespace NewsWebApp.Controllers
         [HttpPost]
         public async Task<IActionResult> CreateNewsLetter(NewsLetter newsLetter)
         {
-            var category = new List<SelectListItem>
-            {
-            new SelectListItem { Value = "News", Text = "News" },
-            new SelectListItem { Value = "World", Text = "World" },
-            new SelectListItem { Value = "Sweden", Text = "Sweden" },
-            new SelectListItem { Value = "Sports", Text = "Sports" },
-            new SelectListItem { Value = "Weather", Text = "Weather" },
-            };
-            ViewBag.Categories = new SelectList(category, "Value", "Text");
+            //var category = new List<SelectListItem>
+            //{
+            //new SelectListItem { Value = "News", Text = "News" },
+            //new SelectListItem { Value = "World", Text = "World" },
+            //new SelectListItem { Value = "Sweden", Text = "Sweden" },
+            //new SelectListItem { Value = "Sports", Text = "Sports" },
+            //new SelectListItem { Value = "Weather", Text = "Weather" },
+            //};
+            //ViewBag.Categories = new SelectList(category, "Value", "Text");
 
 
             if (ModelState.IsValid)
             {
+                
                 newsLetter.Body = $"<img style='height:100px; width:200px;' src='{newsLetter.Logo}' alt='logo'/></div></div><h1>{newsLetter.Subject}</h1><p>{newsLetter.Body}</p>";
                 if (!string.IsNullOrEmpty(newsLetter.imageUrl))
                 {

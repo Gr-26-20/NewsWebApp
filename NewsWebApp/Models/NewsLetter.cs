@@ -8,7 +8,9 @@ namespace NewsWebApp.Models
         public int Id { get; set; }
 
         public string? Logo { get; set; }
-        public Category? Category { get; set; }
+        //public Category? Category { get; set; }
+
+        public string? Category { get; set; }
         public string Email { get; set; } = string.Empty;
 
         

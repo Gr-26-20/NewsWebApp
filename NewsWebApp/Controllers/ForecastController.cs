@@ -2,6 +2,7 @@
 using NewsWebApp.Models;
 using NewsWebApp.Models.ViewModels;
 using NewsWebApp.Services;
+using Stripe;
 
 namespace NewsWebApp.Controllers
 {
@@ -11,6 +12,7 @@ namespace NewsWebApp.Controllers
         private readonly TableStorageService _tableStorageService;
         private readonly WeatherEditorialAiService _weatherEditorialAiService;
         private readonly WeatherImageAiService _weatherImageAiService;
+        private readonly IFileService _fileService;
 
 
 
@@ -18,12 +20,14 @@ namespace NewsWebApp.Controllers
         WeatherService weatherService,
         TableStorageService tableStorageService,
         WeatherEditorialAiService weatherEditorialAiService,
-        WeatherImageAiService weatherImageAiService)
+        WeatherImageAiService weatherImageAiService,
+        IFileService fileService)
         {
             _weatherService = weatherService;
             _tableStorageService = tableStorageService;
             _weatherEditorialAiService = weatherEditorialAiService;
             _weatherImageAiService = weatherImageAiService;
+            _fileService = fileService;
         }
 
         public async Task<IActionResult> Index()
@@ -110,6 +114,7 @@ namespace NewsWebApp.Controllers
         }
 
 
+
         [HttpGet]
         public async Task<IActionResult> TestWeatherImage(
             CancellationToken cancellationToken)
@@ -127,8 +132,16 @@ namespace NewsWebApp.Controllers
             var imageBytes = await _weatherImageAiService.GenerateImageAsync(
                 prompt, cancellationToken);
 
-            return File(imageBytes, "image/png");
+            var imageUrl = await _fileService.UploadWeatherImageAsync(
+                imageBytes,
+                DateOnly.FromDateTime(DateTime.Now),
+                cancellationToken);
+
+            return Content(
+                $"Weather image uploaded successfully:\n{imageUrl}",
+                "text/plain");
         }
+
 
 
 

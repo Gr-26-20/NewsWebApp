@@ -3238,7 +3238,62 @@ without changing the rest of the CSS.
             background: var(--advert-heading);
             color: var(--advert-button-text);
         }
+    /* Privacy policy uses the account pages' newspaper styling. */
+    .policy-content {
 
+        max-width: 850px;
+        margin: 0 auto 3rem;
+    }
 
+        .policy-content .section-title h1 {
 
+            font-family: Georgia, 'Times New Roman', serif;
+            font-weight: 900;
+            font-size: clamp(1.8rem, 5vw, 2.8rem);
+            margin: 0;
 
+        }
+
+        .policy-content section {
+
+            margin-top: 2rem;
+            padding-top: 1.5rem;
+            border-top: 1px solid currentColor;
+        }
+
+        .policy-content h2 {
+
+            font-family: Georgia, 'Times New Roman', serif;
+            font-size: 1.5rem;
+            font-weight: 700;
+        }
+
+        .policy-content p {
+
+            line-height: 1.75;
+        }
+
+        .policy-content a {
+            color: inherit;
+            text-underline-offset: .2em;
+        }
+
+            .policy-content a:hover {
+
+                color: #b91c1c;
+
+            }
+
+        .policy-content .account-notice p {
+            margin: .6rem 0;
+        }
+
+    .policy-actions {
+
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        gap: 1.25rem;
+        margin-top: 1.5rem;
+    }
+}

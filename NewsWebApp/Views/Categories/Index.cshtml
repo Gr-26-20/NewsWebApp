@@ -52,6 +52,26 @@
         </div>
     }
 
+    
+    @if (ViewBag.Category == "WEATHER" &&
+         !string.IsNullOrWhiteSpace(ViewBag.WeatherEditorial as string))
+    {
+        <section class="weather-editorial">
+            <div class="weather-editorial-label">
+                WEATHER EDITORIAL
+            </div>
+
+            <div class="weather-editorial-content">
+                @Html.Raw(
+                    System.Net.WebUtility.HtmlEncode(
+                        (string)ViewBag.WeatherEditorial
+                    ).Replace("\n", "<br />")
+                )
+            </div>
+        </section>
+    }
+
+
 
     @if (ViewBag.Category == "NEWSLETTER")
     {

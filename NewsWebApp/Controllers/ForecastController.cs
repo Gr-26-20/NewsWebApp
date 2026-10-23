@@ -9,13 +9,18 @@ namespace NewsWebApp.Controllers
     {
         private readonly WeatherService _weatherService;
         private readonly TableStorageService _tableStorageService;
+        private readonly WeatherEditorialAiService _weatherEditorialAiService;
+
+
 
         public ForecastController(
-            WeatherService weatherService,
-            TableStorageService tableStorageService)
+        WeatherService weatherService,
+        TableStorageService tableStorageService,
+        WeatherEditorialAiService weatherEditorialAiService)
         {
             _weatherService = weatherService;
             _tableStorageService = tableStorageService;
+            _weatherEditorialAiService = weatherEditorialAiService;
         }
 
         public async Task<IActionResult> Index()
@@ -85,5 +90,24 @@ namespace NewsWebApp.Controllers
                 return View(new List<TemperatureElectricityViewModel>());
             }
         }
+        public async Task<IActionResult> TestWeatherEditorial()
+        {
+            var municipality =
+                HttpContext.Session.GetString("SelectedWeatherMunicipality")
+                ?? "Gothenburg";
+
+            var forecast =
+                await _weatherService.Get24HourForecastAsync(municipality);
+
+            var editorial =
+                await _weatherEditorialAiService.GenerateEditorialAsync(
+                    municipality, forecast);
+
+            return Content(editorial, "text/plain; charset=utf-8");
+        }
+
+        
     }
+   
+
 }

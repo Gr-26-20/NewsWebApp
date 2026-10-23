@@ -70,6 +70,7 @@ namespace NewsWebApp
             builder.Services.AddHttpClient<WeatherService>(); // for making HTTP requests
             builder.Services.AddHttpClient<SmhiWeatherService>();
             builder.Services.AddHttpClient<WeatherEditorialAiService>();
+            builder.Services.AddHttpClient<WeatherImageAiService>();
             builder.Services.AddScoped<TableStorageService>();
 
             //Add session support

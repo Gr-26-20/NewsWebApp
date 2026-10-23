@@ -10,17 +10,20 @@ namespace NewsWebApp.Controllers
         private readonly WeatherService _weatherService;
         private readonly TableStorageService _tableStorageService;
         private readonly WeatherEditorialAiService _weatherEditorialAiService;
+        private readonly WeatherImageAiService _weatherImageAiService;
 
 
 
         public ForecastController(
         WeatherService weatherService,
         TableStorageService tableStorageService,
-        WeatherEditorialAiService weatherEditorialAiService)
+        WeatherEditorialAiService weatherEditorialAiService,
+        WeatherImageAiService weatherImageAiService)
         {
             _weatherService = weatherService;
             _tableStorageService = tableStorageService;
             _weatherEditorialAiService = weatherEditorialAiService;
+            _weatherImageAiService = weatherImageAiService;
         }
 
         public async Task<IActionResult> Index()
@@ -106,8 +109,30 @@ namespace NewsWebApp.Controllers
             return Content(editorial, "text/plain; charset=utf-8");
         }
 
-        
+
+        [HttpGet]
+        public async Task<IActionResult> TestWeatherImage(
+            CancellationToken cancellationToken)
+        {
+            var prompt = """
+        Create a realistic editorial weather photograph for a Swedish
+        news website. Show a generic Swedish coastal town on a cloudy day,
+        with natural colours, believable weather conditions, realistic
+        photography, and no text, logos, watermarks, or graphic overlays.
+        Landscape composition, 3:2 aspect ratio.
+        This is an illustrative image, not a documentary photograph of
+        a specific place.
+        """;
+
+            var imageBytes = await _weatherImageAiService.GenerateImageAsync(
+                prompt, cancellationToken);
+
+            return File(imageBytes, "image/png");
+        }
+
+
+
     }
-   
+
 
 }

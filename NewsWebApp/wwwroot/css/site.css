@@ -3242,6 +3242,180 @@ without changing the rest of the CSS.
             background: var(--advert-heading);
             color: var(--advert-button-text);
         }
+    /* -------------------------- */
+    /* Weather page layout */
+
+    .weather-page {
+        background: #fff;
+        padding: 1.5rem;
+    }
+
+        .weather-page .weather-image-container {
+            width: 100%;
+            margin-bottom: 1.25rem;
+        }
+
+        .weather-page .weather-editorial-image {
+            display: block;
+            width: 100%;
+            height: auto;
+            object-fit: cover;
+        }
+
+        .weather-page .weather-content-grid {
+            display: grid;
+            grid-template-columns: minmax(0, 1.6fr) minmax(0, 1fr);
+            gap: 1.5rem;
+            align-items: start;
+        }
+        /* -------------------------- */
+        /* Weather editorial */
+
+        .weather-page .weather-editorial-main {
+            min-width: 0;
+            padding: 0;
+            background: transparent;
+            border: none;
+            color: #171717;
+        }
+
+
+        .weather-page .weather-editorial-main h1,
+        .weather-page .weather-editorial-headline {
+            font-family: Georgia, serif;
+            font-size: clamp(2rem, 3vw, 2.75rem);
+            font-weight: 700;
+            line-height: 1.1;
+            margin: 0 0 1rem;
+            padding: 0;
+            border: none;
+        }
+
+        .weather-page .weather-editorial-date {
+            color: #666;
+            font-family: Arial, sans-serif;
+            font-size: 0.8rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
+            margin: 0 0 1.5rem;
+            padding: 0;
+            border: none;
+        }
+
+        .weather-page .weather-editorial-introduction {
+            font-family: Arial, sans-serif;
+            font-size: 1.2rem;
+            font-weight: 600;
+            line-height: 1.55;
+            margin: 0 0 1.25rem;
+        }
+
+        .weather-page .weather-editorial-text {
+            font-family: Arial, sans-serif;
+            font-size: 1rem;
+            line-height: 1.75;
+            color: #252525;
+            overflow-wrap: anywhere;
+        }
+        /* -------------------------- */
+        /* Regional weather overview */
+
+        .weather-page .regional-weather {
+            margin-top: 0;
+            min-width: 0;
+            padding: 1rem 1.1rem;
+            background: #e9e9e6;
+            border: 1px solid #d5d5d0;
+        }
+
+            .weather-page .regional-weather .section-title {
+                margin-bottom: 0.75rem;
+            }
+
+                .weather-page .regional-weather .section-title h2 {
+                    font-size: 1.1rem;
+                }
+
+        .weather-page .regional-weather-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 0;
+        }
+
+        .weather-page .regional-weather-item {
+            display: grid;
+            grid-template-columns: 1fr auto;
+            align-items: center;
+            column-gap: 0.5rem;
+            padding: 0.65rem 0;
+            border-right: none;
+            border-bottom: none;
+        }
+
+
+
+            .weather-page .regional-weather-item h3 {
+                grid-column: 1;
+                margin: 0 0 0.2rem;
+                font-size: 0.9rem;
+                font-weight: 700;
+            }
+
+            .weather-page .regional-weather-item p {
+                grid-column: 1;
+                margin: 0.15rem 0;
+                font-size: 0.85rem;
+            }
+
+            .weather-page .regional-weather-item img {
+                grid-column: 2;
+                grid-row: 1 / span 3;
+                width: 38px;
+                height: 38px;
+                object-fit: contain;
+            }
+
+            .weather-page .regional-weather-item strong {
+                grid-column: 1;
+                grid-row: 2;
+                font-size: 1.25rem;
+            }
+
+        .weather-page .regional-weather .section-title {
+            border: none;
+        }
+
+            .weather-page .regional-weather .section-title h2 {
+                border: none;
+            }
+
+            .weather-page .regional-weather .section-title::before,
+            .weather-page .regional-weather .section-title::after {
+                display: none;
+            }
+    /* -------------------------- */
+    /* Weather responsive layout */
+
+    @media (max-width: 768px) {
+        .weather-page .weather-content-grid {
+            grid-template-columns: 1fr;
+            gap: 1.25rem;
+        }
+    }
+
+    @media (max-width: 600px) {
+        .weather-page .weather-editorial-main {
+            padding: 1rem;
+        }
+
+        .weather-page .regional-weather {
+            padding: 0.85rem 1rem;
+        }
+    }
+
+
+    
 
 
 

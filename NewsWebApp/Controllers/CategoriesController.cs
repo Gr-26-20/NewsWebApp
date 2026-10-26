@@ -1,9 +1,8 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.Build.Framework;
+using Microsoft.EntityFrameworkCore;
 using NewsWebApp.Models;
 using NewsWebApp.Services;
-using NewsWebApp.Services;
+using NewsWebApp.Data;
 
 namespace NewsWebApp.Controllers
 {
@@ -13,18 +12,31 @@ namespace NewsWebApp.Controllers
         private readonly WeatherService _weatherService;
         private readonly WeatherEditorialAiService _weatherEditorialAiService;
         private readonly ILogger<CategoriesController> _logger;
+        private readonly ApplicationDbContext _context;    
+        private readonly WeatherImageAiService _weatherImageAiService;
+        private readonly SmhiWeatherWarningService _smhiWeatherWarningService;
+        private readonly IFileService _fileService;
 
         public CategoriesController(
             IArticleService articleService,
             WeatherService weatherService,
             WeatherEditorialAiService weatherEditorialAiService,
-            ILogger<CategoriesController> logger)
+            ILogger<CategoriesController> logger,
+            ApplicationDbContext context,
+            WeatherImageAiService weatherImageAiService,
+            SmhiWeatherWarningService smhiWeatherWarningService,
+            IFileService fileService)
         {
             _articleService = articleService;
             _weatherService = weatherService;
             _weatherEditorialAiService = weatherEditorialAiService;
             _logger = logger;
+            _context = context;
+            _weatherImageAiService = weatherImageAiService;
+            _smhiWeatherWarningService = smhiWeatherWarningService;
+            _fileService = fileService;
         }
+
 
         [Route("Categories/{category?}")]
         public async Task<IActionResult> Index(string? category)
@@ -36,41 +48,36 @@ namespace NewsWebApp.Controllers
             var articles = await _articleService
                 .GetArticlesByCategoryAsync(selectedCategory);
 
+
             if (selectedCategory.Equals(
-                "Weather",
-                StringComparison.OrdinalIgnoreCase))
+                "Weather", StringComparison.OrdinalIgnoreCase))
             {
                 var municipality =
                     HttpContext.Session.GetString("SelectedWeatherMunicipality")
                     ?? "Gothenburg";
 
-                var forecast =
-                    await _weatherService.Get24HourForecastAsync(municipality);
+                var regionalForecasts = await Task.WhenAll(
+                    _weatherService.Get24HourForecastAsync("Gothenburg"),
+                    _weatherService.Get24HourForecastAsync("Stockholm"),
+                    _weatherService.Get24HourForecastAsync("Umea")
+                );
+                var weatherArticle = await _context.WeatherArticles
+                    .Where(a => a.City == "Sweden")
+                    .OrderByDescending(a => a.GeneratedAt)
+                    .FirstOrDefaultAsync(HttpContext.RequestAborted);
 
 
-                try
-                {
-                    var editorial =
-                        await _weatherEditorialAiService.GenerateEditorialAsync(
-                            municipality, forecast);
+                ViewBag.WeatherArticle = weatherArticle;
+                ViewBag.WeatherForecast = await _weatherService
+                    .Get24HourForecastAsync(municipality);
 
-                    ViewBag.WeatherEditorial = editorial;
-                }
-                catch (OperationCanceledException)
-                {
-                    throw;
-                }
-                catch (Exception ex)
-                {
-                    _logger.LogWarning(
-                        ex,
-                        "Could not generate weather editorial for {Municipality}.",
-                        municipality);
+                ViewBag.GotalandForecast = regionalForecasts[0];
+                ViewBag.SvealandForecast = regionalForecasts[1];
+                ViewBag.NorrlandForecast = regionalForecasts[2];
 
-                    // The Weather category can still display its regular articles.
-                }
-
+                return View("Weather", articles);
             }
+
 
             return View(articles);
         }

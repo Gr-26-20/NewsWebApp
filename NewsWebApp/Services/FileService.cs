@@ -89,7 +89,8 @@ namespace NewsWebApp.Services
             await containerClient.CreateIfNotExistsAsync(
                 cancellationToken: cancellationToken);
 
-            string blobName = $"weather/{date:yyyy-MM-dd}.png";
+            string blobName =
+                $"weather/{date:yyyy-MM-dd}-{Guid.NewGuid():N}.png";
 
             var blobClient = containerClient.GetBlobClient(blobName);
 

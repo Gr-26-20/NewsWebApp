@@ -4,6 +4,8 @@ using Microsoft.Extensions.Configuration;
 using System.Net.Http.Headers;
 using System.Net.Http.Json;
 using System.Text.Json;
+using SixLabors.ImageSharp;
+using SixLabors.ImageSharp.Processing;
 
 namespace NewsWebApp.Services
 {
@@ -83,7 +85,57 @@ namespace NewsWebApp.Services
                     "The image API returned no image data.");
             }
 
-            return Convert.FromBase64String(base64);
+            var imageBytes = Convert.FromBase64String(base64);
+
+            return await CropToPanoramaAsync(imageBytes);
+        }
+
+        private static async Task<byte[]> CropToPanoramaAsync(
+        byte[] imageBytes)
+        {
+            const int targetWidth = 1500;
+            const int targetHeight = 417;
+
+            using var input = new MemoryStream(imageBytes);
+            using var image = await Image.LoadAsync(input);
+
+            double targetRatio = (double)targetWidth / targetHeight;
+            double sourceRatio = (double)image.Width / image.Height;
+
+            Rectangle crop;
+
+            if (sourceRatio > targetRatio)
+            {
+                // Image is too wide. Crop the sides.
+                int cropWidth = (int)Math.Round(
+                    image.Height * targetRatio);
+
+                int x = (image.Width - cropWidth) / 2;
+
+                crop = new Rectangle(
+                    x, 0, cropWidth, image.Height);
+            }
+            else
+            {
+                // Image is too tall. Crop the top and bottom.
+                int cropHeight = (int)Math.Round(
+                    image.Width / targetRatio);
+
+                int y = (image.Height - cropHeight) / 2;
+
+                crop = new Rectangle(
+                    0, y, image.Width, cropHeight);
+            }
+
+            image.Mutate(operation => operation
+                .Crop(crop)
+                .Resize(targetWidth, targetHeight));
+
+            await using var output = new MemoryStream();
+
+            await image.SaveAsPngAsync(output);
+
+            return output.ToArray();
         }
     }
 }

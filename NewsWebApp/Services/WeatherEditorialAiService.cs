@@ -45,11 +45,27 @@ namespace NewsWebApp.Services
         private sealed record CachedEditorial(
             string Editorial,
             string ForecastFingerprint,
+            string WarningFingerprint,
             DateTimeOffset GeneratedAtUtc);
+
+
+        public Task<string> GenerateEditorialAsync(
+            string municipality,
+            List<WeatherForecast> forecast,
+            CancellationToken cancellationToken = default)
+        {
+            return GenerateEditorialAsync(
+                municipality,
+                forecast,
+                null,
+                cancellationToken);
+        }
+
 
         public async Task<string> GenerateEditorialAsync(
             string municipality,
             List<WeatherForecast> forecast,
+            List<SmhiWeatherWarning>? warnings,
             CancellationToken cancellationToken = default)
         {
             if (forecast == null || forecast.Count == 0)
@@ -61,7 +77,8 @@ namespace NewsWebApp.Services
             var cacheKey =
                 $"WeatherEditorial:{municipality.Trim().ToUpperInvariant()}";
 
-            var fingerprint = CreateForecastFingerprint(forecast);
+            var forecastFingerprint = CreateForecastFingerprint(forecast);
+            var warningFingerprint = CreateWarningFingerprint(warnings);
 
             var generationLock = _generationLocks.GetOrAdd(
                 cacheKey,
@@ -77,15 +94,23 @@ namespace NewsWebApp.Services
 
                 if (cached != null)
                 {
-                    // Forecast has not changed: reuse the existing editorial.
-                    if (cached.ForecastFingerprint == fingerprint)
+                    var forecastUnchanged =
+                        cached.ForecastFingerprint == forecastFingerprint;
+
+                    var warningsUnchanged =
+                        cached.WarningFingerprint == warningFingerprint;
+
+                    // Reuse the editorial when both data sets are unchanged.
+                    if (forecastUnchanged && warningsUnchanged)
                     {
                         return cached.Editorial;
                     }
 
-                    // Forecast changed, but avoid another AI request too soon.
-                    if (DateTimeOffset.UtcNow - cached.GeneratedAtUtc
-                        < MinimumGenerationInterval)
+                    // Warning changes must trigger regeneration immediately.
+                    // Forecast-only changes still respect the one-hour limit.
+                    if (warningsUnchanged &&
+                        DateTimeOffset.UtcNow - cached.GeneratedAtUtc
+                            < MinimumGenerationInterval)
                     {
                         return cached.Editorial;
                     }
@@ -96,11 +121,13 @@ namespace NewsWebApp.Services
                     var editorial = await GenerateEditorialUncachedAsync(
                         municipality,
                         forecast,
+                        warnings,
                         cancellationToken);
 
                     var newCachedEditorial = new CachedEditorial(
                         editorial,
-                        fingerprint,
+                        forecastFingerprint,
+                        warningFingerprint,
                         DateTimeOffset.UtcNow);
 
                     _memoryCache.Set(
@@ -114,10 +141,12 @@ namespace NewsWebApp.Services
                 {
                     throw;
                 }
-
-                catch (Exception) when (cached != null)
+                catch (Exception) when (
+                    cached != null &&
+                    cached.WarningFingerprint == warningFingerprint)
                 {
-                    // If Foundry fails, retain the previous successful editorial.
+                    // Keep the previous editorial only when the warning data
+                    // has not changed.
                     return cached.Editorial;
                 }
             }
@@ -126,6 +155,8 @@ namespace NewsWebApp.Services
                 generationLock.Release();
             }
         }
+
+
 
         private static string CreateForecastFingerprint(
             List<WeatherForecast> forecast)
@@ -150,11 +181,57 @@ namespace NewsWebApp.Services
         }
 
 
+        private static string CreateWarningFingerprint(
+            List<SmhiWeatherWarning>? warnings)
+        {
+            var snapshot = (warnings ?? new List<SmhiWeatherWarning>())
+                .Select(warning => new
+                {
+                    warning.Id,
+                    Event = warning.Event?.En,
+                    Classification = warning.MhoClassification?.En,
+                    Areas = warning.WarningAreas
+                        .Select(area => new
+                        {
+                            area.Id,
+                            AreaName = area.AreaName?.En,
+                            WarningLevel = area.WarningLevel?.En,
+                            EventDescription = area.EventDescription?.En,
+                            area.ApproximateStart,
+                            area.ApproximateEnd,
+                            area.Published,
+                            AffectedAreas = area.AffectedAreas
+                                .Select(affectedArea => affectedArea.En)
+                                .OrderBy(name => name)
+                                .ToArray(),
+                            Descriptions = area.Descriptions
+                                .Select(description => new
+                                {
+                                    Title = description.Title?.En,
+                                    Text = description.Text?.En
+                                })
+                                .ToArray()
+                        })
+                        .OrderBy(area => area.Id)
+                        .ToArray()
+                })
+                .OrderBy(warning => warning.Id)
+                .ToArray();
+
+            var json = JsonSerializer.Serialize(snapshot);
+            var hash = SHA256.HashData(Encoding.UTF8.GetBytes(json));
+
+            return Convert.ToHexString(hash);
+        }
+
+
+
         private async Task<string> GenerateEditorialUncachedAsync(
             string municipality,
             List<WeatherForecast> forecast,
+            List<SmhiWeatherWarning>? warnings,
             CancellationToken cancellationToken = default)
-        {
+            {
             if (forecast == null || forecast.Count == 0)
             {
                 throw new InvalidOperationException(
@@ -191,6 +268,37 @@ namespace NewsWebApp.Services
                 WindSpeed = $"{item.WindSpeed} m/s"
             });
 
+            var warningData = (warnings ?? new List<SmhiWeatherWarning>())
+                .Select(warning => new
+                {
+                    warning.Id,
+                    Event = warning.Event?.En,
+                    Classification = warning.MhoClassification?.En,
+                    Areas = warning.WarningAreas.Select(area => new
+                    {
+                        AreaName = area.AreaName?.En,
+                        WarningLevel = area.WarningLevel?.En,
+                        EventDescription = area.EventDescription?.En,
+                        area.ApproximateStart,
+                        area.ApproximateEnd,
+                        AffectedAreas = area.AffectedAreas
+                            .Select(affectedArea => affectedArea.En)
+                            .ToList(),
+                        Descriptions = area.Descriptions.Select(description => new
+                        {
+                            Title = description.Title?.En,
+                            Text = description.Text?.En
+                        }).ToList()
+                    }).ToList()
+                });
+
+            var warningsJson = JsonSerializer.Serialize(
+                warningData,
+                new JsonSerializerOptions
+                {
+                    WriteIndented = true
+                });
+
             var forecastJson = JsonSerializer.Serialize(
                 weatherData,
                 new JsonSerializerOptions
@@ -211,6 +319,19 @@ namespace NewsWebApp.Services
 
                 Forecast data:
                 {forecastJson}
+
+                Official SMHI weather warnings:
+                {warningsJson}
+
+                Editorial requirements:
+                - Base the forecast discussion on the supplied forecast data.
+                - Use the SMHI warnings as additional official information.
+                - Preserve warning severity, timing, and affected geographical areas.
+                - Do not imply that a warning applies to a wider area than the data specifies.
+                - Do not invent warnings or warning details.
+                - If the warnings array is empty, do not invent any active warnings.
+                - Integrate relevant warnings naturally into the editorial rather than
+                  copying the warning data verbatim.
                 """;
 
             var accessToken = await _credential.GetTokenAsync(
@@ -232,6 +353,12 @@ namespace NewsWebApp.Services
                 input,
                 stream = false
             });
+
+            var requestBody = await request.Content.ReadAsStringAsync(
+                cancellationToken);
+
+            System.Diagnostics.Debug.WriteLine("FOUNDRY REQUEST BODY:");
+            System.Diagnostics.Debug.WriteLine(requestBody);
 
             using var response = await _httpClient.SendAsync(
                 request,

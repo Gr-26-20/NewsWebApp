@@ -73,6 +73,7 @@ namespace NewsWebApp
             builder.Services.AddHttpClient<WeatherEditorialAiService>();
             builder.Services.AddHttpClient<WeatherImageAiService>();
             builder.Services.AddScoped<TableStorageService>();
+            builder.Services.AddScoped<WeatherArticleGenerationService>();
 
             //Add session support
             builder.Services.AddSession();

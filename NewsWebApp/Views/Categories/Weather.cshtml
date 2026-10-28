@@ -122,54 +122,71 @@
             }
         </article>
 
+        
         <section class="regional-weather">
             <div class="section-title">
-                <h2>WEATHER AT A GLANCE</h2>
+                <h2>The weather at a glance</h2>
             </div>
 
             <div class="regional-weather-grid">
 
                 @if (gotaland?.Any() == true)
                 {
-                    var forecast = gotaland[0];
+                    var minTemp = gotaland.Min(f => f.TemperatureC);
+                    var maxTemp = gotaland.Max(f => f.TemperatureC);
+                    var summary = gotaland[0].Summary;
 
                     <div class="regional-weather-item">
-                        <h3>GÖTALAND</h3>
-                        <p>@forecast.City</p>
-                        
-                        <strong>@forecast.TemperatureC°C</strong>
-                        <p>@forecast.Summary</p>
+                        <h3>Götaland</h3>
+                        <ul>
+                            <li>@summary</li>
+                            <li>Temperatures around @minTemp–@maxTemp°C</li>
+                            <li>Wind conditions vary across the region</li>
+                        </ul>
                     </div>
                 }
 
                 @if (svealand?.Any() == true)
                 {
-                    var forecast = svealand[0];
+                    var minTemp = svealand.Min(f => f.TemperatureC);
+                    var maxTemp = svealand.Max(f => f.TemperatureC);
+                    var summary = svealand[0].Summary;
 
                     <div class="regional-weather-item">
-                        <h3>SVEALAND</h3>
-                        <p>@forecast.City</p>
-                        
-                        <strong>@forecast.TemperatureC°C</strong>
-                        <p>@forecast.Summary</p>
+                        <h3>Svealand</h3>
+                        <ul>
+                            <li>@summary</li>
+                            <li>Temperatures around @minTemp–@maxTemp°C</li>
+                            <li>Wind conditions vary across the region</li>
+                        </ul>
                     </div>
                 }
 
                 @if (norrland?.Any() == true)
                 {
-                    var forecast = norrland[0];
+                    var minTemp = norrland.Min(f => f.TemperatureC);
+                    var maxTemp = norrland.Max(f => f.TemperatureC);
+                    var summary = norrland[0].Summary;
 
                     <div class="regional-weather-item">
-                        <h3>NORRLAND</h3>
-                        <p>@forecast.City</p>
-                        
-                        <strong>@forecast.TemperatureC°C</strong>
-                        <p>@forecast.Summary</p>
+                        <h3>Norrland</h3>
+                        <ul>
+                            <li>@summary</li>
+                            <li>Temperatures around @minTemp–@maxTemp°C</li>
+                            <li>Conditions may vary across the region</li>
+                        </ul>
                     </div>
                 }
 
             </div>
+
+            <div class="regional-weather-footer">
+                <a asp-controller="Forecast" asp-action="Index">
+                    FULL FORECAST <span class="clickbait-arrow">→</span>
+                </a>
+            </div>
         </section>
+
 
     </section>
 

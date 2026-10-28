@@ -104,8 +104,22 @@ public class WeatherArticleGenerationService
             Focus on the single most newsworthy weather event described
             in the image brief.
 
-            Use natural colours, realistic photographic lighting and a
-            believable Swedish landscape appropriate to the weather event.
+            Photographic style:
+            The image must look like an ordinary, unedited snapshot taken by
+            a person standing at ground level and holding an older iPhone.
+
+            Use a human eye-level viewpoint, with slightly imperfect
+            framing and ordinary smartphone image quality. Allow mildly uneven
+            exposure, limited dynamic range, subtle image noise and slightly
+            soft details. Use natural, unprocessed colours and realistic
+            lighting.
+
+            Avoid professional landscape photography, cinematic composition,
+            dramatic colour grading, HDR effects, glossy travel-magazine
+            aesthetics, and artificial-looking perfection.
+
+            Do not use drone, aerial, bird's-eye or helicopter viewpoints.
+            The camera must appear to be held by a person standing on the ground.
 
             Compose a wide panoramic photograph intended for a final aspect
             ratio of 1500x417 pixels. Keep the horizon and important visual

@@ -29,4 +29,8 @@ if (!string.IsNullOrEmpty(Environment.GetEnvironmentVariable("APPLICATIONINSIGHT
         .UseAzureMonitorExporter();
 }
 
+// Tests replace the SMTP sender with a recorder, so they never send real email.
+builder.Services.AddTransient<INewsletterEmailSender, SmtpNewsletterEmailSender>();
+builder.Services.AddTransient<NewsletterDelivery>();
+
 builder.Build().Run();

@@ -1,175 +1,39 @@
-﻿using Azure.Storage.Queues;
+using Azure.Storage.Queues;
 using Microsoft.Azure.Functions.Worker;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
-using System;
-using System.Collections.Generic;
-using System.Net.Mail;
-using System.Text;
 using System.Text.Json;
 
-namespace SendNewsletterFromQueue
+namespace SendNewsletterFromQueue;
+
+public class SendNewsletter(ILogger<SendNewsletter> logger,
+    IDbContextFactory<FuncDbContext> dbContextFactory, IConfiguration configuration)
 {
-    public class SendNewsletter
+    [Function("SendNewsletter")]
+    public async Task RunAsync(
+        // Keep Saturday's schedule, but never resend just because the host restarts.
+        [TimerTrigger("0 0 7 * * 6", RunOnStartup = false)] TimerInfo timer,
+        CancellationToken cancellationToken)
     {
-        private readonly ILogger<SendNewsletter> _logger;
-        private readonly IDbContextFactory<FuncDbContext> _dbContextFactory;
-        private readonly IConfiguration _configuration;
-
-        public SendNewsletter(
-            ILogger<SendNewsletter> logger,
-            IDbContextFactory<FuncDbContext> dbContextFactory,
-            IConfiguration configuration)
+        var storage = configuration["AzureWebJobsStorage"]
+            ?? throw new InvalidOperationException("Missing AzureWebJobsStorage setting.");
+        var queueName = configuration["QueueName"];
+        if (string.IsNullOrWhiteSpace(queueName)) throw new InvalidOperationException("Missing QueueName setting.");
+        var queue = new QueueClient(storage, queueName,
+            new QueueClientOptions { MessageEncoding = QueueMessageEncoding.Base64 });
+        await queue.CreateIfNotExistsAsync(cancellationToken: cancellationToken);
+        await using var db = await dbContextFactory.CreateDbContextAsync(cancellationToken);
+        var users = await db.AspNetUsers.AsNoTracking().Where(u => u.Email != null && u.Email != ""
+            && (u.IsSubscribedToNewsletter || u.IsSubscribedToNewsNewsletter || u.IsSubscribedToWorldNewsletter
+                || u.IsSubscribedToSwedenNewsletter || u.IsSubscribedToWeatherNewsletter || u.IsSubscribedToSportsNewsletter))
+            .ToListAsync(cancellationToken);
+        int count = 0;
+        foreach (var request in NewsletterPreferences.BuildRequests(users))
         {
-            _logger = logger;
-            _dbContextFactory = dbContextFactory;
-            _configuration = configuration;
+            await queue.SendMessageAsync(JsonSerializer.Serialize(request), cancellationToken);
+            count++;
         }
-
-        [Function("SendNewsletter")]
-        public async Task RunAsync(
-            [TimerTrigger("0 0 7  * * 6", RunOnStartup = true)] TimerInfo timer,
-            CancellationToken cancellationToken)
-        {
-            string storageConnectionString = GetRequiredSetting("AzureWebJobsStorage");
-            string queueName = _configuration["QueueName"] ?? "";
-
-            var queueClient = new QueueClient(storageConnectionString, queueName,
-                new QueueClientOptions { MessageEncoding = QueueMessageEncoding.Base64 });
-            await queueClient.CreateIfNotExistsAsync(cancellationToken: cancellationToken);
-
-            
-
-            // The context is disposed automatically when this function invocation completes.
-            await using var dbContext =
-                await _dbContextFactory.CreateDbContextAsync(cancellationToken);
-
-            List<string?> emailAddresses = await dbContext.AspNetUsers
-                .AsNoTracking()
-                .Where(user =>
-                    user.IsSubscribedToNewsletter &&
-                    user.Email != null &&
-                    user.Email != string.Empty)
-                .Select(user => user.Email)
-                .ToListAsync(cancellationToken);
-
-            foreach (string emailAddress in emailAddresses)
-            {
-                string message = JsonSerializer.Serialize(new
-                {
-                    EmailAddress = emailAddress
-                });
-
-                await queueClient.SendMessageAsync(message, cancellationToken);
-            }
-
-            List<string?> emailAddressesForNewsCategory = await dbContext.AspNetUsers
-                .AsNoTracking()
-                .Where(user => user.Email != null
-                && user.Email != string.Empty
-                && user.IsSubscribedToNewsNewsletter)
-                .Select(user => user.Email)
-                .ToListAsync(cancellationToken);
-
-            foreach(string emailAddress in emailAddressesForNewsCategory)
-            {
-                string message = JsonSerializer.Serialize(new
-                {
-                    EmailAddress = emailAddress
-                });
-
-                await queueClient.SendMessageAsync(message, cancellationToken);
-            }
-
-            List<string?> emailAddressesForWorldCategory = await dbContext.AspNetUsers
-                .AsNoTracking()
-                .Where(user => user.Email != null
-                && user.Email != string.Empty
-                && user.IsSubscribedToWorldNewsletter)
-                .Select(user => user.Email)
-                .ToListAsync(cancellationToken);
-            foreach (string emailAddress in emailAddressesForWorldCategory)
-            {
-                string message = JsonSerializer.Serialize(new
-                {
-                    EmailAddress = emailAddress
-                });
-
-                await queueClient.SendMessageAsync(message, cancellationToken);
-            }
-
-            List<string?> emailAddressesForSwedenCategory = await dbContext.AspNetUsers
-                .AsNoTracking()
-                .Where(user => user.Email != null
-                && user.Email != string.Empty
-                && user.IsSubscribedToSwedenNewsletter)
-                .Select(user => user.Email)
-                .ToListAsync(cancellationToken);
-            foreach (string emailAddress in emailAddressesForSwedenCategory)
-            {
-                string message = JsonSerializer.Serialize(new
-                {
-                    EmailAddress = emailAddress
-                });
-
-                await queueClient.SendMessageAsync(message, cancellationToken);
-            }
-
-
-            List<string?> emailAddressesForWeatherCategory = await dbContext.AspNetUsers
-                .AsNoTracking()
-                .Where(user => user.Email != null
-                && user.Email != string.Empty
-                && user.IsSubscribedToWeatherNewsletter)
-                .Select(user => user.Email)
-                .ToListAsync(cancellationToken);
-            foreach (string emailAddress in emailAddressesForWeatherCategory)
-            {
-                string message = JsonSerializer.Serialize(new
-                {
-                    EmailAddress = emailAddress
-                });
-
-                await queueClient.SendMessageAsync(message, cancellationToken);
-            }
-
-            List<string> emailAddressesForSportsCategory = await dbContext.AspNetUsers
-                .AsNoTracking()
-                .Where(user => user.Email != null
-                && user.Email != string.Empty
-                && user.IsSubscribedToSportsNewsletter)
-                .Select(user => user.Email!)
-                .ToListAsync(cancellationToken);
-            foreach (string emailAddress in emailAddressesForSportsCategory)
-            {
-                string message = JsonSerializer.Serialize(new
-                {
-                    EmailAddress = emailAddress
-                });
-
-                await queueClient.SendMessageAsync(message, cancellationToken);
-            }
-
-            _logger.LogInformation(
-                "Queued {UserCount} user email addresses in {QueueName}.",
-                emailAddresses.Count,
-                queueName);
-
-
-            if (timer.ScheduleStatus is not null)
-            {
-                _logger.LogInformation(
-                    "Next timer schedule at: {NextSchedule}",
-                    timer.ScheduleStatus.Next);
-            }
-        }
-
-        private string GetRequiredSetting(string settingName)
-        {
-            return _configuration[settingName]
-                ?? throw new InvalidOperationException(
-                    $"The '{settingName}' application setting is not configured.");
-        }
+        logger.LogInformation("Queued {Count} newsletter deliveries in {QueueName}.", count, queueName);
     }
 }

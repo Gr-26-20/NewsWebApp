@@ -402,8 +402,8 @@ namespace NewsWebApp.Data.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int?>("CategoryId")
-                        .HasColumnType("int");
+                    b.Property<string>("Category")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Description")
                         .IsRequired()
@@ -460,8 +460,6 @@ namespace NewsWebApp.Data.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("CategoryId");
 
                     b.ToTable("NewsLetters");
                 });
@@ -657,15 +655,6 @@ namespace NewsWebApp.Data.Migrations
                     b.HasOne("NewsWebApp.Models.Articles", null)
                         .WithMany("Feedback")
                         .HasForeignKey("ArticlesId");
-                });
-
-            modelBuilder.Entity("NewsWebApp.Models.NewsLetter", b =>
-                {
-                    b.HasOne("NewsWebApp.Models.Category", "Category")
-                        .WithMany()
-                        .HasForeignKey("CategoryId");
-
-                    b.Navigation("Category");
                 });
 
             modelBuilder.Entity("NewsWebApp.Models.Subscriptions", b =>

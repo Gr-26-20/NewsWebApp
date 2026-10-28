@@ -1,6 +1,37 @@
 ﻿@{
     ViewData["Title"] = "Privacy Policy";
 }
-<h1>@ViewData["Title"]</h1>
-
-<p>Use this page to detail your site's privacy policy.</p>
+<div class="policy-page account-page">
+    <header class="account-masthead">
+        <div class="account-edition"><span>YOUR DATA / YOUR CHOICE</span><a asp-controller="Home" asp-action="Index">BACK TO NEWS →</a></div>
+        <a class="account-wordmark" asp-controller="Home" asp-action="Index">CLICKBAIT News</a>
+    </header>
+    <article class="policy-content">
+        <div class="section-title"><h1>PRIVACY POLICY</h1></div>
+        <p class="account-intro">We are committed to handling your personal data in accordance with the General Data Protection Regulation (GDPR), including transparency, data minimisation and respect for your privacy rights.</p>
+        <section aria-labelledby="policy-account">
+            <h2 id="policy-account">Your account, your control</h2>
+            <p>We use the details you provide to manage your account, provide subscriptions and send newsletters when you choose to receive them. You can update your details in your profile and change your newsletter preference in the Newsletter tab.</p>
+            <p>You can request access to, correction or erasure of your personal data, and exercise other applicable GDPR rights through our <a asp-controller="Contact" asp-action="Index">Contact page</a>. You can also download your account data from <a asp-area="Identity" asp-page="/Account/Manage/PersonalData">Personal data</a>.</p>
+        </section>
+        <section aria-labelledby="policy-anonymize">
+            <h2 id="policy-anonymize">Anonymize your account</h2>
+            <p>Open your profile and choose Personal data, then Anonymize account. This replaces your profile details with anonymous values, disables account access and turns off your newsletter subscription. You will be signed out and cannot use the account again.</p>
+            <div class="account-notice">
+                <strong>Have a paid subscription?</strong>
+                <p>Before you can anonymize your account, your recurring subscription must be canceled or scheduled to cancel at the end of your paid period. Open Manage billing from your subscription page and confirm the cancellation. A scheduled cancellation date is enough; you do not need to wait until that date.</p>
+                <a asp-controller="Subscription" asp-action="MySubscription">View subscription and manage billing →</a>
+            </div>
+            <p>Linked records, including subscription records and internal account identifiers, remain in our system. Anonymizing your profile does not erase information held by Stripe or remove personal information from every linked record. Contact us with any further erasure request; we will assess it under the GDPR, including any applicable legal retention requirements.</p>
+            <div class="policy-actions">
+                <a class="account-button" asp-area="" asp-page="/Profile">Go to my profile</a>
+                <a class="account-text-link" asp-area="Identity" asp-page="/Account/Manage/DeletePersonalData">Anonymize account →</a>
+            </div>
+        </section>
+        <section aria-labelledby="policy-contact">
+            <h2 id="policy-contact">Questions about your data?</h2>
+            <p><a asp-controller="Contact" asp-action="Index">Contact us</a> for help with your personal data or account. You also have the right to lodge a complaint with a data protection authority.</p>
+            <p>Read more about <a href="https://commission.europa.eu/law/law-topic/data-protection/reform/rights-citizens_en">your GDPR rights at the European Commission</a>.</p>
+        </section>
+    </article>
+</div>

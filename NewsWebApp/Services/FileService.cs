@@ -77,9 +77,9 @@ namespace NewsWebApp.Services
                     "AzureWebJobsStorage is not configured.");
 
             string containerName =
-                _configuration["BlobContainerName"]
+                _configuration["WeatherImageBlobContainer"]
                 ?? throw new InvalidOperationException(
-                    "BlobContainerName is not configured.");
+                    "WeatherImageBlobContainer is not configured.");
 
             var blobServiceClient = new BlobServiceClient(connectionString);
 

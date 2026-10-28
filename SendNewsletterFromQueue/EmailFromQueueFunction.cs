@@ -70,47 +70,51 @@ namespace SendNewsletterFromQueue
                 //List of all newsletters
                 List<NewsLetter> newsletters = await dbContext.NewsLetters.ToListAsync();
 
+
+
                 //Lists for categorized newsletters
-                List<NewsLetter> newsNewsletters = new List<NewsLetter>();
-                List<NewsLetter> worldNewsletters = new List<NewsLetter>();
-                List<NewsLetter> swedenNewsletters = new List<NewsLetter>();
-                //List<NewsLetter> weatherNewsletters = new List<NewsLetter>();
-                //List<NewsLetter> sportsNewsletters = new List<NewsLetter>();
+                List < NewsLetter > newsNewsletters = new List<NewsLetter>();
+                List < NewsLetter > worldNewsletters = new List<NewsLetter>();
+                List < NewsLetter > swedenNewsletters = new List<NewsLetter>();
+                List < NewsLetter > weatherNewsletters = new List<NewsLetter>();
+                List < NewsLetter > sportsNewsletters = new List<NewsLetter>();
 
 
 
                 //Loop to add each newsletter of each category in their separate lists
                 foreach (var item in newsletters)
-                {
+                    {
                     //Adding the different categorized newsletters to their respective
-                    //lists
+                    //    lists
                     if (item.Category == "News")
                         newsNewsletters.Add(item);
                     else if (item.Category == "World")
                         worldNewsletters.Add(item);
                     else if (item.Category == "Sweden")
                         swedenNewsletters.Add(item);
-                    //else if (item.Category == "Weather")
-                    //    weatherNewsletters.Add(item);
-                    //else if(item.Category == "Sports")
-                    //    sportsNewsletters.Add(item);
+                    else if (item.Category == "Weather")
+                        weatherNewsletters.Add(item);
+                    else if (item.Category == "Sports")
+                        sportsNewsletters.Add(item);
                 }
 
 
                 //Chunks of messages for each category of newsletter, grabbing the latest newsletter for each category
-                //var message = new MimeMessage();
-                //message.From.Add(new MailboxAddress(senderName, smtpFrom));
-                //message.To.Add(MailboxAddress.Parse(queuedEmail.EmailAddress));
-                //message.Subject = "CLICKBAIT newsletter";
+                var message = new MimeMessage();
+                message.From.Add(new MailboxAddress(senderName, smtpFrom));
+                message.To.Add(MailboxAddress.Parse(queuedEmail.EmailAddress));
+                message.Subject = "CLICKBAIT newsletter";
 
-                //message.Body = new TextPart(TextFormat.Html)
-                //{
-                //    Text = newsletters[newsletters.Count - 1].Body ?? "No newsletter content available."
-                //};
+                message.Body = new TextPart(TextFormat.Html)
+                {
+                    Text = newsletters[newsletters.Count - 1].Body ?? "No newsletter content available."
+                };
+
+
                 var newsMessage = new MimeMessage();
                 if (newsNewsletters.Count > 0)
                 {
-                   
+
                     newsMessage.From.Add(new MailboxAddress(senderName, smtpFrom));
                     newsMessage.To.Add(MailboxAddress.Parse(queuedEmail.EmailAddress));
                     newsMessage.Subject = "CLICKBAIT newsletter";
@@ -136,7 +140,7 @@ namespace SendNewsletterFromQueue
                 var swedenMessage = new MimeMessage();
                 if (swedenNewsletters.Count > 0)
                 {
-                   
+
                     swedenMessage.From.Add(new MailboxAddress(senderName, smtpFrom));
                     swedenMessage.To.Add(MailboxAddress.Parse(queuedEmail.EmailAddress));
                     swedenMessage.Subject = "CLICKBAIT Sweden newsletter";
@@ -146,32 +150,32 @@ namespace SendNewsletterFromQueue
                     };
                 }
 
-                //var weatherMessage = new MimeMessage();
-                //if (weatherNewsletters.Count > 0)
-                //{
+                var weatherMessage = new MimeMessage();
+                if (weatherNewsletters.Count > 0)
+                {
 
-                //    weatherMessage.From.Add(new MailboxAddress(senderName, smtpFrom));
-                //    weatherMessage.To.Add(MailboxAddress.Parse(queuedEmail.EmailAddress));
-                //    weatherMessage.Subject = "CLICKBAIT weather newsletter";
-                //    weatherMessage.Body = new TextPart(TextFormat.Html)
-                //    {
-                //        Text = weatherNewsletters[weatherNewsletters.Count - 1].Body ?? "No newsletter content available."
-                //    };
-                //}
+                    weatherMessage.From.Add(new MailboxAddress(senderName, smtpFrom));
+                    weatherMessage.To.Add(MailboxAddress.Parse(queuedEmail.EmailAddress));
+                    weatherMessage.Subject = "CLICKBAIT weather newsletter";
+                    weatherMessage.Body = new TextPart(TextFormat.Html)
+                    {
+                        Text = weatherNewsletters[weatherNewsletters.Count - 1].Body ?? "No newsletter content available."
+                    };
+                }
 
 
-                //var sportsMessage = new MimeMessage();
-                //if(sportsNewsletters.Count > 0)
-                //{
-                //    sportsMessage.From.Add(new MailboxAddress(senderName, smtpFrom));
-                //    sportsMessage.To.Add(MailboxAddress.Parse(queuedEmail.EmailAddress));
-                //    sportsMessage.Subject = "CLICKBAIT sports newsletter";
-                //    sportsMessage.Body = new TextPart(TextFormat.Html)
-                //    {
-                //        Text = sportsNewsletters[sportsNewsletters.Count - 1].Body ?? "No newsletter content available."
-                //    };
+                var sportsMessage = new MimeMessage();
+                if (sportsNewsletters.Count > 0)
+                {
+                    sportsMessage.From.Add(new MailboxAddress(senderName, smtpFrom));
+                    sportsMessage.To.Add(MailboxAddress.Parse(queuedEmail.EmailAddress));
+                    sportsMessage.Subject = "CLICKBAIT sports newsletter";
+                    sportsMessage.Body = new TextPart(TextFormat.Html)
+                    {
+                        Text = sportsNewsletters[sportsNewsletters.Count - 1].Body ?? "No newsletter content available."
+                    };
 
-                //}
+                }
 
                 SecureSocketOptions socketOptions = int.Parse(smtpPort) == 465
                     ? SecureSocketOptions.SslOnConnect
@@ -191,28 +195,28 @@ namespace SendNewsletterFromQueue
                     smtpUser,
                     smtpPassword.Replace(" ", string.Empty));
                 emailClient.AuthenticationMechanisms.Remove("XOAUTH2");
-                //emailClient.Send(message);
-                if(newsNewsletters.Count > 0)
+                await emailClient.SendAsync(message);
+                if (newsNewsletters.Count > 0 && queuedEmail.IsSubscribedToNewsNewsletter)
                 {
                     await emailClient.SendAsync(newsMessage);
                 }
-                if(worldNewsletters.Count > 0)
+                if (worldNewsletters.Count > 0 && queuedEmail.IsSubscribedToWorldNewsletter)
                 {
                     await emailClient.SendAsync(worldMessage);
                 }
-                if(swedenNewsletters.Count > 0)
+                if (swedenNewsletters.Count > 0 && queuedEmail.IsSubscribedToSwedenNewsletter)
                 {
                     await emailClient.SendAsync(swedenMessage);
                 }
-                //if(weatherNewsletters.Count > 0)
-                //{
-                //    //await emailClient.SendAsync(weatherMessage);
-                //}
+                if (weatherNewsletters.Count > 0 && queuedEmail.IsSubscribedToWeatherNewsletter)
+                {
+                    await emailClient.SendAsync(weatherMessage);
+                }
 
-                //if(sportsNewsletters.Count > 0)
-                //{
-                //    //await emailClient.SendAsync(sportsMessage);
-                //}
+                if (sportsNewsletters.Count > 0 && queuedEmail.IsSubscribedToSportsNewsletter)
+                {
+                    await emailClient.SendAsync(sportsMessage);
+                }
 
                 emailClient.Disconnect(true);
 
@@ -246,9 +250,14 @@ namespace SendNewsletterFromQueue
             catch (JsonException)
             {
                 // Support messages containing only the email address.
+                _logger.LogWarning(
+                    "Queue message could not be deserialized as a newsletter message.");
             }
 
-            return new QueueEmailMessage(queueMessage.Trim());
+            throw new InvalidOperationException(
+                "The queue message is not a valid newsletter message.");
+
+            //return new QueueEmailMessage(queueMessage.Trim());
         }
 
         private string GetRequiredSetting(string settingName)
@@ -268,7 +277,16 @@ namespace SendNewsletterFromQueue
                     $"The '{settingName}' application setting must be an integer.");
         }
 
-        private sealed record QueueEmailMessage(string EmailAddress);
+        //Extending the class to hold subscription status bools
+        private sealed record QueueEmailMessage(
+            string EmailAddress,
+            bool IsSubscribedToNewsletter,
+            bool IsSubscribedToNewsNewsletter,
+            bool IsSubscribedToWorldNewsletter,
+            bool IsSubscribedToSwedenNewsletter,
+            bool IsSubscribedToWeatherNewsletter,
+            bool IsSubscribedToSportsNewsletter
+            );
     }
 
 }

@@ -1,0 +1,193 @@
+﻿
+@model IEnumerable<NewsWebApp.Models.Articles>
+@using NewsWebApp.Models
+
+@{
+    ViewData["Title"] = "Weather";
+    var weatherArticle = ViewBag.WeatherArticle as WeatherArticle;
+
+    var gotaland = ViewBag.GotalandForecast as List<WeatherForecast>;
+    var svealand = ViewBag.SvealandForecast as List<WeatherForecast>;
+    var norrland = ViewBag.NorrlandForecast as List<WeatherForecast>;
+
+    var editorialText = weatherArticle?.EditorialText ?? string.Empty;
+
+    var headline = string.Empty;
+    var introduction = string.Empty;
+    var articleText = string.Empty;
+
+    var headlineMarker = "HEADLINE:";
+    var introductionMarker = "INTRODUCTION:";
+    var articleMarker = "ARTICLE:";
+    var imageBriefMarker = "IMAGE BRIEF:";
+
+    var headlineStart = editorialText.IndexOf(
+        headlineMarker, StringComparison.OrdinalIgnoreCase);
+
+    var introductionStart = editorialText.IndexOf(
+        introductionMarker, StringComparison.OrdinalIgnoreCase);
+
+    var articleStart = editorialText.IndexOf(
+        articleMarker, StringComparison.OrdinalIgnoreCase);
+
+    if (headlineStart >= 0 &&
+        introductionStart > headlineStart &&
+        articleStart > introductionStart)
+    {
+        headline = editorialText.Substring(
+            headlineStart + headlineMarker.Length,
+            introductionStart - (headlineStart + headlineMarker.Length))
+            .Trim();
+
+        introduction = editorialText.Substring(
+            introductionStart + introductionMarker.Length,
+            articleStart - (introductionStart + introductionMarker.Length))
+            .Trim();
+
+        var imageBriefStart = editorialText.IndexOf(
+            imageBriefMarker,
+            articleStart + articleMarker.Length,
+            StringComparison.OrdinalIgnoreCase);
+
+        articleText = imageBriefStart >= 0
+            ? editorialText.Substring(
+                articleStart + articleMarker.Length,
+                imageBriefStart - (articleStart + articleMarker.Length)).Trim()
+            : editorialText
+                .Substring(articleStart + articleMarker.Length)
+                .Trim();
+    }
+    else
+    {
+    // Keep the existing text visible if the response format differs.
+    articleText = editorialText;
+}
+}
+
+<div class="category-page weather-page">
+
+    <div class="section-title">
+        <h2>WEATHER</h2>
+        <a asp-controller="Forecast" asp-action="Index">FULL FORECAST →</a>
+    </div>
+
+    @* Full-width weather image *@
+    @if (weatherArticle != null &&
+         !string.IsNullOrWhiteSpace(weatherArticle.ImageUrl))
+    {
+        <div class="weather-image-container">
+            <img class="weather-editorial-image"
+                 src="@($"{weatherArticle.ImageUrl}?v={weatherArticle.GeneratedAt.Ticks}")"
+                 alt="Weather in @weatherArticle.City" />
+        </div>
+    }
+
+    @* Article and regional overview below the image *@
+    <section class="weather-content-grid">
+
+        <article class="weather-editorial-main">
+            @if (weatherArticle != null)
+            {
+                @if (!string.IsNullOrWhiteSpace(headline))
+                {
+                    <h1 class="weather-editorial-headline">
+                        @headline
+                    </h1>
+                }
+                else
+                {
+                    <h1 class="weather-editorial-headline">
+                        @weatherArticle.City Weather
+                    </h1>
+                }
+
+                <p class="weather-editorial-date">
+                    Forecast for @weatherArticle.ForecastDate.ToString("d MMMM yyyy")
+                </p>
+
+                @if (!string.IsNullOrWhiteSpace(introduction))
+                {
+                    <p class="weather-editorial-introduction">
+                        @introduction
+                    </p>
+                }
+
+                <div class="weather-editorial-text">
+                    @articleText
+                </div>
+            }
+            else
+            {
+                <p>The latest weather editorial is not available yet.</p>
+            }
+        </article>
+
+        
+        <section class="regional-weather">
+            <div class="section-title">
+                <h2>The weather at a glance</h2>
+            </div>
+
+            <div class="regional-weather-grid">
+
+                @if (gotaland?.Any() == true)
+                {
+                    var minTemp = gotaland.Min(f => f.TemperatureC);
+                    var maxTemp = gotaland.Max(f => f.TemperatureC);
+                    var summary = gotaland[0].Summary;
+
+                    <div class="regional-weather-item">
+                        <h3>Götaland</h3>
+                        <ul>
+                            <li>@summary</li>
+                            <li>Temperatures around @minTemp–@maxTemp°C</li>
+                            <li>Wind conditions vary across the region</li>
+                        </ul>
+                    </div>
+                }
+
+                @if (svealand?.Any() == true)
+                {
+                    var minTemp = svealand.Min(f => f.TemperatureC);
+                    var maxTemp = svealand.Max(f => f.TemperatureC);
+                    var summary = svealand[0].Summary;
+
+                    <div class="regional-weather-item">
+                        <h3>Svealand</h3>
+                        <ul>
+                            <li>@summary</li>
+                            <li>Temperatures around @minTemp–@maxTemp°C</li>
+                            <li>Wind conditions vary across the region</li>
+                        </ul>
+                    </div>
+                }
+
+                @if (norrland?.Any() == true)
+                {
+                    var minTemp = norrland.Min(f => f.TemperatureC);
+                    var maxTemp = norrland.Max(f => f.TemperatureC);
+                    var summary = norrland[0].Summary;
+
+                    <div class="regional-weather-item">
+                        <h3>Norrland</h3>
+                        <ul>
+                            <li>@summary</li>
+                            <li>Temperatures around @minTemp–@maxTemp°C</li>
+                            <li>Conditions may vary across the region</li>
+                        </ul>
+                    </div>
+                }
+
+            </div>
+
+            <div class="regional-weather-footer">
+                <a asp-controller="Forecast" asp-action="Index">
+                    FULL FORECAST <span class="clickbait-arrow">→</span>
+                </a>
+            </div>
+        </section>
+
+
+    </section>
+
+</div>

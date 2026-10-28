@@ -69,7 +69,11 @@ namespace NewsWebApp
             builder.Services.AddHttpClient("AnalyticsLogs");
             builder.Services.AddHttpClient<WeatherService>(); // for making HTTP requests
             builder.Services.AddHttpClient<SmhiWeatherService>();
+            builder.Services.AddHttpClient<SmhiWeatherWarningService>();
+            builder.Services.AddHttpClient<WeatherEditorialAiService>();
+            builder.Services.AddHttpClient<WeatherImageAiService>();
             builder.Services.AddScoped<TableStorageService>();
+            builder.Services.AddScoped<WeatherArticleGenerationService>();
 
             //Add session support
             builder.Services.AddSession();

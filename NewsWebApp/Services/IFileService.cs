@@ -7,5 +7,9 @@ namespace NewsWebApp.Services
     {
         Task<string> UploadFileToContainer(FileUploadModel model);
         Task<string> UploadImageAsync(IFormFile file);
+        Task<string> UploadWeatherImageAsync(
+        byte[] imageBytes,
+        DateOnly date,
+        CancellationToken cancellationToken = default);
     }
 }

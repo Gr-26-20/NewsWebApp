@@ -9,6 +9,7 @@ namespace NewsWebApp.Services
 {
     public class FileService : IFileService
     {
+        
         private readonly IConfiguration _configuration;
 
         public FileService(IConfiguration configuration)
@@ -18,6 +19,8 @@ namespace NewsWebApp.Services
             _configuration = configuration;
 
         }
+
+        
 
         public async Task<string> UploadFileToContainer(FileUploadModel model)
         {
@@ -61,5 +64,53 @@ namespace NewsWebApp.Services
 
             return blobClient.Uri.ToString();
         }
+
+
+        public async Task<string> UploadWeatherImageAsync(
+            byte[] imageBytes,
+            DateOnly date,
+            CancellationToken cancellationToken = default)
+        {
+            string connectionString =
+                _configuration["AzureWebJobsStorage"]
+                ?? throw new InvalidOperationException(
+                    "AzureWebJobsStorage is not configured.");
+
+            string containerName =
+                _configuration["WeatherImageBlobContainer"]
+                ?? throw new InvalidOperationException(
+                    "WeatherImageBlobContainer is not configured.");
+
+            var blobServiceClient = new BlobServiceClient(connectionString);
+
+            var containerClient =
+                blobServiceClient.GetBlobContainerClient(containerName);
+
+            await containerClient.CreateIfNotExistsAsync(
+                cancellationToken: cancellationToken);
+
+            string blobName =
+                $"weather/{date:yyyy-MM-dd}-{Guid.NewGuid():N}.png";
+
+            var blobClient = containerClient.GetBlobClient(blobName);
+
+            using var stream = new MemoryStream(imageBytes);
+
+            await blobClient.UploadAsync(
+                stream,
+                overwrite: true,
+                cancellationToken: cancellationToken);
+
+            await blobClient.SetHttpHeadersAsync(
+                new Azure.Storage.Blobs.Models.BlobHttpHeaders
+                {
+                    ContentType = "image/png",
+                    CacheControl = "public, max-age=3600"
+                },
+                cancellationToken: cancellationToken);
+
+            return blobClient.Uri.ToString();
+        }
+
     }
 }

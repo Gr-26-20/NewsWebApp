@@ -14,15 +14,49 @@ public class Function1
     private readonly ILogger<Function1> _logger;
     private readonly HttpClient _httpClient;
     private readonly TableStorageService _tableStorageService;
+    private readonly WeatherArticleGenerationService
+        _weatherArticleGenerationService;
 
     public Function1(
         ILogger<Function1> logger,
         IHttpClientFactory httpClientFactory,
-        TableStorageService tableStorageService)
+        TableStorageService tableStorageService,
+        WeatherArticleGenerationService weatherArticleGenerationService)
     {
         _logger = logger;
         _httpClient = httpClientFactory.CreateClient();
         _tableStorageService = tableStorageService;
+        _weatherArticleGenerationService =
+            weatherArticleGenerationService;
+    }
+
+
+    [Function("GenerateDailyWeatherArticle")]
+    public async Task GenerateDailyWeatherArticle(
+        [TimerTrigger("0 0 5 * * *")] TimerInfo timer)
+    {
+        {
+            _logger.LogInformation(
+                "Starting daily weather article generation.");
+
+            try
+            {
+                var article = await _weatherArticleGenerationService
+                    .GenerateAndSaveAsync(CancellationToken.None);
+
+                _logger.LogInformation(
+                    "Weather article generated and saved. Article ID: {ArticleId}",
+                    article.Id);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(
+                    ex,
+                    "Daily weather article generation failed.");
+
+                throw;
+            }
+        }
     }
 
     [Function("SaveTemperatureElectricity")]

@@ -3332,7 +3332,7 @@ without changing the rest of the CSS.
     .weather-page .regional-weather .section-title h2 {
         margin: 0;
         font-family: "Times New Roman", Times, serif;
-        font-size: 18px;
+        font-size: 22px;
         line-height: 1.2;
         text-transform: none;
     }
@@ -3352,6 +3352,7 @@ without changing the rest of the CSS.
         margin: 0 0 6px;
         font-size: 14px;
         line-height: 1.2;
+        font-weight: 700;
     }
 
     .weather-page .regional-weather-item ul {

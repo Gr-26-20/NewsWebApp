@@ -167,6 +167,103 @@ namespace NewsWebApp.Controllers
             {
                 user.IsSubscribedToNewsletter = false;
             }
+
+            await _applicationDbContext.SaveChangesAsync();
+            return RedirectToAction(nameof(ManageNewsletters));
+        }
+
+        public async Task<IActionResult>SubscribeToNewsCategory(string userId)
+        {
+            var user = await _userAndRoleService.GetCurrentUser();
+            if(user == null)
+            {
+                return NotFound();
+            }
+            if (!user.IsSubscribedToNewsNewsletter)
+            {
+                user.IsSubscribedToNewsNewsletter = true;
+            }
+            else
+            {
+                user.IsSubscribedToNewsNewsletter = false;
+            }
+            await _applicationDbContext.SaveChangesAsync();
+            return RedirectToAction(nameof(ManageNewsletters));
+        }
+
+        public async Task<IActionResult> SubscribeToWorldCategory(string userId)
+        {
+            var user = await _userAndRoleService.GetCurrentUser();
+            if (user == null)
+            {
+                return NotFound();
+            }
+            if (!user.IsSubscribedToWorldNewsletter)
+            {
+                user.IsSubscribedToWorldNewsletter = true;
+            }
+            else
+            {
+                user.IsSubscribedToWorldNewsletter = false;
+            }
+            await _applicationDbContext.SaveChangesAsync();
+            return RedirectToAction(nameof(ManageNewsletters));
+        }
+
+      
+        public async Task<IActionResult> SubscribeToSwedenCategory(string userId)
+        {
+            var user = await _userAndRoleService.GetCurrentUser();
+            if (user == null)
+            {
+                return NotFound();
+            }
+            if (!user.IsSubscribedToSwedenNewsletter)
+            {
+                user.IsSubscribedToSwedenNewsletter = true;
+            }
+            else
+            {
+                user.IsSubscribedToSwedenNewsletter = false;
+            }
+            await _applicationDbContext.SaveChangesAsync();
+            return RedirectToAction(nameof(ManageNewsletters));
+        }
+
+        public async Task<IActionResult> SubscribeToWeatherCategory(string userId)
+        {
+            var user = await _userAndRoleService.GetCurrentUser();
+            if (user == null)
+            {
+                return NotFound();
+            }
+            if (!user.IsSubscribedToWeatherNewsletter)
+            {
+                user.IsSubscribedToWeatherNewsletter = true;
+            }
+            else
+            {
+                user.IsSubscribedToWeatherNewsletter = false;
+            }
+            await _applicationDbContext.SaveChangesAsync();
+            return RedirectToAction(nameof(ManageNewsletters));
+        }
+
+        public async Task<IActionResult> SubscribeToSportsCategory(string userId)
+        {
+            var user = await _userAndRoleService.GetCurrentUser();
+            if (user == null)
+            {
+                return NotFound();
+            }
+            if (!user.IsSubscribedToSportsNewsletter)
+            {
+                user.IsSubscribedToSportsNewsletter = true;
+            }
+            else
+            {
+                user.IsSubscribedToSportsNewsletter = false;
+            }
             await _applicationDbContext.SaveChangesAsync();
             return RedirectToAction(nameof(ManageNewsletters));
         }

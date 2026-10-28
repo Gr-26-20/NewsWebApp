@@ -7,6 +7,8 @@ namespace NewsWebApp.Models
     {
         public int Id { get; set; }
 
+        //public string? UserId;
+
         public string? Logo { get; set; }
         //public Category? Category { get; set; }
 

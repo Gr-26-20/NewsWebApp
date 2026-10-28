@@ -5,6 +5,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
+using System.Net.Mail;
 using System.Text;
 using System.Text.Json;
 
@@ -28,7 +29,7 @@ namespace SendNewsletterFromQueue
 
         [Function("SendNewsletter")]
         public async Task RunAsync(
-            [TimerTrigger("0 0 7  * * 6", RunOnStartup = false)] TimerInfo timer,
+            [TimerTrigger("0 0 7  * * 6", RunOnStartup = true)] TimerInfo timer,
             CancellationToken cancellationToken)
         {
             string storageConnectionString = GetRequiredSetting("AzureWebJobsStorage");
@@ -38,22 +39,109 @@ namespace SendNewsletterFromQueue
                 new QueueClientOptions { MessageEncoding = QueueMessageEncoding.Base64 });
             await queueClient.CreateIfNotExistsAsync(cancellationToken: cancellationToken);
 
-            int latestBirthYearForAdults = DateTime.UtcNow.Year - 18;
+            
 
             // The context is disposed automatically when this function invocation completes.
             await using var dbContext =
                 await _dbContextFactory.CreateDbContextAsync(cancellationToken);
 
-            List<string> emailAddresses = await dbContext.AspNetUsers
+            List<string?> emailAddresses = await dbContext.AspNetUsers
                 .AsNoTracking()
                 .Where(user =>
                     user.IsSubscribedToNewsletter &&
                     user.Email != null &&
                     user.Email != string.Empty)
-                .Select(user => user.Email!)
+                .Select(user => user.Email)
                 .ToListAsync(cancellationToken);
 
             foreach (string emailAddress in emailAddresses)
+            {
+                string message = JsonSerializer.Serialize(new
+                {
+                    EmailAddress = emailAddress
+                });
+
+                await queueClient.SendMessageAsync(message, cancellationToken);
+            }
+
+            List<string?> emailAddressesForNewsCategory = await dbContext.AspNetUsers
+                .AsNoTracking()
+                .Where(user => user.Email != null
+                && user.Email != string.Empty
+                && user.IsSubscribedToNewsNewsletter)
+                .Select(user => user.Email)
+                .ToListAsync(cancellationToken);
+
+            foreach(string emailAddress in emailAddressesForNewsCategory)
+            {
+                string message = JsonSerializer.Serialize(new
+                {
+                    EmailAddress = emailAddress
+                });
+
+                await queueClient.SendMessageAsync(message, cancellationToken);
+            }
+
+            List<string?> emailAddressesForWorldCategory = await dbContext.AspNetUsers
+                .AsNoTracking()
+                .Where(user => user.Email != null
+                && user.Email != string.Empty
+                && user.IsSubscribedToWorldNewsletter)
+                .Select(user => user.Email)
+                .ToListAsync(cancellationToken);
+            foreach (string emailAddress in emailAddressesForWorldCategory)
+            {
+                string message = JsonSerializer.Serialize(new
+                {
+                    EmailAddress = emailAddress
+                });
+
+                await queueClient.SendMessageAsync(message, cancellationToken);
+            }
+
+            List<string?> emailAddressesForSwedenCategory = await dbContext.AspNetUsers
+                .AsNoTracking()
+                .Where(user => user.Email != null
+                && user.Email != string.Empty
+                && user.IsSubscribedToSwedenNewsletter)
+                .Select(user => user.Email)
+                .ToListAsync(cancellationToken);
+            foreach (string emailAddress in emailAddressesForSwedenCategory)
+            {
+                string message = JsonSerializer.Serialize(new
+                {
+                    EmailAddress = emailAddress
+                });
+
+                await queueClient.SendMessageAsync(message, cancellationToken);
+            }
+
+
+            List<string?> emailAddressesForWeatherCategory = await dbContext.AspNetUsers
+                .AsNoTracking()
+                .Where(user => user.Email != null
+                && user.Email != string.Empty
+                && user.IsSubscribedToWeatherNewsletter)
+                .Select(user => user.Email)
+                .ToListAsync(cancellationToken);
+            foreach (string emailAddress in emailAddressesForWeatherCategory)
+            {
+                string message = JsonSerializer.Serialize(new
+                {
+                    EmailAddress = emailAddress
+                });
+
+                await queueClient.SendMessageAsync(message, cancellationToken);
+            }
+
+            List<string> emailAddressesForSportsCategory = await dbContext.AspNetUsers
+                .AsNoTracking()
+                .Where(user => user.Email != null
+                && user.Email != string.Empty
+                && user.IsSubscribedToSportsNewsletter)
+                .Select(user => user.Email!)
+                .ToListAsync(cancellationToken);
+            foreach (string emailAddress in emailAddressesForSportsCategory)
             {
                 string message = JsonSerializer.Serialize(new
                 {

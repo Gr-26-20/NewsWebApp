@@ -20,5 +20,17 @@ namespace NewsWebApp.Models
         public string Role { get; set; } 
 
         public bool IsSubscribedToNewsletter { get; set; } = false;
+
+        public bool IsSubscribedToNewsNewsletter { get; set; } = false;
+
+        public bool IsSubscribedToWorldNewsletter { get; set; } = false;
+
+        public bool IsSubscribedToSwedenNewsletter { get; set; } = false;
+
+        public bool IsSubscribedToWeatherNewsletter { get; set; } = false;
+
+        public bool IsSubscribedToSportsNewsletter { get; set; } = false;
     }
 }
+
+

@@ -58,7 +58,14 @@
         <div class="newsletter-category-link">
             @if (SignInManager.IsSignedIn(User))
             {  
-                <a id="subscribeButton" class="btn btn-primary"  onclick="CheckSubscriptionStatus('@User.Identity?.Name')">Subscribe to newsletter</a>             
+                <a id="subscribeButton" class="btn btn-primary"  onclick="CheckSubscriptionStatus('@User.Identity?.Name')">Subscribe to newsletter</a><br />
+                <a id="subscribeNewsButton" class="btn btn-primary" onclick="SubscribeToNewsCategory('@User.Identity?.Name')">Subscribe to news category newsletter</a><br />
+                <a id="subscribeWorldButton" class="btn btn-primary" onclick="SubscribeToWorldCategory('@User.Identity?.Name')">Subscribe to world category newsletter</a><br />
+                <a id="subscribeSwedenButton" class="btn btn-primary" onclick="SubscribeToSwedenCategory('@User.Identity?.Name')">Subscribe to Sweden category newsletter</a><br />
+                <a id="subscribeWeatherButton" class="btn btn-primary" onclick="SubscribeToWeatherCategory('@User.Identity?.Name')">Subscribe to weather category newsletter</a><br />
+                <a id="subscribeSportsButton" class="btn btn-primary" onclick="SubscribeToSportsCategory('@User.Identity?.Name')">Subscribe to sports category newsletter</a><br />
+
+
             }
             </div>
     }

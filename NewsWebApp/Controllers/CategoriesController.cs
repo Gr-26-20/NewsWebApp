@@ -37,6 +37,24 @@ namespace NewsWebApp.Controllers
             _fileService = fileService;
         }
 
+        private static readonly string[] RegionalWeatherHeadings =
+            {
+                "The Weather at a Glance",
+                "Regional Weather",
+                "Regional Forecast",
+                "Weather Outlook",
+                "Across Sweden",
+                "Sweden at a Glance",
+                "Regional Conditions",
+                "The National Forecast",
+                "The Weather Picture",
+                "Weather Across the Regions",
+                "The Day's Weather",
+                "The Weather Briefing",
+                "A Snapshot of Sweden's Weather",
+                "Weather from North to South"
+            };
+
 
         [Route("Categories/{category?}")]
         public async Task<IActionResult> Index(string? category)
@@ -65,6 +83,24 @@ namespace NewsWebApp.Controllers
                     .Where(a => a.City == "Sweden")
                     .OrderByDescending(a => a.GeneratedAt)
                     .FirstOrDefaultAsync(HttpContext.RequestAborted);
+
+                if (weatherArticle != null)
+                {
+                    var dayNumber = DateOnly
+                        .FromDateTime(weatherArticle.GeneratedAt)
+                        .DayNumber;
+
+                    var headingIndex =
+                        dayNumber % RegionalWeatherHeadings.Length;
+
+                    ViewBag.RegionalWeatherHeading =
+                        RegionalWeatherHeadings[headingIndex];
+                }
+                else
+                {
+                    ViewBag.RegionalWeatherHeading =
+                        RegionalWeatherHeadings[0];
+                }
 
 
                 ViewBag.WeatherArticle = weatherArticle;

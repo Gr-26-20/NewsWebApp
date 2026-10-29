@@ -20,6 +20,7 @@ namespace NewsWebApp.Controllers
         private readonly SmhiWeatherWarningService _smhiWeatherWarningService;
         private readonly WeatherArticleGenerationService
             _weatherArticleGenerationService;
+        
 
 
 
@@ -83,6 +84,8 @@ namespace NewsWebApp.Controllers
             }
 
             return View(model);
+
+
         }
 
         public async Task<IActionResult> History()
@@ -182,7 +185,7 @@ namespace NewsWebApp.Controllers
 
         [HttpGet]
         public async Task<IActionResult> TestWeatherImage(
-    CancellationToken cancellationToken)
+            CancellationToken cancellationToken)
         {
             var article = await _weatherArticleGenerationService
                 .GenerateAndSaveAsync(cancellationToken);

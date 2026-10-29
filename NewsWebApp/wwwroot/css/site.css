@@ -717,28 +717,33 @@ without changing the rest of the CSS.
     .news-container {
         max-width: 1320px;
     }
-
-
+    /* ---------------------------------------------------------
+   SHARED NEWS NAVIGATION
+--------------------------------------------------------- */
     .shared-news-nav {
         padding: 0;
         background: var(--page-bg);
         border-top: 4px solid var(--border);
         border-bottom: 1px solid var(--border);
     }
-
-        .shared-news-nav .navbar-collapse {
+        /* Keep the main navigation links and toggler in one row */
+        .shared-news-nav > .news-container {
+            display: flex;
             align-items: center;
-            gap: 20px;
+            flex-wrap: wrap;
         }
-
+    /* Home, Analytics and login/register links */
     .shared-nav-links {
         display: flex;
         flex: 1 1 auto;
+        align-items: center;
         flex-wrap: wrap;
         min-width: 0;
     }
 
     .shared-news-nav .navbar-nav {
+        display: flex;
+        flex-direction: row;
         flex-wrap: wrap;
     }
 
@@ -765,6 +770,11 @@ without changing the rest of the CSS.
             background: var(--accent);
             color: var(--accent-text) !important;
         }
+    /* Collapsible search area */
+    .shared-news-nav .navbar-collapse {
+        flex: 0 0 auto;
+        align-items: center;
+    }
 
     .shared-nav-search {
         display: flex;
@@ -802,7 +812,7 @@ without changing the rest of the CSS.
             .shared-nav-search button:hover {
                 background: var(--accent);
             }
-
+    /* Keyboard focus */
     .shared-news-nav :is(a, button, input):focus-visible {
         outline: 3px solid var(--accent);
         outline-offset: 2px;
@@ -813,35 +823,66 @@ without changing the rest of the CSS.
         border-radius: 0;
     }
 
-    @media (max-width: 1199.98px) {
+    .shared-news-nav .navbar-toggler {
+        display: none;
+    }
+    /* ---------------------------------------------------------
+   TABLET AND MOBILE
+--------------------------------------------------------- */
+
+    @media (max-width: 991.98px) {
+        .shared-news-nav > .news-container {
+            display: flex;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .shared-news-nav .shared-nav-links {
+            display: flex;
+            flex: 1 1 auto;
+            align-items: center;
+            flex-wrap: wrap;
+            min-width: 0;
+            order: 1;
+        }
+
         .shared-news-nav .navbar-toggler {
             display: block;
-        }
-
-        .shared-nav-links {
-            display: block;
-        }
-
-        .shared-news-nav .navbar-nav {
-            flex-direction: row;
+            flex-shrink: 0;
+            margin: 8px 0 8px 8px;
+            order: 2;
         }
 
         .shared-news-nav .navbar-collapse {
+            flex-basis: 100%;
+            order: 3;
             padding-bottom: 8px;
         }
 
-        .shared-nav-search {
+        .shared-news-nav .shared-nav-search {
+            flex: 0 1 360px;
             width: min(100%, 360px);
+            margin: 0;
+        }
+
+        .nav-secondary {
+            display: flex;
+            position: relative;
+            flex: 0 0 auto;
+            margin-left: auto;
+        }
+
+        .nav-secondary-toggler {
+            display: block !important;
+            visibility: visible;
+            position: relative;
+            z-index: 1001;
         }
     }
-
+    /* General navigation item styling */
     .nav-item {
-        /*    padding: 10px 18px;*/
         font-size: 14px;
         font-family: Arial, Helvetica, sans-serif;
-        /*    font-weight: 800;*/
-        /*    letter-spacing: .04em;*/
-        /*    border-right: 1px solid var(--border);*/
     }
 
         .nav-item a:hover {
@@ -911,53 +952,81 @@ without changing the rest of the CSS.
         letter-spacing: .08em;
     }
     /* ---------------------------------------------------------
-   NAVIGATION
+   MAIN CATEGORY NAVIGATION
 --------------------------------------------------------- */
 
     .main-nav {
-        display: flex;
-        align-items: center;
+        width: 100%;
         border-top: 4px solid var(--border);
         border-bottom: 1px solid var(--border);
     }
 
-        .main-nav.category-page-nav {
-            border-top: 4px solid var(--border) !important;
-            border-bottom: 1px solid var(--border) !important;
-        }
+    .nav-categories {
+        display: flex;
+        flex-wrap: nowrap;
+        align-items: stretch;
+        width: 100%;
+        overflow-x: auto;
+        overflow-y: hidden;
+        -webkit-overflow-scrolling: touch;
+        scrollbar-width: thin;
+        scrollbar-color: var(--border) transparent;
+    }
 
-        .main-nav a {
-            padding: 10px 18px;
+        .nav-categories > a {
+            display: block;
+            flex: 0 0 auto;
+            padding: 10px 14px;
             font-size: 12px;
             font-weight: 800;
             letter-spacing: .04em;
+            white-space: nowrap;
             border-right: 1px solid var(--border);
         }
 
-            .main-nav a:first-child {
+            .nav-categories > a:first-child {
                 background: var(--accent);
                 color: var(--accent-text);
             }
 
-            .main-nav a:hover {
+            .nav-categories > a:hover {
                 background: var(--accent);
                 color: var(--accent-text);
                 text-decoration: none;
             }
+
+            .nav-categories > a.nav-subscribe {
+                margin-left: 0;
+                border-left: 1px solid var(--border);
+                border-right: 1px solid var(--border);
+                background: transparent;
+                color: inherit;
+                box-shadow: none;
+            }
+
+                .nav-categories > a.nav-subscribe:hover {
+                    background: var(--accent);
+                    color: var(--accent-text);
+                    box-shadow: none;
+                    text-decoration: none;
+                }
     /* ---------------------------------------------------------
-   NAVIGATION CATEGORIES
+   SECONDARY NAVIGATION
 --------------------------------------------------------- */
 
-    .nav-categories {
+    .nav-secondary {
+        position: relative;
         display: flex;
-        flex-wrap: wrap;
+        align-items: center;
+        flex-shrink: 0;
     }
-        /* ---------------------------------------------------------
-   SUBSCRIBE BUTTON
---------------------------------------------------------- */
 
-        .nav-categories a.nav-subscribe {
-            margin-left: auto;
+    .nav-secondary-links {
+        display: flex;
+        align-items: center;
+    }
+
+        .nav-secondary-links a.nav-subscribe {
             border-left: 1px solid var(--border);
             border-right: none;
             background: transparent;
@@ -965,11 +1034,69 @@ without changing the rest of the CSS.
             box-shadow: inset 0 0 0 2px var(--accent);
         }
 
-            .nav-categories a.nav-subscribe:hover {
+            .nav-secondary-links a.nav-subscribe:hover {
                 background: var(--accent);
                 color: var(--accent-text);
                 box-shadow: none;
             }
+
+    .nav-secondary-toggler {
+        display: none;
+    }
+    /* ---------------------------------------------------------
+   TABLET AND MOBILE
+--------------------------------------------------------- */
+
+    @media (max-width: 991.98px) {
+        .main-nav {
+            align-items: flex-start;
+        }
+
+        .nav-categories {
+            flex: 1 1 0;
+            min-width: 0;
+        }
+
+        .nav-secondary {
+            margin-left: auto;
+        }
+
+        .nav-secondary-toggler {
+            display: block;
+            margin: 6px 0;
+        }
+
+        .nav-secondary-links {
+            display: none;
+            position: absolute;
+            top: 100%;
+            right: 0;
+            z-index: 1000;
+            flex-direction: column;
+            align-items: stretch;
+            min-width: 190px;
+            max-width: calc(100vw - 24px);
+            background: var(--surface);
+            border: 1px solid var(--border);
+            box-shadow: 0 4px 10px rgb(0 0 0 / 15%);
+        }
+
+            .nav-secondary-links.open {
+                display: flex;
+            }
+
+            .nav-secondary-links a {
+                border-right: none;
+                border-bottom: 1px solid var(--border);
+                white-space: normal;
+            }
+
+                .nav-secondary-links a.nav-subscribe {
+                    border-left: none;
+                    border-right: none;
+                    box-shadow: none;
+                }
+    }
     /* ---------------------------------------------------------
    CATEGORIES STYLING
 --------------------------------------------------------- */
@@ -1069,46 +1196,37 @@ without changing the rest of the CSS.
 --------------------------------------------------------- */
 
     @media (max-width: 768px) {
-
         .main-nav {
-            display: block;
-            border-top: 4px solid var(--border);
-            border-bottom: 1px solid var(--border);
-        }
-
-        .navbar-toggler {
-            display: block;
-            margin: 8px 8px 8px auto;
+            display: flex;
+            flex-wrap: wrap;
+            align-items: flex-start;
         }
 
         .nav-categories {
-            display: none;
+            display: flex;
+            flex: 1 1 100%;
+            flex-wrap: wrap;
             width: 100%;
         }
 
-            .nav-categories.open {
-                display: block;
-            }
-
             .nav-categories a {
                 display: block;
-                padding: 10px 18px;
-                border-right: none;
-                border-bottom: 1px solid var(--border);
             }
 
-        .nav-account {
+        .nav-secondary {
+            margin-left: auto;
+        }
+
+        .nav-secondary-toggler {
+            display: block;
+        }
+
+        .nav-secondary-links {
             display: none;
         }
 
-            .nav-account.open {
+            .nav-secondary-links.open {
                 display: flex;
-                align-items: center;
-                margin-left: 0;
-                border-left: none;
-                border-right: none;
-                border-top: 1px solid var(--border);
-                border-bottom: 1px solid var(--border);
             }
     }
     /* ---------------------------------------------------------
@@ -3308,167 +3426,194 @@ without changing the rest of the CSS.
             margin: 0;
             white-space: pre-line;
         }
-}
         /* -------------------------- */
-/* ---- Regional weather card --- */
+        /* ---- Regional weather card --- */
 
-.weather-page .regional-weather {
-    display: flex;
-    flex-direction: column;
-    width: 100%;
-    max-width: none;
-    min-height: 482px;
-    box-sizing: border-box;
-    padding: 16px 18px;
-    border: none;
-    background: rgb(242, 243, 243);
-}
-
-    .weather-page .regional-weather .section-title {
-        margin-bottom: 14px;
-        border: none;
-    }
-
-    .weather-page .regional-weather .section-title h2 {
-        margin: 0;
-        font-family: "Times New Roman", Times, serif;
-        font-size: 22px;
-        line-height: 1.2;
-        text-transform: none;
-    }
-
-.weather-page .regional-weather-grid {
-    display: flex;
-    flex-direction: column;
-    gap: 0;
-}
-
-.weather-page .regional-weather-item {
-    padding: 12px 0;
-    border: none;
-}
-
-    .weather-page .regional-weather-item h3 {
-        margin: 0 0 6px;
-        font-size: 14px;
-        line-height: 1.2;
-        font-weight: 700;
-    }
-
-    .weather-page .regional-weather-item ul {
-        margin: 0;
-        padding-left: 16px;
-    }
-
-    .weather-page .regional-weather-item li {
-        margin: 3px 0;
-        font-size: 13px;
-        line-height: 1.35;
-    }
-
-
-
-.weather-page .regional-weather-footer {
-    margin-top: auto;
-    padding-top: 14px;
-    font-size: 12px;
-    font-weight: 700;
-}
-
-.weather-page .regional-weather-footer a {
-    color: inherit;
-    text-decoration: none;
-}
-
-    .weather-page .regional-weather-footer a:hover {
-        text-decoration: underline;
-    }
-
-.weather-page .regional-weather-footer .clickbait-arrow {
-    margin-left: 4px;
-}
-
-
-
-/* -------------------------- */
-/* Weather responsive layout */
-
-@media (max-width: 768px) {
-    .weather-page .weather-content-grid {
-        grid-template-columns: minmax(0, 1fr);
-        gap: 1.25rem;
-    }
-
-    .weather-page .regional-weather {
-        max-width: none;
-        min-height: 0;
-    }
-}
-
-@media (max-width: 600px) {
-    .weather-page {
-        padding: 1rem;
-    }
-
-        .weather-page .weather-editorial-main {
-            padding: 0;
+        .weather-page .regional-weather {
+            display: flex;
+            flex-direction: column;
+            width: 100%;
+            max-width: none;
+            min-height: 482px;
+            box-sizing: border-box;
+            padding: 16px 18px;
+            border: none;
+            background: rgb(242, 243, 243);
         }
 
-            .weather-page .weather-editorial-main h1,
-            .weather-page .weather-editorial-headline {
-                font-size: clamp(28px, 7vw, 36px);
-                line-height: 1.05;
+            .weather-page .regional-weather .section-title {
+                margin-bottom: 14px;
+                border: none;
             }
 
-        .weather-page .weather-editorial-introduction {
-            font-size: 16px;
+                .weather-page .regional-weather .section-title h2 {
+                    margin: 0;
+                    font-family: "Times New Roman", Times, serif;
+                    font-size: 22px;
+                    line-height: 1.2;
+                    text-transform: none;
+                }
+
+        .weather-page .regional-weather-grid {
+            display: flex;
+            flex-direction: column;
+            gap: 0;
         }
 
-        .weather-page .weather-editorial-text {
-            font-size: 17px;
-            line-height: 1.5;
+        .weather-page .regional-weather-item {
+            padding: 12px 0;
+            border: none;
+        }
+
+            .weather-page .regional-weather-item h3 {
+                margin: 0 0 6px;
+                font-size: 14px;
+                line-height: 1.2;
+                font-weight: 700;
+            }
+
+            .weather-page .regional-weather-item ul {
+                margin: 0;
+                padding-left: 16px;
+            }
+
+            .weather-page .regional-weather-item li {
+                margin: 3px 0;
+                font-size: 13px;
+                line-height: 1.35;
+            }
+
+
+
+        .weather-page .regional-weather-footer {
+            margin-top: auto;
+            padding-top: 14px;
+            font-size: 12px;
+            font-weight: 700;
+        }
+
+            .weather-page .regional-weather-footer a {
+                color: inherit;
+                text-decoration: none;
+            }
+
+                .weather-page .regional-weather-footer a:hover {
+                    text-decoration: underline;
+                }
+
+            .weather-page .regional-weather-footer .clickbait-arrow {
+                margin-left: 4px;
+            }
+    /* -------------------------- */
+    /* Weather page - mobile layout */
+
+    @media (max-width: 600px) {
+
+        .weather-page {
+            padding: 1rem;
+            min-width: 0;
+        }
+
+            .weather-page .weather-content-grid {
+                display: grid;
+                grid-template-columns: minmax(0, 1fr);
+                gap: 1.25rem;
+                width: 100%;
+            }
+
+            .weather-page .weather-editorial-main {
+                width: 100%;
+                min-width: 0;
+                box-sizing: border-box;
+            }
+
+                .weather-page .weather-editorial-main h1,
+                .weather-page .weather-editorial-headline {
+                    font-size: 28px;
+                    line-height: 1.1;
+                    overflow-wrap: break-word;
+                }
+
+            .weather-page .weather-editorial-introduction {
+                font-size: 16px;
+                line-height: 1.5;
+            }
+
+            .weather-page .weather-editorial-text {
+                font-size: 16px;
+                line-height: 1.6;
+                overflow-wrap: break-word;
+            }
+    }
+    /* -------------------------- */
+    /* Weather responsive layout */
+
+    @media (max-width: 768px) {
+        .weather-page .weather-content-grid {
+            grid-template-columns: minmax(0, 1fr);
+            gap: 1.25rem;
         }
 
         .weather-page .regional-weather {
-            padding: 0.85rem 1rem;
+            max-width: none;
+            min-height: 0;
         }
-}
+    }
 
+    @media (max-width: 600px) {
+        .weather-page {
+            padding: 1rem;
+        }
 
+            .weather-page .weather-editorial-main {
+                padding: 0;
+            }
 
-    
+                .weather-page .weather-editorial-main h1,
+                .weather-page .weather-editorial-headline {
+                    font-size: clamp(28px, 7vw, 36px);
+                    line-height: 1.05;
+                }
+
+            .weather-page .weather-editorial-introduction {
+                font-size: 16px;
+            }
+
+            .weather-page .weather-editorial-text {
+                font-size: 17px;
+                line-height: 1.5;
+            }
+
+            .weather-page .regional-weather {
+                padding: 0.85rem 1rem;
+            }
+    }
     /* Privacy policy uses the account pages' newspaper styling. */
     .policy-content {
-
         max-width: 850px;
         margin: 0 auto 3rem;
     }
 
         .policy-content .section-title h1 {
-
             font-family: Georgia, 'Times New Roman', serif;
             font-weight: 900;
             font-size: clamp(1.8rem, 5vw, 2.8rem);
             margin: 0;
-
         }
 
         .policy-content section {
-
             margin-top: 2rem;
             padding-top: 1.5rem;
             border-top: 1px solid currentColor;
         }
 
         .policy-content h2 {
-
             font-family: Georgia, 'Times New Roman', serif;
             font-size: 1.5rem;
             font-weight: 700;
         }
 
         .policy-content p {
-
             line-height: 1.75;
         }
 
@@ -3478,9 +3623,7 @@ without changing the rest of the CSS.
         }
 
             .policy-content a:hover {
-
                 color: #b91c1c;
-
             }
 
         .policy-content .account-notice p {
@@ -3488,7 +3631,6 @@ without changing the rest of the CSS.
         }
 
     .policy-actions {
-
         display: flex;
         flex-wrap: wrap;
         align-items: center;
@@ -3496,3 +3638,36 @@ without changing the rest of the CSS.
         margin-top: 1.5rem;
     }
 }
+
+
+/* ---------------------------------------------------------
+   CATEGORY NAVIGATION — HORIZONTAL SCROLLING
+--------------------------------------------------------- */
+
+.main-nav {
+    display: block !important;
+    width: 100%;
+    min-width: 0;
+}
+
+.main-nav .nav-categories {
+    display: flex !important;
+    flex-flow: row nowrap !important;
+    align-items: stretch;
+    justify-content: flex-start;
+    width: 100%;
+    min-width: 0;
+    max-width: 100%;
+    overflow-x: auto !important;
+    overflow-y: hidden !important;
+    white-space: nowrap;
+    -webkit-overflow-scrolling: touch;
+    /* Hide the scrollbar but keep scrolling */
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+}
+
+.main-nav .nav-categories::-webkit-scrollbar {
+    display: none;
+}
+

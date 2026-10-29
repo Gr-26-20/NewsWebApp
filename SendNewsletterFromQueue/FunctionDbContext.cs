@@ -28,6 +28,8 @@ namespace SendNewsletterFromQueue
                 entity.Property(user => user.IsSubscribedToNewsletter)
                     .IsRequired();
 
+               
+
                 
             });
 
@@ -81,7 +83,20 @@ namespace SendNewsletterFromQueue
 
         public string? Email { get; set; }
 
-        public bool IsSubscribedToNewsletter { get; set; } 
+        
+
+        public bool IsSubscribedToNewsletter { get; set; }
+
+        public bool IsSubscribedToNewsNewsletter { get; set; }
+
+        public bool IsSubscribedToWorldNewsletter { get; set; } 
+
+        public bool IsSubscribedToSwedenNewsletter { get; set; }
+
+        public bool IsSubscribedToWeatherNewsletter { get; set; }
+
+        public bool IsSubscribedToSportsNewsletter { get; set; } 
+
 
     }
 
@@ -89,6 +104,8 @@ namespace SendNewsletterFromQueue
     public sealed class NewsLetter
     {
         public int Id { get; set; }
+
+        public string? Category { get; set; }
 
         public string Subject { get; set; } = string.Empty;
         public string Body { get; set; } = string.Empty;

@@ -183,7 +183,22 @@ namespace NewsWebApp.Data.Migrations
                         .HasMaxLength(100)
                         .HasColumnType("nvarchar(100)");
 
+                    b.Property<bool>("IsSubscribedToNewsNewsletter")
+                        .HasColumnType("bit");
+
                     b.Property<bool>("IsSubscribedToNewsletter")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsSubscribedToSportsNewsletter")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsSubscribedToSwedenNewsletter")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsSubscribedToWeatherNewsletter")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsSubscribedToWorldNewsletter")
                         .HasColumnType("bit");
 
                     b.Property<string>("LastName")

@@ -1,10 +1,12 @@
 ﻿using Azure.Storage.Queues;
 using Microsoft.Azure.Functions.Worker;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.ChangeTracking.Internal;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
+using System.Net.Mail;
 using System.Text;
 using System.Text.Json;
 
@@ -38,34 +40,63 @@ namespace SendNewsletterFromQueue
                 new QueueClientOptions { MessageEncoding = QueueMessageEncoding.Base64 });
             await queueClient.CreateIfNotExistsAsync(cancellationToken: cancellationToken);
 
-            int latestBirthYearForAdults = DateTime.UtcNow.Year - 18;
+            
 
             // The context is disposed automatically when this function invocation completes.
             await using var dbContext =
                 await _dbContextFactory.CreateDbContextAsync(cancellationToken);
 
-            List<string> emailAddresses = await dbContext.AspNetUsers
+            /* My previous approach does not work, as the queue does not take into account
+             * duplicate emails. It only adds the email addresses to the queue,
+             * meaning, with the previous approach, the same email address would
+             * be added each time, per category subscribed to, to the queue.
+             * Hence why we have to add all the email addresses; regardless
+             * of which category is subscribed to, only once to the queue.
+             */
+            var subscriberEmails = await dbContext.AspNetUsers
                 .AsNoTracking()
-                .Where(user =>
-                    user.IsSubscribedToNewsletter &&
-                    user.Email != null &&
-                    user.Email != string.Empty)
-                .Select(user => user.Email!)
+                .Where(user => user.Email != null
+                && user.Email != string.Empty
+                && (user.IsSubscribedToNewsletter
+                || user.IsSubscribedToNewsNewsletter
+                || user.IsSubscribedToSportsNewsletter
+                || user.IsSubscribedToSwedenNewsletter
+                || user.IsSubscribedToWeatherNewsletter
+                || user.IsSubscribedToWorldNewsletter))
+                .Select(user => new{
+                    user.Email,
+                    user.IsSubscribedToNewsNewsletter,
+                    user.IsSubscribedToSportsNewsletter,
+                    user.IsSubscribedToSwedenNewsletter,
+                    user.IsSubscribedToWeatherNewsletter,
+                    user.IsSubscribedToWorldNewsletter
+                })
                 .ToListAsync(cancellationToken);
 
-            foreach (string emailAddress in emailAddresses)
+            foreach (var subscriber in subscriberEmails)
             {
-                string message = JsonSerializer.Serialize(new
+                var message = JsonSerializer.Serialize(new
                 {
-                    EmailAddress = emailAddress
+                    EmailAddress = subscriber.Email,
+                    IsSubscribedToNewsNewsletter =
+                        subscriber.IsSubscribedToNewsNewsletter,
+                    IsSubscribedToWorldNewsletter =
+                        subscriber.IsSubscribedToWorldNewsletter,
+                    IsSubscribedToSwedenNewsletter =
+                        subscriber.IsSubscribedToSwedenNewsletter,
+                    IsSubscribedToWeatherNewsletter =
+                        subscriber.IsSubscribedToWeatherNewsletter,
+                    IsSubscribedToSportsNewsletter =
+                        subscriber.IsSubscribedToSportsNewsletter
                 });
 
                 await queueClient.SendMessageAsync(message, cancellationToken);
             }
 
-            _logger.LogInformation(
+
+                _logger.LogInformation(
                 "Queued {UserCount} user email addresses in {QueueName}.",
-                emailAddresses.Count,
+                subscriberEmails.Count,
                 queueName);
 
 

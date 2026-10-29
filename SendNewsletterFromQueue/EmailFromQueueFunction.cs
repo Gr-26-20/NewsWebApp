@@ -100,17 +100,6 @@ namespace SendNewsletterFromQueue
 
 
                 //Chunks of messages for each category of newsletter, grabbing the latest newsletter for each category
-                var message = new MimeMessage();
-                message.From.Add(new MailboxAddress(senderName, smtpFrom));
-                message.To.Add(MailboxAddress.Parse(queuedEmail.EmailAddress));
-                message.Subject = "CLICKBAIT newsletter";
-
-                message.Body = new TextPart(TextFormat.Html)
-                {
-                    Text = newsletters[newsletters.Count - 1].Body ?? "No newsletter content available."
-                };
-
-
                 var newsMessage = new MimeMessage();
                 if (newsNewsletters.Count > 0)
                 {
@@ -195,7 +184,6 @@ namespace SendNewsletterFromQueue
                     smtpUser,
                     smtpPassword.Replace(" ", string.Empty));
                 emailClient.AuthenticationMechanisms.Remove("XOAUTH2");
-                await emailClient.SendAsync(message);
                 if (newsNewsletters.Count > 0 && queuedEmail.IsSubscribedToNewsNewsletter)
                 {
                     await emailClient.SendAsync(newsMessage);

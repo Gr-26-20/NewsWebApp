@@ -149,29 +149,34 @@ namespace NewsWebApp.Controllers
             return RedirectToAction(nameof(ManageNewsletters));
         }
 
-        public async Task<IActionResult> Subscribe(string userId) 
-        {
+        //public async Task<IActionResult> Subscribe(string userId) 
+        //{
 
-            //var currentUser = User;
-            //var user = await _userManager.GetUserAsync(currentUser);
-            var user = await _userAndRoleService.GetCurrentUser();
-            if (user == null)
-            {
-                return NotFound();
-            }
-            if(!user.IsSubscribedToNewsletter)
-            {
-                user.IsSubscribedToNewsletter = true;
-            }
-            else
-            {
-                user.IsSubscribedToNewsletter = false;
-            }
+        //    //var currentUser = User;
+        //    //var user = await _userManager.GetUserAsync(currentUser);
+        //    var user = await _userAndRoleService.GetCurrentUser();
+        //    if (user == null)
+        //    {
+        //        return NotFound();
+        //    }
+        //    if(!user.IsSubscribedToNewsletter)
+        //    {
+        //        user.IsSubscribedToNewsletter = true;
+        //    }
+        //    else
+        //    {
+        //        user.IsSubscribedToNewsletter = false;
+        //    }
 
-            await _applicationDbContext.SaveChangesAsync();
-            return RedirectToAction(nameof(ManageNewsletters));
-        }
+        //    await _applicationDbContext.SaveChangesAsync();
+        //    //return RedirectToAction(nameof(ManageNewsletters));
+        //    return Json(new
+        //    {
+        //        subscribed = user.IsSubscribedToNewsNewsletter
+        //    });
+        //}
 
+        [HttpPost]
         public async Task<IActionResult>SubscribeToNewsCategory(string userId)
         {
             var user = await _userAndRoleService.GetCurrentUser();
@@ -188,10 +193,14 @@ namespace NewsWebApp.Controllers
                 user.IsSubscribedToNewsNewsletter = false;
             }
             await _applicationDbContext.SaveChangesAsync();
-            return RedirectToAction(nameof(ManageNewsletters));
+            //return RedirectToAction(nameof(ManageNewsletters));
+            return Json(new
+            {
+                subscribed = user.IsSubscribedToNewsNewsletter
+            });
         }
-
-        public async Task<IActionResult> SubscribeToWorldCategory(string userId)
+        [HttpPost]
+        public async Task<IActionResult> SubscribeToWorldCategory()
         {
             var user = await _userAndRoleService.GetCurrentUser();
             if (user == null)
@@ -206,11 +215,19 @@ namespace NewsWebApp.Controllers
             {
                 user.IsSubscribedToWorldNewsletter = false;
             }
+
+
+
             await _applicationDbContext.SaveChangesAsync();
-            return RedirectToAction(nameof(ManageNewsletters));
+            //return RedirectToAction(nameof(ManageNewsletters));
+            return Json(new
+            {
+                success = true,
+                subscribed = user.IsSubscribedToWorldNewsletter
+            });
         }
 
-      
+        [HttpPost]
         public async Task<IActionResult> SubscribeToSwedenCategory(string userId)
         {
             var user = await _userAndRoleService.GetCurrentUser();
@@ -227,9 +244,14 @@ namespace NewsWebApp.Controllers
                 user.IsSubscribedToSwedenNewsletter = false;
             }
             await _applicationDbContext.SaveChangesAsync();
-            return RedirectToAction(nameof(ManageNewsletters));
+            //return RedirectToAction(nameof(ManageNewsletters));
+            return Json(new
+            {
+                subscribed = user.IsSubscribedToSwedenNewsletter
+            });
         }
 
+        [HttpPost]
         public async Task<IActionResult> SubscribeToWeatherCategory(string userId)
         {
             var user = await _userAndRoleService.GetCurrentUser();
@@ -246,9 +268,14 @@ namespace NewsWebApp.Controllers
                 user.IsSubscribedToWeatherNewsletter = false;
             }
             await _applicationDbContext.SaveChangesAsync();
-            return RedirectToAction(nameof(ManageNewsletters));
+            //return RedirectToAction(nameof(ManageNewsletters));
+            return Json(new
+            {
+                subscribed = user.IsSubscribedToWeatherNewsletter
+            });
         }
 
+        [HttpPost]
         public async Task<IActionResult> SubscribeToSportsCategory(string userId)
         {
             var user = await _userAndRoleService.GetCurrentUser();
@@ -265,7 +292,83 @@ namespace NewsWebApp.Controllers
                 user.IsSubscribedToSportsNewsletter = false;
             }
             await _applicationDbContext.SaveChangesAsync();
-            return RedirectToAction(nameof(ManageNewsletters));
+            //return RedirectToAction(nameof(ManageNewsletters));
+            return Json(new
+            {
+                
+                subscribed = user.IsSubscribedToSportsNewsletter
+            });
         }
+
+        [HttpGet]
+        public async Task<IActionResult> GetNewsSubscriptionStatus()
+        {
+            var user = await _userAndRoleService.GetCurrentUser();
+
+            if (user == null)
+                return Unauthorized();
+
+            return Json(new
+            {
+                subscribed = user.IsSubscribedToNewsNewsletter
+            });
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> GetWorldSubscriptionStatus(string category)
+        {
+            var user = await _userAndRoleService.GetCurrentUser();
+
+            if (user == null)
+                return Unauthorized();
+
+            return Json(new
+            {
+                subscribed = user.IsSubscribedToWorldNewsletter
+            });
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> GetSwedenSubscriptionStatus()
+        {
+            var user = await _userAndRoleService.GetCurrentUser();
+
+            if (user == null)
+                return Unauthorized();
+
+            return Json(new
+            {
+                subscribed = user.IsSubscribedToSwedenNewsletter
+            });
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> GetWeatherSubscriptionStatus()
+        {
+            var user = await _userAndRoleService.GetCurrentUser();
+
+            if (user == null)
+                return Unauthorized();
+
+            return Json(new
+            {
+                subscribed = user.IsSubscribedToWeatherNewsletter
+            });
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> GetSportsSubscriptionStatus()
+        {
+            var user = await _userAndRoleService.GetCurrentUser();
+
+            if (user == null)
+                return Unauthorized();
+
+            return Json(new
+            {
+                subscribed = user.IsSubscribedToSportsNewsletter
+            });
+        }
+
     }
 }

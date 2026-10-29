@@ -30,7 +30,7 @@ namespace SendNewsletterFromQueue
 
         [Function("SendNewsletter")]
         public async Task RunAsync(
-            [TimerTrigger("0 0 7  * * 6", RunOnStartup = true)] TimerInfo timer,
+            [TimerTrigger("0 0 7  * * 6", RunOnStartup = false)] TimerInfo timer,
             CancellationToken cancellationToken)
         {
             string storageConnectionString = GetRequiredSetting("AzureWebJobsStorage");
@@ -78,8 +78,6 @@ namespace SendNewsletterFromQueue
                 var message = JsonSerializer.Serialize(new
                 {
                     EmailAddress = subscriber.Email,
-                    //IsSubscribedToNewsletter =
-                    //    subscriber.IsSubscribedToNewsletter,
                     IsSubscribedToNewsNewsletter =
                         subscriber.IsSubscribedToNewsNewsletter,
                     IsSubscribedToWorldNewsletter =

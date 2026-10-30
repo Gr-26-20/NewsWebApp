@@ -76,15 +76,46 @@
     @if (ViewBag.Category == "NEWSLETTER")
     {
         <div class="newsletter-category-link">
+            @if (!SignInManager.IsSignedIn(User))
+            {
+                <h1>Sign in to subscribe to our newsletter!</h1>
+            }
             @if (SignInManager.IsSignedIn(User))
             {  
-                <button id="subscribeNewsButton" class="btn btn-primary" onclick="toggleSubscription('@User.Identity?.Name', 'news')">Subscribe to news category newsletter</button><br />
-                <button id="subscribeWorldButton" class="btn btn-primary" onclick="toggleSubscription('@User.Identity?.Name', 'world')">Subscribe to world category newsletter</button><br />
-                <button id="subscribeSwedenButton" class="btn btn-primary" onclick="toggleSubscription('@User.Identity?.Name', 'sweden')">Subscribe to Sweden category newsletter</button><br />
-                <button id="subscribeWeatherButton" class="btn btn-primary" onclick="toggleSubscription('@User.Identity?.Name', 'weather')">Subscribe to Sweden category newsletter</button><br />
-                <button id="subscribeSportsButton" class="btn btn-primary" onclick="toggleSubscription('@User.Identity?.Name', 'sports')">Subscribe to sports category newsletter</button><br /> 
+                <div class="card">
+                    <div class="card-body" style="background-image: url('/images/Newsletterbg5.png')">
+                        <h4 class="card-title d-flex justify-content-center">Subscribe to the news category newsletter!</h4>
+                        <button id="subscribeNewsButton" class="btn btn-primary d-flex justify-content-center" style="margin:auto" onclick="toggleSubscription('@User.Identity?.Name', 'news')">Subscribe to news category newsletter</button><br /> 
+                    </div>
+                </div>
 
+                <div class="card">
+                    <div class="card-body" style="background-image: url('/images/Newsletterbg5.png')">
+                        <h4 class="card-title d-flex justify-content-center">Subscribe to the world category newsletter</h4>
+                        <button id="subscribeWorldButton" class="btn btn-primary d-flex justify-content-center" style="margin:auto" onclick="toggleSubscription('@User.Identity?.Name', 'world')">Subscribe to world category newsletter</button><br />
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-body" style="background-image: url('/images/Newsletterbg5.png')">
+                        <h4 class="card-title d-flex justify-content-center">Subscribe to the Sweden category newsletter!</h4>
+                        <button id="subscribeSwedenButton" class="btn btn-primary d-flex justify-content-center" style="margin:auto" onclick="toggleSubscription('@User.Identity?.Name', 'sweden')">Subscribe to Sweden category newsletter</button><br />
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-body" style="background-image: url('/images/Newsletterbg5.png')">
+                        <h4 class="card-title d-flex justify-content-center">Subscribe to the weather category newsletter!</h4>
+                        <button id="subscribeWeatherButton" class="btn btn-primary d-flex justify-content-center" style="margin:auto" onclick="toggleSubscription('@User.Identity?.Name', 'weather')">Subscribe to weather category newsletter</button><br />
+                    </div>
+                </div>
                 
+                <div class="card">
+                    <div class="card-body" style="background-image: url('/images/Newsletterbg5.png')">
+                        <h4 class="card-title d-flex justify-content-center">Subscribe to the sports category newsletter!</h4>
+                        <button id="subscribeSportsButton" class="btn btn-primary d-flex justify-content-center" style="margin:auto" onclick="toggleSubscription('@User.Identity?.Name', 'sports')">Subscribe to sports category newsletter</button><br />
+                    </div>
+                </div>                
             }
             </div>
     }
@@ -131,7 +162,7 @@
 
         </section>
 
-        <aside class="category-advert-column">
+        <aside class="category-advert-column" style="display: inline-flex">
             @await Component.InvokeAsync("Advertisement")
         </aside>
 

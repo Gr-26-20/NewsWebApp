@@ -42,7 +42,6 @@
 
   <ItemGroup>
     <Folder Include="Views\Feedback\" />
-    <Folder Include="wwwroot\images\" />
   </ItemGroup>
 
 </Project>

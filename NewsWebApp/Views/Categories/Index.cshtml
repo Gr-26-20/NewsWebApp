@@ -71,54 +71,93 @@
         </section>
     }
 
-
-
     @if (ViewBag.Category == "NEWSLETTER")
     {
-        <div class="newsletter-category-link">
-            @if (!SignInManager.IsSignedIn(User))
-            {
-                <h1>Sign in to subscribe to our newsletter!</h1>
-            }
-            @if (SignInManager.IsSignedIn(User))
-            {  
-                <div class="card">
-                    <div class="card-body" style="background-image: url('/images/Newsletterbg5.png')">
-                        <h4 class="card-title d-flex justify-content-center">Subscribe to the news category newsletter!</h4>
-                        <button id="subscribeNewsButton" class="btn btn-primary d-flex justify-content-center" style="margin:auto" onclick="toggleSubscription('@User.Identity?.Name', 'news')">Subscribe to news category newsletter</button><br /> 
-                    </div>
-                </div>
+        <div class="category-content-layout">
 
-                <div class="card">
-                    <div class="card-body" style="background-image: url('/images/Newsletterbg5.png')">
-                        <h4 class="card-title d-flex justify-content-center">Subscribe to the world category newsletter</h4>
-                        <button id="subscribeWorldButton" class="btn btn-primary d-flex justify-content-center" style="margin:auto" onclick="toggleSubscription('@User.Identity?.Name', 'world')">Subscribe to world category newsletter</button><br />
-                    </div>
-                </div>
+            <section class="category-articles">
 
-                <div class="card">
-                    <div class="card-body" style="background-image: url('/images/Newsletterbg5.png')">
-                        <h4 class="card-title d-flex justify-content-center">Subscribe to the Sweden category newsletter!</h4>
-                        <button id="subscribeSwedenButton" class="btn btn-primary d-flex justify-content-center" style="margin:auto" onclick="toggleSubscription('@User.Identity?.Name', 'sweden')">Subscribe to Sweden category newsletter</button><br />
-                    </div>
-                </div>
+                @if (!SignInManager.IsSignedIn(User))
+                {
+                    <h1>Sign in to subscribe to our newsletter!</h1>
+                }
 
-                <div class="card">
-                    <div class="card-body" style="background-image: url('/images/Newsletterbg5.png')">
-                        <h4 class="card-title d-flex justify-content-center">Subscribe to the weather category newsletter!</h4>
-                        <button id="subscribeWeatherButton" class="btn btn-primary d-flex justify-content-center" style="margin:auto" onclick="toggleSubscription('@User.Identity?.Name', 'weather')">Subscribe to weather category newsletter</button><br />
+                @if (SignInManager.IsSignedIn(User))
+                {
+                    <div class="d-flex flex-column align-items-start">
+
+                        <div class="card" style="width: fit-content; max-width: 100%;">
+                            <div class="card-body">
+                                <h4 class="card-title text-center">
+                                    Subscribe to the news category newsletter!
+                                </h4>
+                                <button id="subscribeNewsButton" class="btn btn-primary"
+                                        onclick="toggleSubscription('@User.Identity?.Name', 'news')">
+                                    Subscribe to news category newsletter
+                                </button>
+                            </div>
+                        </div>
+
+                        <div class="card" style="width: fit-content; max-width: 100%;">
+                            <div class="card-body">
+                                <h4 class="card-title text-center">
+                                    Subscribe to the world category newsletter
+                                </h4>
+                                <button id="subscribeWorldButton" class="btn btn-primary"
+                                        onclick="toggleSubscription('@User.Identity?.Name', 'world')">
+                                    Subscribe to world category newsletter
+                                </button>
+                            </div>
+                        </div>
+
+                        <div class="card" style="width: fit-content; max-width: 100%;">
+                            <div class="card-body">
+                                <h4 class="card-title text-center">
+                                    Subscribe to the Sweden category newsletter!
+                                </h4>
+                                <button id="subscribeSwedenButton" class="btn btn-primary"
+                                        onclick="toggleSubscription('@User.Identity?.Name', 'sweden')">
+                                    Subscribe to Sweden category newsletter
+                                </button>
+                            </div>
+                        </div>
+
+                        <div class="card" style="width: fit-content; max-width: 100%;">
+                            <div class="card-body">
+                                <h4 class="card-title text-center">
+                                    Subscribe to the weather category newsletter!
+                                </h4>
+                                <button id="subscribeWeatherButton" class="btn btn-primary"
+                                        onclick="toggleSubscription('@User.Identity?.Name', 'weather')">
+                                    Subscribe to weather category newsletter
+                                </button>
+                            </div>
+                        </div>
+
+                        <div class="card" style="width: fit-content; max-width: 100%;">
+                            <div class="card-body">
+                                <h4 class="card-title text-center">
+                                    Subscribe to the sports category newsletter!
+                                </h4>
+                                <button id="subscribeSportsButton" class="btn btn-primary"
+                                        onclick="toggleSubscription('@User.Identity?.Name', 'sports')">
+                                    Subscribe to sports category newsletter
+                                </button>
+                            </div>
+                        </div>
+
                     </div>
-                </div>
-                
-                <div class="card">
-                    <div class="card-body" style="background-image: url('/images/Newsletterbg5.png')">
-                        <h4 class="card-title d-flex justify-content-center">Subscribe to the sports category newsletter!</h4>
-                        <button id="subscribeSportsButton" class="btn btn-primary d-flex justify-content-center" style="margin:auto" onclick="toggleSubscription('@User.Identity?.Name', 'sports')">Subscribe to sports category newsletter</button><br />
-                    </div>
-                </div>                
-            }
-            </div>
+                }
+
+            </section>
+
+            <aside class="category-advert-column">
+                @await Component.InvokeAsync("Advertisement")
+            </aside>
+
+        </div>
     }
+
 
     <div class="category-content-layout">
 
@@ -162,10 +201,15 @@
 
         </section>
 
-        <aside class="category-advert-column" style="display: inline-flex">
-            @await Component.InvokeAsync("Advertisement")
-        </aside>
-
+        @*DO NOT REMOVE THIS IF STATEMENT!
+          This is here to prevent the advertisement from appearing twice on the newsletter subscription page!
+        *@
+        @if(ViewBag.Category != "NEWSLETTER")
+        {
+            <aside class="category-advert-column">
+                @await Component.InvokeAsync("Advertisement")
+            </aside>
+        }
     </div>
 
 </div>

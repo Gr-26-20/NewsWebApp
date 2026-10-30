@@ -123,8 +123,16 @@
 {
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-date-fns"></script>
-
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-zoom@2.2.0"></script>
     <script>
+
+
+        if (typeof ChartZoom !== 'undefined') {
+            Chart.register(ChartZoom);
+        } else {
+            console.error('Chart.js zoom plugin failed to load.');
+        }
+
             const ctx = document.getElementById('historyChart');
 
             const historyData = [
@@ -157,6 +165,14 @@
             const HOUR_MS = 60 * 60 * 1000;
             const DAY_MS = 24 * HOUR_MS;
             const SEVEN_DAYS_MS = 7 * DAY_MS;
+
+            const earliestHistoryTime =
+                new Date(historyData[0].time).getTime();
+
+            const latestHistoryTime =
+                new Date(historyData[historyData.length - 1].time).getTime();
+
+            const TOTAL_INITIAL_WINDOW = 14 * DAY_MS;
 
             let currentView = '1day';
             let windowOffset = 0;
@@ -193,16 +209,72 @@
                 });
             }
 
-            function updateChart() {
-                const visibleData = getVisibleData();
-                const visibleChartData = getChartData(visibleData);
+        function updateChart() {
 
-                chart.data.labels = [];
-                chart.data.datasets[0].data = visibleChartData.temperatures;
-                chart.data.datasets[1].data = visibleChartData.electricityPrices;
-
-                chart.update('none');
+            // Clear any previous zoom or pan state when changing views.
+            if (typeof chart.resetZoom === 'function') {
+                chart.resetZoom();
             }
+
+            const visibleData = getVisibleData();
+            const visibleChartData = getChartData(visibleData);
+
+            chart.data.labels = [];
+            chart.data.datasets[0].data = visibleChartData.temperatures;
+            chart.data.datasets[1].data = visibleChartData.electricityPrices;
+
+            const xScale = chart.options.scales.x;
+            const zoomOptions = chart.options.plugins.zoom;
+
+            // Remove previous axis boundaries.
+            xScale.min = undefined;
+            xScale.max = undefined;
+
+            if (currentView === '1day') {
+
+                xScale.time.unit = 'hour';
+                xScale.ticks.stepSize = 3;
+                xScale.ticks.autoSkip = false;
+                xScale.ticks.maxTicksLimit = undefined;
+
+            }
+            else if (currentView === '7days') {
+
+                xScale.time.unit = 'day';
+                xScale.time.displayFormats.day = 'EEE';
+                xScale.ticks.stepSize = 1;
+                xScale.ticks.autoSkip = true;
+                xScale.ticks.maxTicksLimit = 7;
+
+            }
+            else {
+
+                xScale.time.unit = 'day';
+                xScale.time.displayFormats.day = 'dd MMM yy';
+                xScale.ticks.stepSize = undefined;
+                xScale.ticks.autoSkip = true;
+                xScale.ticks.maxTicksLimit = 8;
+
+                // Show the latest 14 days initially.
+                xScale.min = Math.max(
+                    earliestHistoryTime,
+                    latestHistoryTime - TOTAL_INITIAL_WINDOW
+                );
+
+                xScale.max = latestHistoryTime;
+            }
+
+            // Enable navigation only in TOTAL view.
+            const isTotal = currentView === 'total';
+
+            zoomOptions.pan.enabled = isTotal;
+            zoomOptions.zoom.wheel.enabled = isTotal;
+            zoomOptions.zoom.pinch.enabled = isTotal;
+
+            chart.update('none');
+        }
+
+       
 
             const nightBackgroundPlugin = {
                 id: 'nightBackground',
@@ -381,6 +453,7 @@
             let chart;
 
             chart = new Chart(ctx, {
+
                 type: 'line',
 
                 plugins: [nightBackgroundPlugin],
@@ -415,26 +488,57 @@
                     responsive: true,
                     maintainAspectRatio: false,
 
-                    scales: {
-                        x: {
-                            type: 'time',
-
-                            time: {
-                                unit: 'hour',
-                                displayFormats: {
-                                    hour: 'HH:mm'
-                                },
-                                tooltipFormat: 'dd MMM yyyy HH:mm'
-                            },
-
-                            ticks: {
-                                stepSize: 3,
-                                source: 'auto',
-                                autoSkip: false,
-                                maxRotation: 0,
-                                minRotation: 0
+                plugins: {
+                    zoom: {
+                        limits: {
+                            x: {
+                                min: earliestHistoryTime,
+                                max: latestHistoryTime,
+                                minRange: DAY_MS
                             }
                         },
+
+                        pan: {
+                            enabled: false,
+                            mode: 'x'
+                        },
+
+                        zoom: {
+                            mode: 'x',
+
+                            wheel: {
+                                enabled: false,
+                                speed: 0.1
+                            },
+
+                            pinch: {
+                                enabled: false
+                            }
+                        }
+                    }
+                },
+
+                    scales: {
+                    x: {
+                        type: 'time',
+
+                        time: {
+                            unit: 'hour',
+                            displayFormats: {
+                                hour: 'HH:mm',
+                                day: 'EEE',
+                            },
+                            tooltipFormat: 'dd MMM yyyy HH:mm'
+                        },
+
+                        ticks: {
+                            stepSize: 3,
+                            source: 'auto',
+                            autoSkip: false,
+                            maxRotation: 0,
+                            minRotation: 0
+                        }
+                    },
 
                         y: {
                             type: 'linear',
@@ -470,6 +574,9 @@
                     }
                 }
             });
+
+        console.log('ChartZoom:', typeof ChartZoom);
+        console.log('Zoom plugin registered:', chart.constructor.registry.plugins.get('zoom'));
 
             // Show the selected initial view (1 DAY).
             updateChart();

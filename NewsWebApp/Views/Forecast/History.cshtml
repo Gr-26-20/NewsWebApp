@@ -123,12 +123,21 @@
 {
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-date-fns"></script>
+    <script src="https://cdn.jsdelivr.net/npm/hammerjs@2.0.8"></script>
     <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-zoom@2.2.0"></script>
+
     <script>
 
 
         if (typeof ChartZoom !== 'undefined') {
             Chart.register(ChartZoom);
+
+            console.log('Zoom plugin loaded:', typeof ChartZoom);
+
+            console.log(
+                'Registered zoom plugin:',
+                Chart.registry.plugins.get('zoom')
+        );
         } else {
             console.error('Chart.js zoom plugin failed to load.');
         }
@@ -180,41 +189,10 @@
             console.log('Initial view:', currentView);
 
             function getVisibleData() {
-                if (historyData.length === 0) {
-                    return [];
-                }
-
-                if (currentView === 'total') {
-                    return historyData;
-                }
-
-                const windowSize =
-                    currentView === '1day'
-                        ? DAY_MS
-                        : SEVEN_DAYS_MS;
-
-                const latestTime =
-                    new Date(historyData[historyData.length - 1].time).getTime();
-
-                const endTime =
-                    latestTime - (windowOffset * HOUR_MS);
-
-                const startTime =
-                    endTime - windowSize;
-
-                return historyData.filter(item => {
-                    const time = new Date(item.time).getTime();
-
-                    return time >= startTime && time <= endTime;
-                });
+                return historyData;
             }
 
-        function updateChart() {
-
-            // Clear any previous zoom or pan state when changing views.
-            if (typeof chart.resetZoom === 'function') {
-                chart.resetZoom();
-            }
+            function updateChart() {
 
             const visibleData = getVisibleData();
             const visibleChartData = getChartData(visibleData);
@@ -224,9 +202,11 @@
             chart.data.datasets[1].data = visibleChartData.electricityPrices;
 
             const xScale = chart.options.scales.x;
-            const zoomOptions = chart.options.plugins.zoom;
 
-            // Remove previous axis boundaries.
+            // Calculate the visible time window.
+            const endTime =
+                latestHistoryTime - (windowOffset * HOUR_MS);
+
             xScale.min = undefined;
             xScale.max = undefined;
 
@@ -237,8 +217,10 @@
                 xScale.ticks.autoSkip = false;
                 xScale.ticks.maxTicksLimit = undefined;
 
-            }
-            else if (currentView === '7days') {
+                xScale.min = endTime - DAY_MS;
+                xScale.max = endTime;
+
+            } else if (currentView === '7days') {
 
                 xScale.time.unit = 'day';
                 xScale.time.displayFormats.day = 'EEE';
@@ -246,8 +228,10 @@
                 xScale.ticks.autoSkip = true;
                 xScale.ticks.maxTicksLimit = 7;
 
-            }
-            else {
+                xScale.min = endTime - SEVEN_DAYS_MS;
+                xScale.max = endTime;
+
+            } else {
 
                 xScale.time.unit = 'day';
                 xScale.time.displayFormats.day = 'dd MMM yy';
@@ -255,7 +239,6 @@
                 xScale.ticks.autoSkip = true;
                 xScale.ticks.maxTicksLimit = 8;
 
-                // Show the latest 14 days initially.
                 xScale.min = Math.max(
                     earliestHistoryTime,
                     latestHistoryTime - TOTAL_INITIAL_WINDOW
@@ -264,12 +247,15 @@
                 xScale.max = latestHistoryTime;
             }
 
-            // Enable navigation only in TOTAL view.
-            const isTotal = currentView === 'total';
+            // Enable horizontal dragging in all views.
+            chart.options.plugins.zoom.pan.enabled = true;
 
-            zoomOptions.pan.enabled = isTotal;
-            zoomOptions.zoom.wheel.enabled = isTotal;
-            zoomOptions.zoom.pinch.enabled = isTotal;
+            // Keep zooming restricted to TOTAL.
+            chart.options.plugins.zoom.zoom.wheel.enabled =
+                currentView === 'total';
+
+            chart.options.plugins.zoom.zoom.pinch.enabled =
+                currentView === 'total';
 
             chart.update('none');
         }
@@ -450,27 +436,26 @@
                 }
             };
 
-            let chart;
+                    let chart;
 
-            chart = new Chart(ctx, {
+        chart = new Chart(ctx, {
+            type: 'line',
 
-                type: 'line',
+            plugins: [nightBackgroundPlugin],
 
-                plugins: [nightBackgroundPlugin],
+            data: {
+                labels: [],
 
-                data: {
-                    labels: [],
-
-                    datasets: [
-                        {
-                            label: 'Temperature (°C)',
-                            data: [],
-                            parsing: false,
-                            borderWidth: 2,
-                            tension: 0.25,
-                            pointRadius: 2,
-                            yAxisID: 'y'
-                        },
+                datasets: [
+                    {
+                        label: 'Temperature (°C)',
+                        data: [],
+                        parsing: false,
+                        borderWidth: 2,
+                        tension: 0.25,
+                        pointRadius: 2,
+                        yAxisID: 'y'
+                    },
 
                         {
                             label: 'Electricity price (öre/kWh)',
@@ -484,99 +469,125 @@
                     ]
                 },
 
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            animation: false,
 
-                plugins: {
+            plugins: {
+                zoom: {
+                    limits: {
+                        x: {
+                            min: earliestHistoryTime,
+                            max: latestHistoryTime,
+                            minRange: DAY_MS
+                        }
+                    },
+
+                    pan: {
+                        enabled: true,
+                        mode: 'x',
+                        threshold: 5,
+                        modifierKey: null,
+
+                        onPanStart: function ({ chart }) {
+                            console.log('Pan started');
+                            return true;
+                        },
+
+                        onPanRejected: function ({ chart }) {
+                            console.log('Pan rejected');
+                        },
+
+                        onPanComplete: function ({ chart }) {
+                            console.log('Pan completed');
+                        }
+                    },
+
                     zoom: {
-                        limits: {
-                            x: {
-                                min: earliestHistoryTime,
-                                max: latestHistoryTime,
-                                minRange: DAY_MS
-                            }
+                        mode: 'x',
+
+                        wheel: {
+                            enabled: true,
+                            speed: 0.1
                         },
 
-                        pan: {
-                            enabled: false,
-                            mode: 'x'
+                        pinch: {
+                            enabled: true
+                        }
+                    }
+                }
+            },
+
+            scales: {
+                x: {
+                    type: 'time',
+
+                    time: {
+                        unit: 'hour',
+                        displayFormats: {
+                            hour: 'HH:mm',
+                            day: 'EEE'
                         },
+                        tooltipFormat: 'dd MMM yyyy HH:mm'
+                    },
 
-                        zoom: {
-                            mode: 'x',
+                    ticks: {
+                        stepSize: 3,
+                        source: 'auto',
+                        autoSkip: false,
+                        maxRotation: 0,
+                        minRotation: 0
+                    }
+                },
 
-                            wheel: {
-                                enabled: false,
-                                speed: 0.1
-                            },
+                y: {
+                    type: 'linear',
+                    position: 'left',
 
-                            pinch: {
-                                enabled: false
-                            }
+                    title: {
+                        display: true,
+                        text: 'Temperature (°C)'
+                    },
+
+                    ticks: {
+                        callback: function (value) {
+                            return Number(value)
+                                .toFixed(1)
+                                .replace(".", ",") + "°";
                         }
                     }
                 },
 
-                    scales: {
-                    x: {
-                        type: 'time',
+                y1: {
+                    type: 'linear',
+                    position: 'right',
 
-                        time: {
-                            unit: 'hour',
-                            displayFormats: {
-                                hour: 'HH:mm',
-                                day: 'EEE',
-                            },
-                            tooltipFormat: 'dd MMM yyyy HH:mm'
-                        },
-
-                        ticks: {
-                            stepSize: 3,
-                            source: 'auto',
-                            autoSkip: false,
-                            maxRotation: 0,
-                            minRotation: 0
-                        }
+                    title: {
+                        display: true,
+                        text: 'Electricity price (öre/kWh)'
                     },
 
-                        y: {
-                            type: 'linear',
-                            position: 'left',
-
-                            title: {
-                                display: true,
-                                text: 'Temperature (°C)'
-                            },
-
-                            ticks: {
-                                callback: function (value) {
-                                    return Number(value)
-                                        .toFixed(1)
-                                        .replace(".", ",") + "°";
-                                }
-                            }
-                        },
-
-                        y1: {
-                            type: 'linear',
-                            position: 'right',
-
-                            title: {
-                                display: true,
-                                text: 'Electricity price (öre/kWh)'
-                            },
-
-                            grid: {
-                                drawOnChartArea: false
-                            }
-                        }
+                    grid: {
+                        drawOnChartArea: false
                     }
                 }
-            });
+            }
+        }
+    });
+        ctx.addEventListener('mousedown', () => {
+            console.log('Canvas: mouse down');
+        });
 
-        console.log('ChartZoom:', typeof ChartZoom);
-        console.log('Zoom plugin registered:', chart.constructor.registry.plugins.get('zoom'));
+        ctx.addEventListener('mousemove', () => {
+            console.log('Canvas: mouse move');
+        });
+
+        ctx.addEventListener('mouseup', () => {
+            console.log('Canvas: mouse up');
+        });
+        
+                   
 
             // Show the selected initial view (1 DAY).
             updateChart();

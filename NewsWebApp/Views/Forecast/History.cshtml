@@ -151,19 +151,42 @@
         }
             ];
 
-            function getChartData(data) {
-                return {
-                    temperatures: data.map(item => ({
-                        x: new Date(item.time).getTime(),
-                        y: item.temperature
-                    })),
+            
+        function getChartData(data) {
 
-                    electricityPrices: data.map(item => ({
-                        x: new Date(item.time).getTime(),
-                        y: item.electricity
-                    }))
-                };
-            }
+            const movingAverage = data.map((item, index) => {
+
+            const start = Math.max(0, index - 23);
+
+            const measurements = data
+                .slice(start, index + 1)
+                .map(item => item.electricity);
+
+            const average =
+                measurements.reduce((sum, value) => sum + value, 0) /
+                measurements.length;
+
+            return {
+                x: new Date(item.time).getTime(),
+                y: average
+            };
+        });
+
+            return {
+                temperatures: data.map(item => ({
+                    x: new Date(item.time).getTime(),
+                    y: item.temperature
+                })),
+
+                movingAverage: movingAverage,
+
+                electricityPrices: data.map(item => ({
+                    x: new Date(item.time).getTime(),
+                    y: item.electricity
+                }))
+            };
+        }
+
 
             historyData.sort((a, b) =>
                 new Date(a.time) - new Date(b.time)
@@ -194,12 +217,20 @@
 
             function updateChart() {
 
-            const visibleData = getVisibleData();
-            const visibleChartData = getChartData(visibleData);
+            const visibleChartData = getChartData(historyData);
 
             chart.data.labels = [];
             chart.data.datasets[0].data = visibleChartData.temperatures;
             chart.data.datasets[1].data = visibleChartData.electricityPrices;
+            chart.data.datasets[2].data = visibleChartData.movingAverage;
+
+            const electricityValues = [
+            ...visibleChartData.electricityPrices.map(point => point.y),
+            ...visibleChartData.movingAverage.map(point => point.y)
+            ];
+
+        chart.options.scales.y1.min = Math.min(...electricityValues);
+        chart.options.scales.y1.max = Math.max(...electricityValues);
 
             const xScale = chart.options.scales.x;
 
@@ -453,20 +484,35 @@
                         parsing: false,
                         borderWidth: 2,
                         tension: 0.25,
-                        pointRadius: 2,
-                        yAxisID: 'y'
+                        pointRadius: 0,
+                        yAxisID: 'y',
+                        borderColor: '#2563eb',
+                        backgroundColor: '#2563eb'
                     },
-
-                        {
-                            label: 'Electricity price (öre/kWh)',
-                            data: [],
-                            parsing: false,
-                            borderWidth: 2,
-                            tension: 0.15,
-                            pointRadius: 2,
-                            yAxisID: 'y1'
-                        }
-                    ]
+                    {
+                        label: 'Electricity price (öre/kWh)',
+                        data: [],
+                        parsing: false,
+                        borderWidth: 2,
+                        tension: 0.15,
+                        pointRadius: 0,
+                        yAxisID: 'y1',
+                        borderColor: '#dc2626',
+                        backgroundColor: '#dc2626'
+                    },
+                    {
+                        label: 'Electricity price trend (24h average)',
+                        data: [],
+                        parsing: false,
+                        borderColor: '#27845A',
+                        backgroundColor: '#27845A',
+                        borderWidth: 1,
+                        tension: 0.25,
+                        pointRadius: 0,
+                        pointHoverRadius: 3,
+                        yAxisID: 'y1'
+                    }
+                ]
                 },
 
         options: {
@@ -475,6 +521,28 @@
             animation: false,
 
             plugins: {
+                legend: {
+                    labels: {
+                        generateLabels(chart) {
+                            const labels =
+                                Chart.defaults.plugins.legend.labels.generateLabels(chart);
+
+                            labels.forEach(label => {
+                                const isVisible =
+                                    chart.isDatasetVisible(label.datasetIndex);
+
+                                if (!isVisible) {
+                                    label.fillStyle = '#ffffff';
+                                    label.strokeStyle = '#b0b0b0';
+                                    label.fontColor = '#999999';
+                                }
+                            });
+
+                            return labels;
+                        }
+                    }
+                },
+
                 zoom: {
                     limits: {
                         x: {
@@ -562,6 +630,7 @@
                 y1: {
                     type: 'linear',
                     position: 'right',
+                    bounds: 'data',
 
                     title: {
                         display: true,
@@ -570,7 +639,8 @@
 
                     grid: {
                         drawOnChartArea: false
-                    }
+                    },
+                    
                 }
             }
         }

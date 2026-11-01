@@ -123,8 +123,25 @@
 {
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-date-fns"></script>
+    <script src="https://cdn.jsdelivr.net/npm/hammerjs@2.0.8"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-zoom@2.2.0"></script>
 
     <script>
+
+
+        if (typeof ChartZoom !== 'undefined') {
+            Chart.register(ChartZoom);
+
+            console.log('Zoom plugin loaded:', typeof ChartZoom);
+
+            console.log(
+                'Registered zoom plugin:',
+                Chart.registry.plugins.get('zoom')
+        );
+        } else {
+            console.error('Chart.js zoom plugin failed to load.');
+        }
+
             const ctx = document.getElementById('historyChart');
 
             const historyData = [
@@ -134,19 +151,42 @@
         }
             ];
 
-            function getChartData(data) {
-                return {
-                    temperatures: data.map(item => ({
-                        x: new Date(item.time).getTime(),
-                        y: item.temperature
-                    })),
+            
+        function getChartData(data) {
 
-                    electricityPrices: data.map(item => ({
-                        x: new Date(item.time).getTime(),
-                        y: item.electricity
-                    }))
-                };
-            }
+            const movingAverage = data.map((item, index) => {
+
+            const start = Math.max(0, index - 23);
+
+            const measurements = data
+                .slice(start, index + 1)
+                .map(item => item.electricity);
+
+            const average =
+                measurements.reduce((sum, value) => sum + value, 0) /
+                measurements.length;
+
+            return {
+                x: new Date(item.time).getTime(),
+                y: average
+            };
+        });
+
+            return {
+                temperatures: data.map(item => ({
+                    x: new Date(item.time).getTime(),
+                    y: item.temperature
+                })),
+
+                movingAverage: movingAverage,
+
+                electricityPrices: data.map(item => ({
+                    x: new Date(item.time).getTime(),
+                    y: item.electricity
+                }))
+            };
+        }
+
 
             historyData.sort((a, b) =>
                 new Date(a.time) - new Date(b.time)
@@ -158,51 +198,100 @@
             const DAY_MS = 24 * HOUR_MS;
             const SEVEN_DAYS_MS = 7 * DAY_MS;
 
+            const earliestHistoryTime =
+                new Date(historyData[0].time).getTime();
+
+            const latestHistoryTime =
+                new Date(historyData[historyData.length - 1].time).getTime();
+
+            const TOTAL_INITIAL_WINDOW = 14 * DAY_MS;
+
             let currentView = '1day';
             let windowOffset = 0;
 
             console.log('Initial view:', currentView);
 
             function getVisibleData() {
-                if (historyData.length === 0) {
-                    return [];
-                }
-
-                if (currentView === 'total') {
-                    return historyData;
-                }
-
-                const windowSize =
-                    currentView === '1day'
-                        ? DAY_MS
-                        : SEVEN_DAYS_MS;
-
-                const latestTime =
-                    new Date(historyData[historyData.length - 1].time).getTime();
-
-                const endTime =
-                    latestTime - (windowOffset * HOUR_MS);
-
-                const startTime =
-                    endTime - windowSize;
-
-                return historyData.filter(item => {
-                    const time = new Date(item.time).getTime();
-
-                    return time >= startTime && time <= endTime;
-                });
+                return historyData;
             }
 
             function updateChart() {
-                const visibleData = getVisibleData();
-                const visibleChartData = getChartData(visibleData);
 
-                chart.data.labels = [];
-                chart.data.datasets[0].data = visibleChartData.temperatures;
-                chart.data.datasets[1].data = visibleChartData.electricityPrices;
+            const visibleChartData = getChartData(historyData);
 
-                chart.update('none');
+            chart.data.labels = [];
+            chart.data.datasets[0].data = visibleChartData.temperatures;
+            chart.data.datasets[1].data = visibleChartData.electricityPrices;
+            chart.data.datasets[2].data = visibleChartData.movingAverage;
+
+            const electricityValues = [
+            ...visibleChartData.electricityPrices.map(point => point.y),
+            ...visibleChartData.movingAverage.map(point => point.y)
+            ];
+
+        chart.options.scales.y1.min = Math.min(...electricityValues);
+        chart.options.scales.y1.max = Math.max(...electricityValues);
+
+            const xScale = chart.options.scales.x;
+
+            // Calculate the visible time window.
+            const endTime =
+                latestHistoryTime - (windowOffset * HOUR_MS);
+
+            xScale.min = undefined;
+            xScale.max = undefined;
+
+            if (currentView === '1day') {
+
+                xScale.time.unit = 'hour';
+                xScale.ticks.stepSize = 3;
+                xScale.ticks.autoSkip = false;
+                xScale.ticks.maxTicksLimit = undefined;
+
+                xScale.min = endTime - DAY_MS;
+                xScale.max = endTime;
+
+            } else if (currentView === '7days') {
+
+                xScale.time.unit = 'day';
+                xScale.time.displayFormats.day = 'EEE';
+                xScale.ticks.stepSize = 1;
+                xScale.ticks.autoSkip = true;
+                xScale.ticks.maxTicksLimit = 7;
+
+                xScale.min = endTime - SEVEN_DAYS_MS;
+                xScale.max = endTime;
+
+            } else {
+
+                xScale.time.unit = 'day';
+                xScale.time.displayFormats.day = 'dd MMM yy';
+                xScale.ticks.stepSize = undefined;
+                xScale.ticks.autoSkip = true;
+                xScale.ticks.maxTicksLimit = 8;
+
+                xScale.min = Math.max(
+                    earliestHistoryTime,
+                    latestHistoryTime - TOTAL_INITIAL_WINDOW
+                );
+
+                xScale.max = latestHistoryTime;
             }
+
+            // Enable horizontal dragging in all views.
+            chart.options.plugins.zoom.pan.enabled = true;
+
+            // Keep zooming restricted to TOTAL.
+            chart.options.plugins.zoom.zoom.wheel.enabled =
+                currentView === 'total';
+
+            chart.options.plugins.zoom.zoom.pinch.enabled =
+                currentView === 'total';
+
+            chart.update('none');
+        }
+
+       
 
             const nightBackgroundPlugin = {
                 id: 'nightBackground',
@@ -378,98 +467,197 @@
                 }
             };
 
-            let chart;
+                    let chart;
 
-            chart = new Chart(ctx, {
-                type: 'line',
+        chart = new Chart(ctx, {
+            type: 'line',
 
-                plugins: [nightBackgroundPlugin],
+            plugins: [nightBackgroundPlugin],
 
-                data: {
-                    labels: [],
+            data: {
+                labels: [],
 
-                    datasets: [
-                        {
-                            label: 'Temperature (°C)',
-                            data: [],
-                            parsing: false,
-                            borderWidth: 2,
-                            tension: 0.25,
-                            pointRadius: 2,
-                            yAxisID: 'y'
-                        },
-
-                        {
-                            label: 'Electricity price (öre/kWh)',
-                            data: [],
-                            parsing: false,
-                            borderWidth: 2,
-                            tension: 0.15,
-                            pointRadius: 2,
-                            yAxisID: 'y1'
-                        }
-                    ]
+                datasets: [
+                    {
+                        label: 'Temperature (°C)',
+                        data: [],
+                        parsing: false,
+                        borderWidth: 2,
+                        tension: 0.25,
+                        pointRadius: 0,
+                        yAxisID: 'y',
+                        borderColor: '#2563eb',
+                        backgroundColor: '#2563eb'
+                    },
+                    {
+                        label: 'Electricity price (öre/kWh)',
+                        data: [],
+                        parsing: false,
+                        borderWidth: 2,
+                        tension: 0.15,
+                        pointRadius: 0,
+                        yAxisID: 'y1',
+                        borderColor: '#dc2626',
+                        backgroundColor: '#dc2626'
+                    },
+                    {
+                        label: 'Electricity price trend (24h average)',
+                        data: [],
+                        parsing: false,
+                        borderColor: '#27845A',
+                        backgroundColor: '#27845A',
+                        borderWidth: 1,
+                        tension: 0.25,
+                        pointRadius: 0,
+                        pointHoverRadius: 3,
+                        yAxisID: 'y1'
+                    }
+                ]
                 },
 
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            animation: false,
 
-                    scales: {
-                        x: {
-                            type: 'time',
+            plugins: {
+                legend: {
+                    labels: {
+                        generateLabels(chart) {
+                            const labels =
+                                Chart.defaults.plugins.legend.labels.generateLabels(chart);
 
-                            time: {
-                                unit: 'hour',
-                                displayFormats: {
-                                    hour: 'HH:mm'
-                                },
-                                tooltipFormat: 'dd MMM yyyy HH:mm'
-                            },
+                            labels.forEach(label => {
+                                const isVisible =
+                                    chart.isDatasetVisible(label.datasetIndex);
 
-                            ticks: {
-                                stepSize: 3,
-                                source: 'auto',
-                                autoSkip: false,
-                                maxRotation: 0,
-                                minRotation: 0
-                            }
-                        },
-
-                        y: {
-                            type: 'linear',
-                            position: 'left',
-
-                            title: {
-                                display: true,
-                                text: 'Temperature (°C)'
-                            },
-
-                            ticks: {
-                                callback: function (value) {
-                                    return Number(value)
-                                        .toFixed(1)
-                                        .replace(".", ",") + "°";
+                                if (!isVisible) {
+                                    label.fillStyle = '#ffffff';
+                                    label.strokeStyle = '#b0b0b0';
+                                    label.fontColor = '#999999';
                                 }
-                            }
+                            });
+
+                            return labels;
+                        }
+                    }
+                },
+
+                zoom: {
+                    limits: {
+                        x: {
+                            min: earliestHistoryTime,
+                            max: latestHistoryTime,
+                            minRange: DAY_MS
+                        }
+                    },
+
+                    pan: {
+                        enabled: true,
+                        mode: 'x',
+                        threshold: 5,
+                        modifierKey: null,
+
+                        onPanStart: function ({ chart }) {
+                            console.log('Pan started');
+                            return true;
                         },
 
-                        y1: {
-                            type: 'linear',
-                            position: 'right',
+                        onPanRejected: function ({ chart }) {
+                            console.log('Pan rejected');
+                        },
 
-                            title: {
-                                display: true,
-                                text: 'Electricity price (öre/kWh)'
-                            },
+                        onPanComplete: function ({ chart }) {
+                            console.log('Pan completed');
+                        }
+                    },
 
-                            grid: {
-                                drawOnChartArea: false
-                            }
+                    zoom: {
+                        mode: 'x',
+
+                        wheel: {
+                            enabled: true,
+                            speed: 0.1
+                        },
+
+                        pinch: {
+                            enabled: true
                         }
                     }
                 }
-            });
+            },
+
+            scales: {
+                x: {
+                    type: 'time',
+
+                    time: {
+                        unit: 'hour',
+                        displayFormats: {
+                            hour: 'HH:mm',
+                            day: 'EEE'
+                        },
+                        tooltipFormat: 'dd MMM yyyy HH:mm'
+                    },
+
+                    ticks: {
+                        stepSize: 3,
+                        source: 'auto',
+                        autoSkip: false,
+                        maxRotation: 0,
+                        minRotation: 0
+                    }
+                },
+
+                y: {
+                    type: 'linear',
+                    position: 'left',
+
+                    title: {
+                        display: true,
+                        text: 'Temperature (°C)'
+                    },
+
+                    ticks: {
+                        callback: function (value) {
+                            return Number(value)
+                                .toFixed(1)
+                                .replace(".", ",") + "°";
+                        }
+                    }
+                },
+
+                y1: {
+                    type: 'linear',
+                    position: 'right',
+                    bounds: 'data',
+
+                    title: {
+                        display: true,
+                        text: 'Electricity price (öre/kWh)'
+                    },
+
+                    grid: {
+                        drawOnChartArea: false
+                    },
+                    
+                }
+            }
+        }
+    });
+        ctx.addEventListener('mousedown', () => {
+            console.log('Canvas: mouse down');
+        });
+
+        ctx.addEventListener('mousemove', () => {
+            console.log('Canvas: mouse move');
+        });
+
+        ctx.addEventListener('mouseup', () => {
+            console.log('Canvas: mouse up');
+        });
+        
+                   
 
             // Show the selected initial view (1 DAY).
             updateChart();

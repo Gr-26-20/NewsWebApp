@@ -47,14 +47,19 @@ namespace NewsWebApp.Controllers
 
         public async Task<IActionResult> Index()
         {
+            // Use the Full Forecast selection if one exists.
+            // Otherwise, inherit the front page selection.
             var municipality =
-                HttpContext.Session.GetString("SelectedWeatherMunicipality")
+                HttpContext.Session.GetString("SelectedForecastMunicipality")
+                ?? HttpContext.Session.GetString("SelectedWeatherMunicipality")
                 ?? "Gothenburg";
 
             var model = new ForecastViewModel
             {
                 HourlyForecast = new List<WeatherForecast>(),
-                FiveDayForecast = new List<WeatherForecast>()
+                FiveDayForecast = new List<WeatherForecast>(),
+                Municipalities = MunicipalityOption.All,
+                SelectedMunicipality = municipality
             };
 
             try
@@ -86,6 +91,25 @@ namespace NewsWebApp.Controllers
             return View(model);
 
 
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public IActionResult SelectMunicipality(string municipality)
+        {
+            var selectedMunicipality = MunicipalityOption.All
+                .FirstOrDefault(m => m.ApiValue == municipality);
+
+            if (selectedMunicipality == null)
+            {
+                return NotFound();
+            }
+
+            HttpContext.Session.SetString(
+                "SelectedForecastMunicipality",
+                selectedMunicipality.ApiValue);
+
+            return RedirectToAction(nameof(Index));
         }
 
         public async Task<IActionResult> History()

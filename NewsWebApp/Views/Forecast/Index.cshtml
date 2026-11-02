@@ -99,46 +99,67 @@
 
         </section>
     }
-    else
-    {
-        <section class="current-weather">
+else
+{
+    <section class="current-weather">
 
-            <div class="current-weather-main">
+        <div class="current-weather-main">
 
-                <div class="current-location">
-                    @Model.HourlyForecast.FirstOrDefault()?.City
-                </div>
+            <!-- CITY SELECTOR -->
+            <div class="current-location">
 
-                <div class="current-temperature">
-                    @Model.HourlyForecast.FirstOrDefault()?.TemperatureC°C
-                </div>
+                <form asp-controller="Forecast"
+                      asp-action="SelectMunicipality"
+                      method="post">
 
-                <div class="current-condition">
-                    @Model.HourlyForecast.FirstOrDefault()?.Summary
-                </div>
+                    <select id="municipality"
+                            name="municipality"
+                            onchange="this.form.submit()">
 
-            </div>
+                        @foreach (var municipality in Model.Municipalities)
+                        {
+                            <option value="@municipality.ApiValue"
+                                    selected="@(municipality.ApiValue == Model.SelectedMunicipality)">
+                                @municipality.Name
+                            </option>
+                        }
 
-            <div class="current-weather-details">
+                    </select>
 
-                <div class="weather-detail">
-                    <span>HUMIDITY</span>
-                    <strong>
-                        @Model.HourlyForecast.FirstOrDefault()?.Humidity%
-                    </strong>
-                </div>
-
-                <div class="weather-detail">
-                    <span>WIND</span>
-                    <strong>
-                        @Model.HourlyForecast.FirstOrDefault()?.WindSpeed m/s
-                    </strong>
-                </div>
+                </form>
 
             </div>
 
-        </section>
-    }
+            <div class="current-temperature">
+                @Model.HourlyForecast.FirstOrDefault()?.TemperatureC°C
+            </div>
+
+            <div class="current-condition">
+                @Model.HourlyForecast.FirstOrDefault()?.Summary
+            </div>
+
+        </div>
+
+        <div class="current-weather-details">
+
+            <div class="weather-detail">
+                <span>HUMIDITY</span>
+                <strong>
+                    @Model.HourlyForecast.FirstOrDefault()?.Humidity%
+                </strong>
+            </div>
+
+            <div class="weather-detail">
+                <span>WIND</span>
+                <strong>
+                    @Model.HourlyForecast.FirstOrDefault()?.WindSpeed m/s
+                </strong>
+            </div>
+
+        </div>
+
+    </section>
+}
 
 
     <!-- NEXT 24 HOURS -->

@@ -2103,6 +2103,60 @@ without changing the rest of the CSS.
             font-size: 11px;
             color: var(--muted);
         }
+
+    .current-location select {
+        appearance: none;
+        background: transparent;
+        border: none;
+        border-bottom: 1px solid #171717;
+        border-radius: 0;
+        color: inherit;
+        font: inherit;
+        font-size: inherit;
+        font-weight: inherit;
+        letter-spacing: inherit;
+        text-transform: uppercase;
+        cursor: pointer;
+        padding: 2px 28px 2px 0;
+        max-width: 100%;
+        box-sizing: content-box;
+    }
+
+    .current-location {
+        min-width: 0;
+        width: fit-content;
+        max-width: 100%;
+    }
+
+        .current-location form {
+            width: fit-content;
+            max-width: 100%;
+        }
+
+        .current-location select {
+            appearance: none;
+            background: transparent;
+            border: none;
+            border-bottom: 1px solid #171717;
+            border-radius: 0;
+            color: inherit;
+            font: inherit;
+            font-size: inherit;
+            font-weight: inherit;
+            letter-spacing: 0;
+            text-transform: uppercase;
+            cursor: pointer;
+            padding: 2px 34px 2px 0;
+            min-width: 115px;
+            width: auto;
+            max-width: 100%;
+            box-sizing: border-box;
+        }
+
+            .current-location select:focus {
+                outline: none;
+                border-bottom: 2px solid #d71920;
+            }
     /* ---------------------------------------------------------
    CURRENT WEATHER
 --------------------------------------------------------- */

@@ -204,17 +204,26 @@ namespace NewsWebApp.Controllers
         [Authorize(Roles = "Writer, Editor, Admin")]
         public async Task<IActionResult> DeleteArticle(int id)
         {
+            //_articleService.GetAllFeedbackForArticle(id).ToList().ForEach(f => _context.Feedback.Remove(f));
+            //var feedbackList = _articleService.GetAllFeedbackForArticle(id);
+            await _articleService.DeleteAllFeedbackForArticle(id);
+            
 
             var article = await _context.Articles
-             .Include(a => a.Feedback)
              .FirstOrDefaultAsync(a => a.Id == id);
+
+
 
             if (article == null)
             {
                 return NotFound();
             }
+            //foreach(var feedback in _articleService.GetFeedbackById(id))
+            //{
+            //    _context.Feedback.Remove(feedback);
+            //}
 
-            _context.Feedback.RemoveRange(article.Feedback);
+            //_context.Feedback.RemoveRange(article.Feedback);
             _context.Articles.Remove(article);
 
             await _context.SaveChangesAsync();

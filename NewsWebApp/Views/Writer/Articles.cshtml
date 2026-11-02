@@ -39,7 +39,6 @@
 			<a class="btn btn-danger" asp-action="DeleteArticle" asp-controller="Writer" asp-route-id="@article.Id">Delete</a>
 			<a class="btn btn-warning" asp-action="Create" asp-controller="Editor" asp-route-id="@article.Id">Add feedback</a>
 			<a class="btn btn-info" asp-action="Details" asp-controller="Editor" asp-route-id="@article.Id">View feedback</a>
-			<a class="btn btn-warning" asp-action="GetAllFeedback" asp-controller="Editor">view all feedback</a>
 		</div>
 		@if (User.IsInRole("Editor") || User.IsInRole("Admin"))
 		{

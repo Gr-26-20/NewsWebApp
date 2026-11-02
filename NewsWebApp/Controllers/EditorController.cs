@@ -93,10 +93,23 @@ namespace NewsWebApp.Controllers
             return RedirectToAction("Details", "Editor");
         }
 
+        public async Task<IActionResult> DeleteAllFeedback()
+        {
+            if (ModelState.IsValid)
+            {
+                var allfeedback = await _articleService.GetAllFeedback();
+                foreach (var feedback in allfeedback)
+                {
+                    _dbContext.Feedback.Remove(feedback);
+                    await _dbContext.SaveChangesAsync();
+                }
+                return RedirectToAction("Details", "Editor");
+            }
+            return RedirectToAction("Details", "Editor");
+        }
 
-       
 
-        
+
 
         public async Task<IActionResult> Details(int id)
         {

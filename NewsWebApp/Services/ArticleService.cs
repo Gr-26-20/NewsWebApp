@@ -121,6 +121,33 @@ namespace NewsWebApp.Services
             return await feedbackList;
         }
 
+        public async Task<List<Feedback>> DeleteAllFeedbackForArticle(int id)
+        {
+            var article = await _context.Articles.FindAsync(id);
+            var allFeedback = await _context.Feedback
+                .Where(f => f.ArticleId == id)
+                .ToListAsync();
+            for (int i = 0; i < allFeedback.Count; i++)
+            {
+                _context.Feedback.Remove(allFeedback[i]);
+                await _context.SaveChangesAsync();
+            }
+            return await _context.Feedback
+                .Where(f => f.ArticleId == id)
+                .ToListAsync();
+        }
+
+        public async Task<Feedback> DeleteAllFeedbackForAllArticles()
+        {
+            var allFeedback = await _context.Feedback.ToListAsync();
+            for (int i = 0; i < allFeedback.Count; i++)
+            {
+                _context.Feedback.Remove(allFeedback[i]);
+                await _context.SaveChangesAsync();
+            }
+            return null;
+        }
+
         public async Task<Feedback> GetFeedbackById(int id)
         {
             var feedback = await _context.Feedback.FirstOrDefaultAsync(f => f.Id == id);

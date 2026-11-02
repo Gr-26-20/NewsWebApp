@@ -13,6 +13,11 @@
 
 	
 }
+if(user.IsInRole("Admin, Editor"))
+{
+<a asp-action="DeleteAllFeedbackForAllArticles" asp-controller="Editor" class="btn btn-danger mt-3">Delete ALL Feedback for All Articles</a>
+}
+<a asp-action="DeleteAllFeedback" asp-controller="Editor" class="btn btn-danger mt-3">Delete ALL Feedback</a>
 @* @await Component.InvokeAsync("LatestNews")  *@
 @if(ViewBag.FeedbackList != null)
 {

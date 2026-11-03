@@ -105,13 +105,74 @@
             </div>
 
             <div class="history-chart">
-                <canvas id="historyChart"></canvas>
-            </div>
-
-            <p class="history-data-sources">
+    <canvas id="historyChart"></canvas>
+    <p class="history-data-sources">
                 Temperature data provided by temperatur.nu ·
                 Electricity price data provided by Lexlink Spot Prices.
             </p>
+</div>
+
+
+
+<section class="history-explanation">
+
+    <h2>About the data</h2>
+
+    <p>
+        <strong>Temperature measurements</strong><br />
+        Hourly temperature readings from Gothenburg, used as a fixed
+        reference location throughout the historical chart.
+    </p>
+
+    <p>
+        <strong>Electricity prices</strong><br />
+        Hourly electricity spot prices from SE3, the Swedish electricity
+        price area covering central Sweden, including Gothenburg.
+    </p>
+
+    <p>
+        <strong>Temperature data</strong><br />
+        Gothenburg is used as a fixed reference location to maintain a continuous
+        and consistent temperature record over time. This makes it possible to
+        explore potential patterns between temperature variations and electricity
+        prices across different periods.
+    </p>
+
+    <h3>Sweden's four electricity price areas</h3>
+
+    <p>
+        <strong>SE1:</strong> Northern Sweden. Examples: Luleå, Kiruna and Piteå.<br />
+        <strong>SE2:</strong> Northern and central Sweden. Examples: Sundsvall, Umeå and Östersund.<br />
+        <strong>SE3:</strong> Central Sweden. Examples: Stockholm, Gothenburg, Uppsala and Örebro.<br />
+        <strong>SE4:</strong> Southern Sweden. Examples: Malmö, Lund, Helsingborg and Växjö.
+    </p>
+
+    <p>
+        The price areas reflect limitations in the electricity transmission
+        network. Their boundaries do not necessarily follow municipal or
+        county borders.
+    </p>
+
+    <p>
+        <strong>Purpose of the comparison</strong><br />
+        The chart allows historical temperature variations and electricity
+        prices to be viewed together. It can help identify patterns, but
+        does not establish a direct causal relationship between the two.
+    </p>
+
+    <p>
+        <strong>Data update</strong><br />
+         Temperature measurements are collected hourly. Day-ahead electricity
+         prices are retrieved daily at 14:00, providing the next 24 hours of
+         hourly prices, which are then included in the chart.
+    </p>
+
+</section>
+
+
+
+
+            
         }
 
     </article>

@@ -2560,6 +2560,33 @@ without changing the rest of the CSS.
         line-height: 1.5;
         text-align: right;
     }
+    /* HISTORY ARTICLE TEXT */
+    .history-explanation {
+        margin-top: 35px;
+        padding-top: 20px;
+        border-top: 1px solid var(--border);
+    }
+
+        .history-explanation h2 {
+            font-family: Georgia, "Times New Roman", serif;
+            font-size: 28px;
+            font-weight: 700;
+            margin: 0 0 16px;
+        }
+
+        .history-explanation h3 {
+            font-family: Georgia, "Times New Roman", serif;
+            font-size: 21px;
+            font-weight: 700;
+            margin: 24px 0 10px;
+        }
+
+        .history-explanation p {
+            font-family: Georgia, "Times New Roman", serif;
+            font-size: 16px;
+            line-height: 1.65;
+            margin: 0 0 16px;
+        }
     /* ---------------------------------------------------------
    HISTORY CATEGORY
 --------------------------------------------------------- */

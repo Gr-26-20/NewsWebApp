@@ -46,16 +46,91 @@
                 </div>
             }
 
-            <div class="article-content">
 
-                @foreach (var paragraph in Model.Content.Split(
-                    new[] { "\r\n\r\n", "\n\n" },
-                    StringSplitOptions.RemoveEmptyEntries))
+<div class="article-content">
+
+    @{
+        var paragraphs = (Model.Content ?? string.Empty).Split(
+            new[] { "\r\n\r\n", "\n\n" },
+            StringSplitOptions.RemoveEmptyEntries);
+
+        int paragraphCount = paragraphs.Length;
+
+        int secondaryPosition = paragraphCount > 1
+            ? (int)Math.Ceiling(paragraphCount / 3.0)
+            : 1;
+
+        int thirdPosition = paragraphCount > 2
+            ? (int)Math.Ceiling(paragraphCount * 2.0 / 3.0)
+            : paragraphCount;
+    }
+
+    @for (int i = 0; i < paragraphCount; i++)
+    {
+        <p style="white-space: pre-line;">@paragraphs[i]</p>
+
+        @if (i + 1 == secondaryPosition &&
+             !string.IsNullOrWhiteSpace(Model.SecondaryImageUrl))
+        {
+            <figure class="article-inline-figure">
+                <img src="@Model.SecondaryImageUrl"
+                     alt="@Model.SecondaryImageCaption"
+                     class="article-inline-image" />
+
+                @if (!string.IsNullOrWhiteSpace(Model.SecondaryImageCaption))
                 {
-                    <p style="white-space: pre-line;">@paragraph</p>
+                    <figcaption>@Model.SecondaryImageCaption</figcaption>
                 }
+            </figure>
+        }
 
-            </div>
+        @if (i + 1 == thirdPosition &&
+             !string.IsNullOrWhiteSpace(Model.ThirdImageUrl))
+        {
+            <figure class="article-inline-figure">
+                <img src="@Model.ThirdImageUrl"
+                     alt="@Model.ThirdImageCaption"
+                     class="article-inline-image" />
+
+                @if (!string.IsNullOrWhiteSpace(Model.ThirdImageCaption))
+                {
+                    <figcaption>@Model.ThirdImageCaption</figcaption>
+                }
+            </figure>
+        }
+    }
+
+    @if (paragraphCount == 0)
+    {
+        @if (!string.IsNullOrWhiteSpace(Model.SecondaryImageUrl))
+        {
+            <figure class="article-inline-figure">
+                <img src="@Model.SecondaryImageUrl"
+                     alt="@Model.SecondaryImageCaption"
+                     class="article-inline-image" />
+                @if (!string.IsNullOrWhiteSpace(Model.SecondaryImageCaption))
+                {
+                    <figcaption>@Model.SecondaryImageCaption</figcaption>
+                }
+            </figure>
+        }
+
+        @if (!string.IsNullOrWhiteSpace(Model.ThirdImageUrl))
+        {
+            <figure class="article-inline-figure">
+                <img src="@Model.ThirdImageUrl"
+                     alt="@Model.ThirdImageCaption"
+                     class="article-inline-image" />
+                @if (!string.IsNullOrWhiteSpace(Model.ThirdImageCaption))
+                {
+                    <figcaption>@Model.ThirdImageCaption</figcaption>
+                }
+            </figure>
+        }
+    }
+
+</div>
+
 
             <div class="article-stats">
                 <button id="likeBtn" class="btn-like" onclick="likeArticle(@Model.Id)">

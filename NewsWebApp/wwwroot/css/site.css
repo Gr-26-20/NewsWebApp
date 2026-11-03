@@ -1847,6 +1847,26 @@ without changing the rest of the CSS.
         height: auto;
     }
 
+    .article-inline-figure {
+        width: 100%;
+        margin: 25px 0;
+    }
+
+    .article-inline-image {
+        display: block;
+        max-width: 100%;
+        width: auto;
+        height: auto;
+        margin: 0 auto;
+    }
+
+    .article-inline-figure figcaption {
+        margin-top: 8px;
+        font-size: 0.9rem;
+        color: #666;
+        font-style: italic;
+    }
+
     .site-footer {
         margin-top: 50px;
         border-top: 4px solid var(--border);

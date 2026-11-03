@@ -78,6 +78,9 @@
 
             <div class="form-group mb-3">
                 <label asp-for="Content" class="control-label"></label>
+                <small class="text-muted ms-2" style="font-size: 0.75rem;">
+                    (Blank line between paragraphs for secondary image placement.)
+                </small>
                 <textarea asp-for="Content"
                           class="form-control"
                           rows="12"
@@ -93,6 +96,7 @@
                        class="form-control"
                        accept="image/*" />
             </div>
+
             <div class="form-group mb-3">
                 <label asp-for="Category" class="control-label"></label>
 
@@ -323,6 +327,116 @@
                            max="300"
                            value="100"
                            step="1" />
+
+                            </div>
+
+                </div>
+            <!-- END SMALL PREVIEW ROW -->
+
+            <!-- ADDITIONAL ARTICLE IMAGES -->
+            <div class="additional-article-images mt-4">
+
+                <hr />
+
+                <h4>Additional Article Images</h4>
+
+                <!-- SECONDARY IMAGE -->
+                <div class="row g-3 align-items-start mb-4">
+
+                    <div class="col-12">
+                        <h5>Secondary image</h5>
+                    </div>
+
+                    <div class="col-md-7">
+
+                        <label for="SecondaryImageFile" class="control-label">
+                            Replace image
+                        </label>
+
+                        <input type="file"
+                               name="SecondaryImageFile"
+                               id="SecondaryImageFile"
+                               class="form-control"
+                               accept="image/*" />
+
+                        <label asp-for="SecondaryImageCaption"
+                               class="control-label mt-3">
+                            Image caption
+                        </label>
+
+                        <input asp-for="SecondaryImageCaption"
+                               class="form-control" />
+
+                    </div>
+
+                    <div class="col-md-5">
+
+                        @if (!string.IsNullOrEmpty(Model.SecondaryImageUrl))
+                        {
+                            <small class="text-muted">Currently saved image</small>
+
+                            <img src="@Model.SecondaryImageUrl"
+                                 alt="Current secondary article image"
+                                 class="img-fluid mt-2"
+                                 style="max-width: 100%; width: 240px; max-height: 160px; height: auto; object-fit: contain;" />
+                        }
+                        else
+                        {
+                            <small class="text-muted">No image currently saved.</small>
+                        }
+
+                    </div>
+
+                </div>
+
+                <hr />
+
+                <!-- THIRD IMAGE -->
+                <div class="row g-3 align-items-start mb-4">
+
+                    <div class="col-12">
+                        <h5>Third image</h5>
+                    </div>
+
+                    <div class="col-md-7">
+
+                        <label for="ThirdImageFile" class="control-label">
+                            Replace image
+                        </label>
+
+                        <input type="file"
+                               name="ThirdImageFile"
+                               id="ThirdImageFile"
+                               class="form-control"
+                               accept="image/*" />
+
+                        <label asp-for="ThirdImageCaption"
+                               class="control-label mt-3">
+                            Image caption
+                        </label>
+
+                        <input asp-for="ThirdImageCaption"
+                               class="form-control" />
+
+                    </div>
+
+                    <div class="col-md-5">
+
+                        @if (!string.IsNullOrEmpty(Model.ThirdImageUrl))
+                        {
+                            <small class="text-muted">Currently saved image</small>
+
+                            <img src="@Model.ThirdImageUrl"
+                                 alt="Current third article image"
+                                 class="img-fluid mt-2"
+                                 style="max-width: 100%; width: 240px; max-height: 160px; height: auto; object-fit: contain;" />
+                        }
+                        else
+                        {
+                            <small class="text-muted">No image currently saved.</small>
+                        }
+
+                    </div>
 
                 </div>
 

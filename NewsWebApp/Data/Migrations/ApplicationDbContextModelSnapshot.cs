@@ -322,6 +322,12 @@ namespace NewsWebApp.Data.Migrations
                     b.Property<double>("MainImageZoom")
                         .HasColumnType("float");
 
+                    b.Property<string>("SecondaryImageCaption")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("SecondaryImageUrl")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<double>("SecondaryImageZoom")
                         .HasColumnType("float");
 
@@ -331,6 +337,12 @@ namespace NewsWebApp.Data.Migrations
 
                     b.Property<string>("Summary")
                         .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("ThirdImageCaption")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("ThirdImageUrl")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Title")

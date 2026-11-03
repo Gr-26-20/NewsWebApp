@@ -93,6 +93,54 @@
                        class="form-control"
                        accept="image/*" />
             </div>
+
+            <!-- Additional article images -->
+
+            <div class="form-group mb-3">
+                <label for="SecondaryImageFile" class="control-label">
+                    Secondary article image
+                </label>
+                <input type="file"
+                       name="SecondaryImageFile"
+                       id="SecondaryImageFile"
+                       class="form-control"
+                       accept="image/*" />
+
+                @if (!string.IsNullOrEmpty(Model.SecondaryImageUrl))
+                {
+                    <p class="mt-2">
+                        <small>Existing secondary image is saved.</small>
+                    </p>
+                }
+
+                <label asp-for="SecondaryImageCaption" class="control-label mt-2">
+                    Secondary image caption
+                </label>
+                <input asp-for="SecondaryImageCaption" class="form-control" />
+            </div>
+
+            <div class="form-group mb-3">
+                <label for="ThirdImageFile" class="control-label">
+                    Third article image
+                </label>
+                <input type="file"
+                       name="ThirdImageFile"
+                       id="ThirdImageFile"
+                       class="form-control"
+                       accept="image/*" />
+
+                @if (!string.IsNullOrEmpty(Model.ThirdImageUrl))
+                {
+                    <p class="mt-2">
+                        <small>Existing third image is saved.</small>
+                    </p>
+                }
+
+                <label asp-for="ThirdImageCaption" class="control-label mt-2">
+                    Third image caption
+                </label>
+                <input asp-for="ThirdImageCaption" class="form-control" />
+            </div>
             <div class="form-group mb-3">
                 <label asp-for="Category" class="control-label"></label>
 

@@ -41,6 +41,7 @@ namespace NewsWebApp.Controllers
 
 
         [Authorize(Roles = "Writer")]
+        
         public async Task<IActionResult> Create()
         {
             return View();
@@ -48,7 +49,12 @@ namespace NewsWebApp.Controllers
 
         [HttpPost]
         [Authorize(Roles = "Writer")]
-        public async Task<IActionResult> Create(Articles article, IFormFile? ImageFile)
+        [RequestSizeLimit(100_000_000)]
+        public async Task<IActionResult> Create(
+            Articles article,
+            IFormFile? ImageFile,
+            IFormFile? SecondaryImageFile,
+            IFormFile? ThirdImageFile)
         {
             if (!ModelState.IsValid)
             {
@@ -62,6 +68,21 @@ namespace NewsWebApp.Controllers
                 imageUrl = await _fileService.UploadImageAsync(ImageFile);
             }
 
+            string? secondaryImageUrl = null;
+            string? thirdImageUrl = null;
+
+            if (SecondaryImageFile != null && SecondaryImageFile.Length > 0)
+            {
+                secondaryImageUrl =
+                    await _fileService.UploadImageAsync(SecondaryImageFile);
+            }
+
+            if (ThirdImageFile != null && ThirdImageFile.Length > 0)
+            {
+                thirdImageUrl =
+                    await _fileService.UploadImageAsync(ThirdImageFile);
+            }
+
             article = new Articles
             {
                 Slug = article.Slug,
@@ -70,6 +91,11 @@ namespace NewsWebApp.Controllers
                 Summary = article.Summary,
                 Content = article.Content,
                 ImageUrl = imageUrl,
+                SecondaryImageUrl = secondaryImageUrl,
+                SecondaryImageCaption = article.SecondaryImageCaption,
+
+                ThirdImageUrl = thirdImageUrl,
+                ThirdImageCaption = article.ThirdImageCaption,
 
                 ImageFocalPointX = article.ImageFocalPointX,
                 ImageFocalPointY = article.ImageFocalPointY,
@@ -99,14 +125,10 @@ namespace NewsWebApp.Controllers
 
         [HttpGet]
         [Authorize(Roles = "Writer, Editor")]
-        public async Task<IActionResult> EditArticle(int? id)
+        
+        public async Task<IActionResult> EditArticle(int id)
         {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
-            var article = await _context.Articles.FindAsync(id.Value);
+            var article = await _context.Articles.FindAsync(id);
 
             if (article == null)
             {
@@ -118,10 +140,13 @@ namespace NewsWebApp.Controllers
 
         [HttpPost]
         [Authorize(Roles = "Writer, Editor")]
+        [RequestSizeLimit(100_000_000)]
         public async Task<IActionResult> EditArticle(
-        int id,
-        Articles article,
-        IFormFile? ImageFile)
+            int id,
+            Articles article,
+            IFormFile? ImageFile,
+            IFormFile? SecondaryImageFile,
+            IFormFile? ThirdImageFile)
         {
             if (id != article.Id)
             {
@@ -167,6 +192,23 @@ namespace NewsWebApp.Controllers
                     await _fileService.UploadImageAsync(ImageFile);
             }
 
+            // Replace additional images only when new files are selected.
+            if (SecondaryImageFile != null && SecondaryImageFile.Length > 0)
+            {
+                existingArticle.SecondaryImageUrl =
+                    await _fileService.UploadImageAsync(SecondaryImageFile);
+            }
+
+            if (ThirdImageFile != null && ThirdImageFile.Length > 0)
+            {
+                existingArticle.ThirdImageUrl =
+                    await _fileService.UploadImageAsync(ThirdImageFile);
+            }
+
+            // Update captions independently of image uploads.
+            existingArticle.SecondaryImageCaption = article.SecondaryImageCaption;
+            existingArticle.ThirdImageCaption = article.ThirdImageCaption;
+
             // Make the recently edited article appear first in its category.
             existingArticle.UpdatedAt = DateTime.UtcNow;
 
@@ -175,31 +217,7 @@ namespace NewsWebApp.Controllers
             return RedirectToAction("Articles");
         }
 
-        /*[HttpPost]
-        [Authorize(Roles = "Writer, Editor")]
-        public async Task<IActionResult> EditArticle(int id, Articles article, IFormFile? ImageFile)
-        {
-            if (id != article.Id)
-            {
-                return NotFound();
-            }
-
-            if (ModelState.IsValid)
-            {
-                if (ImageFile != null && ImageFile.Length > 0)
-                {
-                    article.ImageUrl = await _fileService.UploadImageAsync(ImageFile);
-                }
-
-                article.articleStatus = Models.Articles.Status.Pending;
-                article.UpdatedAt = DateTime.UtcNow;
-
-                _context.Update(article);
-                await _context.SaveChangesAsync();
-                return RedirectToAction("Articles");
-            }
-            return View(article);
-        }*/
+       
 
         [Authorize(Roles = "Writer, Editor, Admin")]
         public async Task<IActionResult> DeleteArticle(int id)

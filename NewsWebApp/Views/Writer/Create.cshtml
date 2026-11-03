@@ -4,14 +4,18 @@
 	ViewData["Title"] = "Create";
 }
 
-<h1>Create</h1>
+<div class="writer-edit-page">
 
+    <h1>Create</h1>
 
-<hr />
-<div class="row">
-	<div class="col-md-4">
-        <h4>Articles</h4>
-		<form asp-action="Create" method="post" enctype="multipart/form-data">
+    <hr />
+    <form asp-action="Create" method="post" enctype="multipart/form-data">
+
+    <div class="row g-4">
+
+        <div class="col-12 col-lg-6 article-fields-column">
+
+            <h4>Articles</h4>
 			<div asp-validation-summary="ModelOnly" class="text-danger"></div>
 
 			<input asp-for="ImageFocalPointX" type="hidden" />
@@ -48,13 +52,19 @@
 			</div>
 
 			<div class="form-group">
-				<label asp-for="Content" class="control-label"></label>
-				<textarea asp-for="Content"
-						  class="form-control"
-						  rows="12"
-						  placeholder="Enter the complete article"></textarea>
-				<span asp-validation-for="Content" class="text-danger"></span>
-			</div>
+                <label asp-for="Content" class="control-label"></label>
+
+                <small class="text-muted ms-2" style="font-size: 0.75rem;">
+                    (Blank line between paragraphs for image placement.)
+                </small>
+
+                <textarea asp-for="Content"
+                          class="form-control"
+                          rows="12"
+                          placeholder="Enter the complete article"></textarea>
+
+                <span asp-validation-for="Content" class="text-danger"></span>
+            </div>
 
 			<div class="form-group">
 				<label for="ImageFile" class="control-label">Image</label>
@@ -120,14 +130,10 @@
                 <input type="submit" value="Create" class="btn btn-primary" />
             </div>
 
-        </form>
-    </div> <!-- END ARTICLE FIELDS COLUMN -->
+        
+       </div> <!-- END ARTICLE FIELDS COLUMN -->
 
-    <div class="col-md-8">
-
-	
-
-    <div class="col-md-8">
+    <div class="col-12 col-lg-5 image-preview-column">
 
 		<!-- IMAGE PREVIEW HEADER -->
 
@@ -264,15 +270,17 @@
 		</div>
 
 
-        </div> <!-- END IMAGE PREVIEW COLUMN -->
+         </div> <!-- END IMAGE PREVIEW COLUMN -->
 
     </div> <!-- END ROW -->
 
-    <div>
-        <a asp-action="Articles" asp-controller="Writer">Back to List</a>
-    </div>
+</form>
 
+<div>
+    <a asp-action="Articles" asp-controller="Writer">Back to List</a>
 </div>
+</div> <!-- END writer-edit-page -->
+
 @section Scripts
 {
     @{

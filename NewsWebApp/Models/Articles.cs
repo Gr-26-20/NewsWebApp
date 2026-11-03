@@ -19,6 +19,13 @@ namespace NewsWebApp.Models
         //[Required]
         public string Content { get; set; }
         public string? ImageUrl { get; set; }
+
+        // Additional images displayed only on the Article Details page
+        public string? SecondaryImageUrl { get; set; }
+        public string? SecondaryImageCaption { get; set; }
+
+        public string? ThirdImageUrl { get; set; }
+        public string? ThirdImageCaption { get; set; }
         public double ImageFocalPointX { get; set; } = 50;
         public double ImageFocalPointY { get; set; } = 50;
 

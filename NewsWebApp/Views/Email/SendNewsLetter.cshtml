@@ -11,7 +11,7 @@
 <hr />
 <div class="row">
     <div class="col-md-4">
-        <form asp-action="SendNewsLetter">
+        <form asp-action="SendNewsLetter" enctype="multipart/form-data">
    @*          <div asp-validation-summary="ModelOnly" class="text-danger"></div>
 
 			<select asp-for="Category" class="form-control" asp-items="ViewBag.Categories">
@@ -48,19 +48,21 @@
 
             <div class="form-group">
                 <label asp-for="Logo" class="control-label"></label>
-                <input asp-for="Logo" class="form-control" />
+                <input asp-for="Logo" type="file" id="Logo" name="Logo" class="form-control" accept="image/*" /> 
+				@* <input asp-for="Logo" type="file" id="Logo" name="Logo" class="form-control" accept="image/*" /> *@
                 <span asp-validation-for="Logo" class="text-danger"></span>
             </div>
 
             <div class="form-group">
                 <label asp-for="Body" class="control-label"></label>
-                <input asp-for="Body" class="form-control" />
+                <textarea asp-for="Body" class="form-control" rows="5"></textarea>  
                 <span asp-validation-for="Body" class="text-danger"></span>
             </div>
 
             <div class="form-group">
                 <label asp-for="imageUrl" class="control-label"></label>
-                <input asp-for="imageUrl" class="form-control" rows="5" placeholder="Enter image URL"/>
+                @* <input asp-for="imageUrl" class="form-control"  placeholder="Enter image URL"/> *@
+                <input asp-for="imageUrl" type="file" id="imageUrl" name="imageUrl" class="form-control" accept="image/*"/>
                 <span asp-validation-for="imageUrl" class="text-danger"></span>
             </div>
 
@@ -72,7 +74,7 @@
 
              <div class="form-group">
                 <label asp-for="Description" class="control-label"></label>
-                <input asp-for="Description" class="form-control" />
+                <textarea asp-for="Description" class="form-control" rows="5"></textarea>
                 <span asp-validation-for="Description" class="text-danger"></span>
             </div> 
 
@@ -84,7 +86,8 @@
 
              <div class="form-group">
                 <label asp-for="imageUrl2" class="control-label"></label>
-                <input asp-for="imageUrl2" class="form-control" />
+                @* <input asp-for="imageUrl2" class="form-control" /> *@
+				<input asp-for="imageUrl2" type="file" id="imageUrl2" name="imageUrl2" class="form-control" accept="image/*"/>
                 <span asp-validation-for="imageUrl2" class="text-danger"></span>
             </div> 
 
@@ -96,7 +99,7 @@
 
             <div class="form-group">
                 <label asp-for="Description2" class="control-label"></label>
-                <input asp-for="Description2" class="form-control" />
+                <textarea asp-for="Description2" class="form-control" rows="5"></textarea>
                 <span asp-validation-for="Description2" class="text-danger"></span>
             </div>
 
@@ -108,7 +111,7 @@
             
             <div class="form-group">
                 <label asp-for="imageUrl3" class="control-label"></label>
-                <input asp-for="imageUrl3" class="form-control" />
+                <input asp-for="imageUrl3" type="file" id="imageUrl3" class="form-control" accept="image/*" />
                 <span asp-validation-for="imageUrl3" class="text-danger"></span>
             </div>
 
@@ -120,7 +123,7 @@
 
             <div class="form-group">
                 <label asp-for="Description3" class="control-label"></label>
-                <input asp-for="Description3" class="form-control" />
+                <textarea asp-for="Description3" class="form-control" rows="5"></textarea>
                 <span asp-validation-for="Description3" class="text-danger"></span>
             </div>
 

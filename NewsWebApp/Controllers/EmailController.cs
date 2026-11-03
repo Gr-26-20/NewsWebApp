@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using NewsWebApp.Data;
 using NewsWebApp.Models;
+using NewsWebApp.Services;
 
 namespace NewsWebApp.Controllers
 {
@@ -11,10 +12,13 @@ namespace NewsWebApp.Controllers
         private readonly IEmailSender _emailSender;
 
         private readonly ApplicationDbContext _context;
-        public EmailController(IEmailSender emailSender, ApplicationDbContext context)
+
+        private readonly IFileService _fileService;
+        public EmailController(IEmailSender emailSender, ApplicationDbContext context, IFileService fileService)
         {
             _emailSender = emailSender;
             _context = context;
+            _fileService = fileService;
         }
        
 
@@ -105,22 +109,23 @@ namespace NewsWebApp.Controllers
 
 
         [HttpPost]
-        public async Task<IActionResult> CreateNewsLetter(NewsLetter newsLetter)
+        public async Task<IActionResult> CreateNewsLetter(NewsLetter newsLetter, IFormFile Logo, IFormFile imageUrl, IFormFile imageUrl2, IFormFile imageUrl3)
         {
-            //var category = new List<SelectListItem>
-            //{
-            //new SelectListItem { Value = "News", Text = "News" },
-            //new SelectListItem { Value = "World", Text = "World" },
-            //new SelectListItem { Value = "Sweden", Text = "Sweden" },
-            //new SelectListItem { Value = "Sports", Text = "Sports" },
-            //new SelectListItem { Value = "Weather", Text = "Weather" },
-            //};
-            //ViewBag.Categories = new SelectList(category, "Value", "Text");
+            
 
 
             if (ModelState.IsValid)
             {
-                
+
+                string imageUrlLogoPath = Logo != null ? await _fileService.UploadImageAsync(Logo) : null;
+                string imageUrlPath = imageUrl != null ? await _fileService.UploadImageAsync(imageUrl) : null;
+                string imageUrl2Path = imageUrl2 != null ? await _fileService.UploadImageAsync(imageUrl2) : null;
+                string imageUrl3Path = imageUrl3 != null ? await _fileService.UploadImageAsync(imageUrl3) : null;
+
+                newsLetter.Logo = imageUrlLogoPath;
+                newsLetter.imageUrl = imageUrlPath;
+                newsLetter.imageUrl2 = imageUrl2Path;
+                newsLetter.imageUrl3 = imageUrl3Path;
                 newsLetter.Body = $"<img style='height:100px; width:200px;' src='{newsLetter.Logo}' alt='logo'/></div></div><h1>{newsLetter.Subject}</h1><p>{newsLetter.Body}</p>";
                 if (!string.IsNullOrEmpty(newsLetter.imageUrl))
                 {

@@ -753,10 +753,10 @@
                         image.dataset.focalY
                     );
 
-                const zoom =
-                    parseFloat(
-                        image.dataset.secondaryZoom
-                    ) || 100;
+                    const zoom =
+                        image.classList.contains("large")
+                        ? parseFloat(image.dataset.mainZoom) || 100
+                        : parseFloat(image.dataset.secondaryZoom) || 100;
 
 
                 if (isNaN(focalX) || isNaN(focalY))
@@ -889,25 +889,74 @@
                 imageHeight + "px";
 
 
-            const minLeft =
-                containerWidth - imageWidth;
+                    const minLeft =
+                        containerWidth - imageWidth;
 
-            const minTop =
-                containerHeight - imageHeight;
+                    const minTop =
+                        containerHeight - imageHeight;
 
-            const left =
-                minLeft * positionX / 100;
-
-            const top =
-                minTop * positionY / 100;
+                    let left;
+                    let top;
 
 
-            image.style.left =
-                left + "px";
+                    if (window.innerWidth <= 700)
+                    {
+                        const focalX =
+                            parseFloat(image.dataset.focalX) || 50;
 
-            image.style.top =
-                top + "px";
-        }
+                        const focalY =
+                            parseFloat(image.dataset.focalY) || 50;
+
+
+                        // Position the selected focal point at the centre.
+
+                        left =
+                            (containerWidth / 2) -
+                            (imageWidth * focalX / 100);
+
+                        top =
+                            (containerHeight / 2) -
+                            (imageHeight * focalY / 100);
+
+
+                        // Apply optional manual adjustments.
+                        // Position 50 means no adjustment.
+
+                        left +=
+                            (positionX - 50) / 100 *
+                            (imageWidth - containerWidth);
+
+                        top +=
+                            (positionY - 50) / 100 *
+                            (imageHeight - containerHeight);
+
+
+                        // Prevent empty space around the image.
+
+                        left =
+                            Math.max(minLeft, Math.min(0, left));
+
+                        top =
+                            Math.max(minTop, Math.min(0, top));
+                    }
+                    else
+                    {
+                        // Preserve existing desktop positioning.
+
+                        left =
+                            minLeft * positionX / 100;
+
+                        top =
+                            minTop * positionY / 100;
+                    }
+
+
+                    image.style.left =
+                        left + "px";
+
+                    image.style.top =
+                        top + "px";
+                    }
 
 
         applyMainImagePosition();

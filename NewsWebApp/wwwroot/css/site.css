@@ -3758,3 +3758,11 @@ without changing the rest of the CSS.
     display: none;
 }
 
+/* ---------------------------------------------------------
+   NEWSLETTER
+--------------------------------------------------------- */
+.thumbnail {
+    max-width: 120px;
+    max-height: 80px;
+    object-fit: contain;
+}

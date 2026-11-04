@@ -2574,11 +2574,21 @@ without changing the rest of the CSS.
             }
 
     .history-data-sources {
-        margin-top: 10px;
-        color: var(--muted);
-        font-size: 11px;
+        margin: 12px 0 0;
+        padding: 0 5px;
+        font-size: 0.8rem;
         line-height: 1.5;
         text-align: right;
+    }
+
+    .history-source-electricity {
+        display: inline;
+    }
+
+    @media (max-width: 700px) {
+        .history-source-electricity {
+            display: block;
+        }
     }
     /* HISTORY ARTICLE TEXT */
     .history-explanation {

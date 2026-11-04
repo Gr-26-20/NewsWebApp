@@ -1480,13 +1480,13 @@ without changing the rest of the CSS.
         position: relative;
     }
 
-        .compact-image .article-image {
-            width: auto;
-            height: auto;
-            max-width: none;
-            object-fit: unset;
-            display: block;
-        }
+    .compact-image .article-image {
+        width: auto;
+        height: auto;
+        max-width: none;
+        object-fit: unset;
+        display: block;
+    }
     /* ---------------------------------------------------------
    WEATHER
 --------------------------------------------------------- */
@@ -2574,18 +2574,33 @@ without changing the rest of the CSS.
             }
 
     .history-data-sources {
-        margin-top: 10px;
-        color: var(--muted);
-        font-size: 11px;
+        margin: 12px 0 0;
+        text-align: left;
+        font-size: 0.8rem;
         line-height: 1.5;
-        text-align: right;
+    }
+
+    .history-source-electricity {
+        display: inline;
+    }
+
+    @media (max-width: 700px) {
+        .history-source-electricity {
+            display: block;
+        }
     }
     /* HISTORY ARTICLE TEXT */
     .history-explanation {
         margin-top: 35px;
         padding-top: 20px;
-        border-top: 1px solid var(--border);
     }
+
+        .history-explanation::before {
+            content: "";
+            display: block;
+            border-top: 1px solid var(--border);
+            margin-bottom: 20px;
+        }
 
         .history-explanation h2 {
             font-family: Georgia, "Times New Roman", serif;
@@ -2675,7 +2690,7 @@ without changing the rest of the CSS.
             width: 100% !important;
             height: 100% !important;
         }
-    /* ---------------------------------------------------------
+/* ---------------------------------------------------------
    HISTORY MOBILE
 --------------------------------------------------------- */
 
@@ -2709,8 +2724,12 @@ without changing the rest of the CSS.
         .history-chart {
             height: 300px;
         }
+
+        .history-source-electricity {
+            display: block;
+        }
     }
-    /* ---------------------------------------------------------
+/* ---------------------------------------------------------
    HISTORICAL DATA LINK
 --------------------------------------------------------- */
 

@@ -214,10 +214,10 @@
 
 </div>
 <script>
-    src="~/js/SubscribeToNewsletter.js" asp-append-version="true"
+    src="~/js/SubscribeToNewsletter.js" asp-append-version="true"</script>
 
     
-
+<script>
     function toggleCategoryNavigation() {
         document.getElementById("categoryPageCategories").classList.toggle("open");
     }
@@ -227,84 +227,80 @@
 
     function applyFocalPoints() {
 
-        const images =
-            document.querySelectorAll(".category-image[data-focal-x]");
+    const images =
+        document.querySelectorAll(".category-image[data-focal-x]");
 
-        images.forEach(function (image) {
+    images.forEach(function (image) {
 
-            const focalX =
-                parseFloat(image.dataset.focalX);
+        const focalX = parseFloat(image.dataset.focalX);
+        const focalY = parseFloat(image.dataset.focalY);
 
-            const focalY =
-                parseFloat(image.dataset.focalY);
+        const zoom =
+            parseFloat(image.dataset.secondaryZoom) || 100;
 
-            if (isNaN(focalX) || isNaN(focalY)) {
-                return;
-            }
-
-            if (!image.complete) {
-                image.addEventListener("load", function () {
-                    calculateObjectPosition(image, focalX, focalY);
-                }, { once: true });
-
-                return;
-            }
-
-            calculateObjectPosition(image, focalX, focalY);
-        });
-    }
-
-
-    function calculateObjectPosition(image, focalX, focalY) {
-
-        const imageWidth = image.naturalWidth;
-        const imageHeight = image.naturalHeight;
-
-        const containerWidth = image.clientWidth;
-        const containerHeight = image.clientHeight;
-
-        if (!imageWidth || !imageHeight ||
-            !containerWidth || !containerHeight) {
+        if (isNaN(focalX) || isNaN(focalY)) {
             return;
         }
 
-        const imageRatio =
-            imageWidth / imageHeight;
+        if (!image.complete) {
+            image.addEventListener("load", function () {
+                calculateObjectPosition(image, focalX, focalY, zoom);
+            }, { once: true });
 
-        const containerRatio =
-            containerWidth / containerHeight;
-
-        const visibleWidth =
-            Math.min(1, containerRatio / imageRatio);
-
-        const visibleHeight =
-            Math.min(1, imageRatio / containerRatio);
-
-        let positionX =
-            ((focalX / 100) - (visibleWidth / 2)) /
-            (1 - visibleWidth);
-
-        let positionY =
-            ((focalY / 100) - (visibleHeight / 2)) /
-            (1 - visibleHeight);
-
-        if (visibleWidth >= 1) {
-            positionX = 0.5;
+            return;
         }
 
-        if (visibleHeight >= 1) {
-            positionY = 0.5;
-        }
+        calculateObjectPosition(image, focalX, focalY, zoom);
+    });
+}
 
-        positionX =
-            Math.max(0, Math.min(1, positionX));
 
-        positionY =
-            Math.max(0, Math.min(1, positionY));
+    function calculateObjectPosition(image, focalX, focalY, zoom = 100) {
 
-        image.style.objectPosition =
-            `${positionX * 100}% ${positionY * 100}%`;
+    const imageWidth = image.naturalWidth;
+    const imageHeight = image.naturalHeight;
+
+    const containerWidth = image.clientWidth;
+    const containerHeight = image.clientHeight;
+
+    if (!imageWidth || !imageHeight ||
+        !containerWidth || !containerHeight) {
+        return;
     }
+
+    const imageRatio = imageWidth / imageHeight;
+    const containerRatio = containerWidth / containerHeight;
+
+    const zoomFactor = zoom / 100;
+
+    const visibleWidth =
+        Math.min(1, (containerRatio / imageRatio) / zoomFactor);
+
+    const visibleHeight =
+        Math.min(1, (imageRatio / containerRatio) / zoomFactor);
+
+    let positionX =
+        ((focalX / 100) - (visibleWidth / 2)) /
+        (1 - visibleWidth);
+
+    let positionY =
+        ((focalY / 100) - (visibleHeight / 2)) /
+        (1 - visibleHeight);
+
+    if (visibleWidth >= 1) {
+        positionX = 0.5;
+    }
+
+    if (visibleHeight >= 1) {
+        positionY = 0.5;
+    }
+
+    positionX = Math.max(0, Math.min(1, positionX));
+    positionY = Math.max(0, Math.min(1, positionY));
+
+    image.style.objectPosition =
+        `${positionX * 100}% ${positionY * 100}%`;
+}
 
 
     window.addEventListener("load", applyFocalPoints);

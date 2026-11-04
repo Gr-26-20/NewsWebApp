@@ -43,20 +43,22 @@
             </div>
 
             <div class="form-group">
-                <label asp-for="Logo" class="control-label"></label>
-                <input asp-for="Logo" type="file" class="form-control" accept="image/*"/>
+                <label asp-for="Logo" class="control-label"></label> <br />
+				<img id="logoPreview" src="@Model.Logo" alt="Logo" style="max-width: 200px; max-height: 100px;" /> 
+                <input asp-for="Logo" type="file" class="form-control" accept="image/*" onchange="previewImage(this, 'logoPreview')" />
                 <span asp-validation-for="Logo" class="text-danger"></span>
             </div>
 
              <div class="form-group">
                 <label asp-for="Body" class="control-label"></label>
-                <input type="hidden" asp-for="Body" class="form-control" rows="5"></input> 
+                <input type="hidden" asp-for="Body" class="form-control" rows="5"/>
                 <span asp-validation-for="Body" class="text-danger"></span>
             </div> 
 
             <div class="form-group">
-                <label asp-for="imageUrl" class="control-label"></label>
-                <input asp-for="imageUrl" type="file" class="form-control" accept="image/*"/>
+                <label asp-for="imageUrl" class="control-label"></label> <br />
+				<img id="imageUrlPreview" src="@Model.imageUrl" alt="Image" style="max-width: 400px; max-height: 400px;" /> 
+                <input asp-for="imageUrl" type="file" class="form-control" accept="image/*" onclick="previewImage(this, 'imageUrlPreview')" />
                 <span asp-validation-for="imageUrl" class="text-danger"></span>
             </div>
 
@@ -79,8 +81,9 @@
             </div> 
 
              <div class="form-group">
-                <label asp-for="imageUrl2" class="control-label"></label>
-                <input asp-for="imageUrl2" type="file" class="form-control" accept="image/*"/>
+                <label asp-for="imageUrl2" class="control-label"></label> <br />
+				<img id="imageUrl2Preview" src="@Model.imageUrl2" alt="Image2" style="max-width: 400px; max-height: 400px;" />
+                <input asp-for="imageUrl2" type="file" class="form-control" accept="image/*" onclick="previewImage(this, 'imageUrl2Preview')" />
                 <span asp-validation-for="imageUrl2" class="text-danger"></span>
             </div> 
 
@@ -103,8 +106,9 @@
             </div>
             
             <div class="form-group">
-                <label asp-for="imageUrl3" class="control-label"></label>
-                <input asp-for="imageUrl3" type="file" class="form-control" accept="image/*"/>
+                <label asp-for="imageUrl3" class="control-label"></label> <br />
+				<img id="imageUrl3Preview" src="@Model.imageUrl3" alt="Image3" style="max-width: 400px; max-height: 400px;" />
+                <input asp-for="imageUrl3" type="file" class="form-control" accept="image/*" onclick="previewImage(this, 'imageUrl3Preview')" />    
                 <span asp-validation-for="imageUrl3" class="text-danger"></span>
             </div>
 
@@ -139,5 +143,7 @@
 @section Scripts {
     @{
         await Html.RenderPartialAsync("_ValidationScriptsPartial");
+
     }
 }
+<script src="~/js/ImagePreview.js"></script>

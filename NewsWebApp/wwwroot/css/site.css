@@ -2575,10 +2575,9 @@ without changing the rest of the CSS.
 
     .history-data-sources {
         margin: 12px 0 0;
-        padding: 0 5px;
+        text-align: left;
         font-size: 0.8rem;
         line-height: 1.5;
-        text-align: right;
     }
 
     .history-source-electricity {
@@ -2594,8 +2593,14 @@ without changing the rest of the CSS.
     .history-explanation {
         margin-top: 35px;
         padding-top: 20px;
-        border-top: 1px solid var(--border);
     }
+
+        .history-explanation::before {
+            content: "";
+            display: block;
+            border-top: 1px solid var(--border);
+            margin-bottom: 20px;
+        }
 
         .history-explanation h2 {
             font-family: Georgia, "Times New Roman", serif;
@@ -2685,7 +2690,7 @@ without changing the rest of the CSS.
             width: 100% !important;
             height: 100% !important;
         }
-    /* ---------------------------------------------------------
+/* ---------------------------------------------------------
    HISTORY MOBILE
 --------------------------------------------------------- */
 
@@ -2719,8 +2724,12 @@ without changing the rest of the CSS.
         .history-chart {
             height: 300px;
         }
+
+        .history-source-electricity {
+            display: block;
+        }
     }
-    /* ---------------------------------------------------------
+/* ---------------------------------------------------------
    HISTORICAL DATA LINK
 --------------------------------------------------------- */
 

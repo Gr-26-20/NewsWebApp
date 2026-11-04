@@ -1480,13 +1480,13 @@ without changing the rest of the CSS.
         position: relative;
     }
 
-        .compact-image .article-image {
-            width: auto;
-            height: auto;
-            max-width: none;
-            object-fit: unset;
-            display: block;
-        }
+    .compact-image .article-image {
+        width: auto;
+        height: auto;
+        max-width: none;
+        object-fit: unset;
+        display: block;
+    }
     /* ---------------------------------------------------------
    WEATHER
 --------------------------------------------------------- */

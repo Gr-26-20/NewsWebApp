@@ -51,7 +51,7 @@ namespace NewsWebApp.Controllers
             return View(newsletters);
         }
 
-        public async Task<IActionResult> EditNewsLetter(int id)
+        public async Task<IActionResult> EditNewsLetter(int id, IFormFile logo, IFormFile imageUrl, IFormFile imageUrl2, IFormFile imageUrl3)
         {
             var newsletter = await _newsletterService.GetNewsletterByIdAsync(id);
             if (newsletter == null)
@@ -68,19 +68,28 @@ namespace NewsWebApp.Controllers
             if (ModelState.IsValid)
             {
                
+                if(logo != null && logo.Length > 0)
+                {
+                    var logoUrl = await _fileService.UploadImageAsync(logo);
+                    newsLetter.Logo = logoUrl;
+                }
+                if(imageUrl != null && imageUrl.Length > 0)
+                {
+                    var imageUrlPath = await _fileService.UploadImageAsync(imageUrl);
+                    newsLetter.imageUrl = imageUrlPath;
+                }
+                if(imageUrl2 != null && imageUrl2.Length > 0)
+                {
+                    var imageUrl2Path = await _fileService.UploadImageAsync(imageUrl2);
+                    newsLetter.imageUrl2 = imageUrl2Path;
+                }
+                if(imageUrl3 != null && imageUrl3.Length > 0)
+                {
+                    var imageUrl3Path = await _fileService.UploadImageAsync(imageUrl3);
+                    newsLetter.imageUrl3 = imageUrl3Path;
+                }
 
-                _applicationDbContext.Update(newsLetter);
-                await _applicationDbContext.SaveChangesAsync();
-
-                string? logoUrl = logo != null ? await _fileService.UploadImageAsync(logo) : null;
-                string? imageUrlPath = imageUrl != null ? await _fileService.UploadImageAsync(imageUrl) : null;
-                string? imageUrl2Path = imageUrl2 != null ? await _fileService.UploadImageAsync(imageUrl2) : null;
-                string? imageUrl3Path = imageUrl3 != null ? await _fileService.UploadImageAsync(imageUrl3) : null;
-
-                newsLetter.Logo = logoUrl;
-                newsLetter.imageUrl = imageUrlPath;
-                newsLetter.imageUrl2 = imageUrl2Path;
-                newsLetter.imageUrl3 = imageUrl3Path;
+               
 
                 newsLetter.Body = "";
                 newsLetter.Body = $"<img style='height:100px; width:200px;' src='{newsLetter.Logo}' alt='logo'/></div></div><h1>{newsLetter.Subject}</h1><p>{newsLetter.Body}</p>";

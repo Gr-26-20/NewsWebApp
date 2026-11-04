@@ -1667,11 +1667,11 @@ without changing the rest of the CSS.
         position: relative;
     }
 
-        .main-image-container .article-image {
-            position: absolute;
-            display: block;
-            max-width: none;
-        }
+    .main-image-container .article-image {
+        position: absolute;
+        display: block;
+        max-width: none;
+    }
     /* HOME PAGE - SECONDARY STORIES */
     .story .article-image {
         width: 100%;
@@ -1986,7 +1986,7 @@ without changing the rest of the CSS.
         align-items: center;
         flex-wrap: wrap;
         justify-content: flex-start;
-        flex: 1;
+        flex: 1;.main-image-container
         order: 1;
     }
 

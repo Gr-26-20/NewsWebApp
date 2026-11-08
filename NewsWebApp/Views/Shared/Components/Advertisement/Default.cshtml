@@ -26,7 +26,7 @@
 
 
 <script>
-    document.querySelectorAll(".simulated-advert").forEach(function (advert) {
+    document.querySelectorAll(".article-image, .article-inline-image").forEach(function (advert) {
         if (advert.dataset.rotatingInitialized === "true") {
             return;
         }
@@ -70,4 +70,220 @@
             current.cta;
     });
 </script>
+
+
+<script>
+    (function () {
+
+        function initializeAdvertColors() {
+
+            const adverts = document.querySelectorAll(
+                ".simulated-advert"
+            );
+
+            const articleImages = Array.from(
+                document.querySelectorAll(".article-image, .article-inline-image")
+            ).filter(image => image.closest(".simulated-advert") === null);
+
+            if (adverts.length === 0 || articleImages.length === 0) {
+                return;
+            }
+
+            // Find the article image closest to an advertisement.
+            function findNearestImage(advert) {
+
+                const advertRect = advert.getBoundingClientRect();
+
+                let nearestImage = null;
+                let shortestDistance = Infinity;
+
+                articleImages.forEach(image => {
+
+                    const imageRect = image.getBoundingClientRect();
+
+                    const advertCenter =
+                        advertRect.top + advertRect.height / 2;
+
+                    const imageCenter =
+                        imageRect.top + imageRect.height / 2;
+
+                    const distance = Math.abs(
+                        advertCenter - imageCenter
+                    );
+
+                    if (distance < shortestDistance) {
+                        shortestDistance = distance;
+                        nearestImage = image;
+                    }
+                });
+
+                return nearestImage;
+            }
+
+            // Extract a pastel colour from an image.
+            console.log("Extracting colour from image...");
+            function extractColor(image, advertContent) {
+
+                if (!image.complete || image.naturalWidth === 0) {
+                    return;
+                }
+
+                try {
+
+                    const canvas = document.createElement("canvas");
+
+                    canvas.width = 32;
+                    canvas.height = 32;
+
+                    const context = canvas.getContext("2d");
+
+                    if (!context) {
+                        return;
+                    }
+
+                    context.drawImage(
+                        image,
+                        0,
+                        0,
+                        canvas.width,
+                        canvas.height
+                    );
+
+                    const imageData = context.getImageData(
+                        0,
+                        0,
+                        canvas.width,
+                        canvas.height
+                    );
+
+                    const pixels = imageData.data;
+
+                    let red = 0;
+                    let green = 0;
+                    let blue = 0;
+                    let count = 0;
+
+                    for (let i = 0; i < pixels.length; i += 4) {
+
+                        red += pixels[i];
+                        green += pixels[i + 1];
+                        blue += pixels[i + 2];
+
+                        count++;
+                    }
+
+                    red = red / count;
+                    green = green / count;
+                    blue = blue / count;
+
+                    // Convert the average RGB colour to HSL.
+                    const r = red / 255;
+                    const g = green / 255;
+                    const b = blue / 255;
+
+                    const max = Math.max(r, g, b);
+                    const min = Math.min(r, g, b);
+                    const delta = max - min;
+
+                    let hue = 0;
+
+                    if (delta !== 0) {
+
+                        if (max === r) {
+                            hue = 60 * (((g - b) / delta) % 6);
+                        }
+                        else if (max === g) {
+                            hue = 60 * ((b - r) / delta + 2);
+                        }
+                        else {
+                            hue = 60 * ((r - g) / delta + 4);
+                        }
+                    }
+
+                    if (hue < 0) {
+                        hue += 360;
+                    }
+
+                    // Match the pastel colours used in the analytics diagrams.
+                    const tint = `hsl(${Math.round(hue)}, 65%, 90%)`;
+
+                    advertContent.style.setProperty(
+                        "--advert-tint",
+                        tint
+                    );
+
+                    console.log(
+                        "Advertisement colour:",
+                        tint,
+                        "Image:",
+                        image
+                    );
+
+                }
+                catch (error) {
+
+                    console.warn(
+                        "Could not extract advertisement colour:",
+                        error
+                    );
+
+                }
+            }
+
+            // Process every advertisement independently.
+            adverts.forEach(advert => {
+
+                const advertContent = advert.querySelector(
+                    ".simulated-advert-content"
+                );
+
+                if (!advertContent) {
+                    return;
+                }
+
+                const nearestImage = findNearestImage(advert);
+                console.log("Nearest image:", nearestImage);
+
+                if (!nearestImage) {
+                    return;
+                }
+
+            console.log(
+                "Image ready:",
+                nearestImage.complete,
+                nearestImage.naturalWidth
+            );
+
+                if (nearestImage.complete) {
+                    extractColor(nearestImage, advertContent);
+                }
+                else {
+
+                    nearestImage.addEventListener(
+                        "load",
+                        () => extractColor(nearestImage, advertContent),
+                        { once: true }
+                    );
+                }
+            });
+        }
+
+        if (document.readyState === "loading") {
+
+            document.addEventListener(
+                "DOMContentLoaded",
+                initializeAdvertColors,
+                { once: true }
+            );
+
+        }
+        else {
+
+            initializeAdvertColors();
+
+        }
+
+    })();
+</script>
+
 

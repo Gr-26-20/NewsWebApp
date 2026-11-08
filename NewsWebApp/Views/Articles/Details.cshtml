@@ -37,7 +37,8 @@
             {
                 <img src="@Model.ImageUrl"
                      alt="@Model.Title"
-                     class="article-image" />
+                     class="article-image"
+                     crossorigin="anonymous"/>
             }
             else
             {
@@ -75,7 +76,8 @@
             <figure class="article-inline-figure">
                 <img src="@Model.SecondaryImageUrl"
                      alt="@Model.SecondaryImageCaption"
-                     class="article-inline-image" />
+                     class="article-inline-image"
+                     crossorigin="anonymous" />
 
                 @if (!string.IsNullOrWhiteSpace(Model.SecondaryImageCaption))
                 {
@@ -90,7 +92,8 @@
             <figure class="article-inline-figure">
                 <img src="@Model.ThirdImageUrl"
                      alt="@Model.ThirdImageCaption"
-                     class="article-inline-image" />
+                     class="article-inline-image"
+                     crossorigin="anonymous" />
 
                 @if (!string.IsNullOrWhiteSpace(Model.ThirdImageCaption))
                 {
@@ -107,7 +110,8 @@
             <figure class="article-inline-figure">
                 <img src="@Model.SecondaryImageUrl"
                      alt="@Model.SecondaryImageCaption"
-                     class="article-inline-image" />
+                     class="article-inline-image"
+                     crossorigin="anonymous" />
                 @if (!string.IsNullOrWhiteSpace(Model.SecondaryImageCaption))
                 {
                     <figcaption>@Model.SecondaryImageCaption</figcaption>
@@ -120,7 +124,8 @@
             <figure class="article-inline-figure">
                 <img src="@Model.ThirdImageUrl"
                      alt="@Model.ThirdImageCaption"
-                     class="article-inline-image" />
+                     class="article-inline-image"
+                     crossorigin="anonymous" />
                 @if (!string.IsNullOrWhiteSpace(Model.ThirdImageCaption))
                 {
                     <figcaption>@Model.ThirdImageCaption</figcaption>

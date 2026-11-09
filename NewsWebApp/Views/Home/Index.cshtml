@@ -117,14 +117,16 @@
                         {
                             <div class="main-image-container">
                                 <a href="/Articles/Details/@mainArticle.Id" class="article-image-link">
-                                    <img src="@mainArticle.ImageUrl"
+                                    <img crossorigin="anonymous"
+                                         src="@mainArticle.ImageUrl"
                                          alt="@mainArticle.Title"
                                          class="article-image large"
                                          data-focal-x="@mainArticle.ImageFocalPointX.ToString(System.Globalization.CultureInfo.InvariantCulture)"
                                          data-focal-y="@mainArticle.ImageFocalPointY.ToString(System.Globalization.CultureInfo.InvariantCulture)"
                                          data-main-zoom="@mainArticle.MainImageZoom"
                                          data-main-position-x="@mainArticle.MainImagePositionX"
-                                         data-main-position-y="@mainArticle.MainImagePositionY" />
+                                         data-main-position-y="@mainArticle.MainImagePositionY"
+                                         crossorigin="anonymous"/>
                                 </a>
                             </div>
                         }
@@ -168,6 +170,7 @@
                                          data-focal-x="@article.ImageFocalPointX"
                                          data-focal-y="@article.ImageFocalPointY"
                                          data-secondary-zoom="@article.SecondaryImageZoom"
+                                         crossorigin="anonymous"
                                          />
                                     </a>
                                 }
@@ -273,7 +276,8 @@
                                          alt="@article.Title"
                                          class="col sm article-image"
                                          data-focal-x="@article.ImageFocalPointX.ToString(System.Globalization.CultureInfo.InvariantCulture)"
-                                         data-focal-y="@article.ImageFocalPointY.ToString(System.Globalization.CultureInfo.InvariantCulture)" />
+                                         data-focal-y="@article.ImageFocalPointY.ToString(System.Globalization.CultureInfo.InvariantCulture)"
+                                         crossorigin="anonymous"/>
                                 </a>
                             </div>
                             }
@@ -338,7 +342,8 @@
                                          alt="@article.Title"
                                          class="col-sm article-image"
                                          data-focal-x="@article.ImageFocalPointX.ToString(System.Globalization.CultureInfo.InvariantCulture)"
-                                         data-focal-y="@article.ImageFocalPointY.ToString(System.Globalization.CultureInfo.InvariantCulture)" />
+                                         data-focal-y="@article.ImageFocalPointY.ToString(System.Globalization.CultureInfo.InvariantCulture)"
+                                         crossorigin="anonymous"/>
                                 </a>
                             </div>
                         }
@@ -403,7 +408,8 @@
                                          alt="@article.Title"
                                          class="col-sm article-image"
                                          data-focal-x="@article.ImageFocalPointX.ToString(System.Globalization.CultureInfo.InvariantCulture)"
-                                         data-focal-y="@article.ImageFocalPointY.ToString(System.Globalization.CultureInfo.InvariantCulture)" />
+                                         data-focal-y="@article.ImageFocalPointY.ToString(System.Globalization.CultureInfo.InvariantCulture)"
+                                         crossorigin="anonymous"/>
                                 </a>
                             </div>
                         }

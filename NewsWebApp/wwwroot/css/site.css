@@ -1480,13 +1480,13 @@ without changing the rest of the CSS.
         position: relative;
     }
 
-    .compact-image .article-image {
-        width: auto;
-        height: auto;
-        max-width: none;
-        object-fit: unset;
-        display: block;
-    }
+        .compact-image .article-image {
+            width: auto;
+            height: auto;
+            max-width: none;
+            object-fit: unset;
+            display: block;
+        }
     /* ---------------------------------------------------------
    WEATHER
 --------------------------------------------------------- */
@@ -1667,11 +1667,11 @@ without changing the rest of the CSS.
         position: relative;
     }
 
-    .main-image-container .article-image {
-        position: absolute;
-        display: block;
-        max-width: none;
-    }
+        .main-image-container .article-image {
+            position: absolute;
+            display: block;
+            max-width: none;
+        }
     /* HOME PAGE - SECONDARY STORIES */
     .story .article-image {
         width: 100%;
@@ -1986,8 +1986,8 @@ without changing the rest of the CSS.
         align-items: center;
         flex-wrap: wrap;
         justify-content: flex-start;
-        flex: 1;.main-image-container
-        order: 1;
+        flex: 1;
+        .main-image-container order: 1;
     }
 
         .category-page-categories a {
@@ -2690,7 +2690,7 @@ without changing the rest of the CSS.
             width: 100% !important;
             height: 100% !important;
         }
-/* ---------------------------------------------------------
+    /* ---------------------------------------------------------
    HISTORY MOBILE
 --------------------------------------------------------- */
 
@@ -2729,7 +2729,7 @@ without changing the rest of the CSS.
             display: block;
         }
     }
-/* ---------------------------------------------------------
+    /* ---------------------------------------------------------
    HISTORICAL DATA LINK
 --------------------------------------------------------- */
 
@@ -3050,11 +3050,7 @@ without changing the rest of the CSS.
         color: #666;
     }
 
-    .simulated-advert-content {
-        padding: 22px;
-        background: #f5f5f2;
-        border-left: 5px solid #d71920;
-    }
+
 
     .simulated-advert-copy h3 {
         color: var(--advert-heading);
@@ -3222,11 +3218,8 @@ without changing the rest of the CSS.
     }
     /* EXTERNAL ADVERT LOOK: deliberately different from CLICKBAIT */
 
-    .simulated-advert {
-        border: 2px solid var(--advert-border);
-        background: var(--advert-background);
-        color: var(--advert-text);
-    }
+    
+    
 
     .simulated-advert-label {
         display: flex;
@@ -3254,7 +3247,8 @@ without changing the rest of the CSS.
     }
 
     .simulated-advert-content {
-        background: var(--advert-content-background);
+        padding: 22px;
+        background: var(--advert-tint, var(--advert-content-background));
         border-left: 5px solid var(--advert-button);
     }
 
@@ -3427,9 +3421,9 @@ without changing the rest of the CSS.
         cursor: pointer;
     }
 
-        .fake-advert-claim:hover {
-            background: #54206f;
-        }
+    .fake-advert-claim:hover {
+        background: #54206f;
+    }
 
     .fake-advert-reveal {
         margin-top: 24px;
@@ -3482,10 +3476,10 @@ without changing the rest of the CSS.
         text-decoration: none;
     }
 
-        a.simulated-advert-cta:hover {
-            background: var(--advert-heading);
-            color: var(--advert-button-text);
-        }
+    a.simulated-advert-cta:hover {
+        background: var(--advert-heading);
+        color: var(--advert-button-text);
+    }
     /* -------------------------- */
     /* Weather page layout */
 
